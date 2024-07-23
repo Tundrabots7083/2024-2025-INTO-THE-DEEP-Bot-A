@@ -69,7 +69,7 @@ import java.util.List;
  * </ul>
  */
 @Config
-public final class AutoMecanumDrive {
+public class AutoMecanumDrive {
 
     public final MecanumKinematics kinematics = new MecanumKinematics(
             Params.inPerTick * Params.trackWidthTicks, Params.inPerTick / Params.lateralInPerTick);
