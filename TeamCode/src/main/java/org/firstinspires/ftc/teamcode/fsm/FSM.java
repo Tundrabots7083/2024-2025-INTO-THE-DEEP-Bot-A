@@ -156,6 +156,7 @@ public class FSM<State, Event> {
 
     /**
      * Returns indication as to whether the FSM is running
+     *
      * @return <code>true</code> if the FSM is running; <code>false</code> if it is not.
      */
     public boolean isRunning() {

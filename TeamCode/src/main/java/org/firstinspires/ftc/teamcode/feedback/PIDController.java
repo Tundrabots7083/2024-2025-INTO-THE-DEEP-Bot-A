@@ -16,7 +16,7 @@ public class PIDController {
 
     private boolean hasRun = false;
 
-    private ElapsedTime timer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
     private double previousError = 0;
 

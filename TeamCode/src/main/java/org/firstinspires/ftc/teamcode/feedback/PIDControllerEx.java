@@ -8,16 +8,16 @@ import androidx.annotation.NonNull;
 public class PIDControllerEx extends PIDController {
     private final FeedForward ff;
 
-/**
- * Creates a new PID controller with a constant gravity FeedForward component.
- *
- * @param Kp proportional term, multiplied directly by the state error
- * @param Ki integral term, multiplied directly by the state error integral
- * @param Kd derivative term, multiplied directly by the state error rate of change
- * @param Kg constant feed forward gravity term, added to the output of the PID calculation
- */
+    /**
+     * Creates a new PID controller with a constant gravity FeedForward component.
+     *
+     * @param Kp proportional term, multiplied directly by the state error
+     * @param Ki integral term, multiplied directly by the state error integral
+     * @param Kd derivative term, multiplied directly by the state error rate of change
+     * @param Kg constant feed forward gravity term, added to the output of the PID calculation
+     */
     public PIDControllerEx(double Kp, double Ki, double Kd, double Kg) {
-        this(Kp, Ki, Kd, p->Kg);
+        this(Kp, Ki, Kd, p -> Kg);
     }
 
     /**
