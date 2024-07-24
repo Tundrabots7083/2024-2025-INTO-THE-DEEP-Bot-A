@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.feedback;
 
+import androidx.annotation.NonNull;
+
 /**
  * The MotionProfile class represents a motion profile with specified maximum acceleration, maximum velocity,
  * start position, and end position. It calculates the current position based on the elapsed time since the
  * profile started.
  */
 public class MotionProfile {
-    private double maxAcceleration;
-    private double maxVelocity;
-    private double startPosition;
+    private final double maxAcceleration;
+    private final double maxVelocity;
+    private final double startPosition;
     private double endPosition;
     private long startTime;
 
@@ -18,9 +20,9 @@ public class MotionProfile {
      * The time unit component of the maximum acceleration and maximum velocity constants must be seconds.
      *
      * @param maxAcceleration The maximum acceleration of the motion profile in units per second squared.
-     * @param maxVelocity The maximum velocity of the motion profile in units per second.
-     * @param startPosition The start position of the motion profile in units.
-     * @param endPosition The end position of the motion profile in units.
+     * @param maxVelocity     The maximum velocity of the motion profile in units per second.
+     * @param startPosition   The start position of the motion profile in units.
+     * @param endPosition     The end position of the motion profile in units.
      */
     public MotionProfile(double maxAcceleration, double maxVelocity, double startPosition, double endPosition) {
         this.maxAcceleration = maxAcceleration;
@@ -37,7 +39,7 @@ public class MotionProfile {
      * Returns indication as to whether the motion profile has reached it's end.
      *
      * @return <code>true</code> if the motion profile has reached it's end;
-     *         <code>false</code> if there is still some motion required to reach the end.
+     * <code>false</code> if there is still some motion required to reach the end.
      */
     public boolean isAtEnd() {
         double elapsedTime = (System.currentTimeMillis() - this.startTime) / 1000.0; // convert to seconds
@@ -109,5 +111,22 @@ public class MotionProfile {
         }
 
         return startPosition + direction * position;
+    }
+
+    /**
+     * Gets a string representation of this motion profile.
+     *
+     * @return a string representation of this motion profile
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "MotionProfile{" +
+                "maxAcceleration=" + maxAcceleration +
+                ", maxVelocity=" + maxVelocity +
+                ", startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", startTime=" + startTime +
+                '}';
     }
 }

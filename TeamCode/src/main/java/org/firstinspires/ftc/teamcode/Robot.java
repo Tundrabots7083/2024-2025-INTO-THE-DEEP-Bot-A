@@ -76,11 +76,29 @@ public class Robot {
         return robot;
     }
 
+    /**
+     * Gets a string representation of the robot.
+     *
+     * @return a string representation of the robot
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "Robot{" +
+                "mecanumDrive=" + mecanumDrive +
+                ", webcam=" + webcam +
+                '}';
+    }
+
     // Enum to specify opmode type
     public enum OpModeType {
-        /** Driver controlled OpMode */
+        /**
+         * Driver controlled OpMode
+         */
         TELEOP,
-        /** Autonomous OpMode */
+        /**
+         * Autonomous OpMode
+         */
         AUTO
     }
 }

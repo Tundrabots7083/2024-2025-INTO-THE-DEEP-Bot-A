@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -37,12 +39,11 @@ public class VisionProcessor implements org.firstinspires.ftc.vision.VisionProce
     public static double MIN_MIDDLE_SAT = 30;
 
     private final Telemetry telemetry;
+    private final Mat hsvMat = new Mat();
     public Rect rectLeft = new Rect(LEFT_RECTANGLE_X, LEFT_RECTANGLE_Y, LEFT_RECTANGLE_WIDTH, LEFT_RECTANGLE_HEIGHT);
     public Rect rectMiddle = new Rect(MIDDLE_RECTANGLE_X, MIDDLE_RECTANGLE_Y, MIDDLE_RECTANGLE_WIDTH, MIDDLE_RECTANGLE_HEIGHT);
-
     private TeamElementLocation selection = TeamElementLocation.UNKNOWN;
     private Mat submat = new Mat();
-    private final Mat hsvMat = new Mat();
 
     /**
      * Creates a new vision processor.
@@ -187,5 +188,20 @@ public class VisionProcessor implements org.firstinspires.ftc.vision.VisionProce
      */
     public TeamElementLocation getSelection() {
         return selection;
+    }
+
+    /**
+     * Gets a string representation of this vision processor.
+     *
+     * @return a string representation of this vision processor
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "VisionProcessor{" +
+                "rectLeft=" + rectLeft +
+                ", rectMiddle=" + rectMiddle +
+                ", selection=" + selection +
+                '}';
     }
 }
