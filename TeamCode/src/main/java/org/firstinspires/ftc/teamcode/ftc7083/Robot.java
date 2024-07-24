@@ -116,4 +116,18 @@ public class Robot {
          */
         AUTO
     }
+
+    /**
+     * Gets a string representation of the robot.
+     *
+     * @return a string representation of the robot
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "Robot{" +
+                "mecanumDrive=" + mecanumDrive +
+                ", webcam=" + webcam +
+                '}';
+    }
 }
