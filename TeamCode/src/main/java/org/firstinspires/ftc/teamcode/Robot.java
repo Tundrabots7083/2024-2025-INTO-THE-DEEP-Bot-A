@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Webcam;
@@ -14,7 +15,7 @@ public class Robot {
 
     public final Telemetry telemetry;
 
-    // Mechanisms
+    // Subsystems
     public final MecanumDrive mecanumDrive;
     public final Webcam webcam;
 
@@ -25,7 +26,7 @@ public class Robot {
      * @param telemetry   telemetry class for displaying data.
      * @param opModeType  the type of opmode the robot is being used for
      */
-    private Robot(HardwareMap hardwareMap, Telemetry telemetry, OpModeType opModeType) {
+    private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
         robot = this;
         this.telemetry = telemetry;
 
@@ -39,6 +40,7 @@ public class Robot {
         }
 
         this.telemetry.addLine("[Robot] initialized");
+        this.telemetry.update();
     }
 
     /**
@@ -47,10 +49,9 @@ public class Robot {
      *
      * @param hardwareMap hardware map for the robot.
      * @param telemetry   telemetry class for displaying data.
-     *
      * @return the robot instance
      */
-    public static Robot init(HardwareMap hardwareMap, Telemetry telemetry) {
+    public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         return init(hardwareMap, telemetry, OpModeType.TELEOP);
     }
 
@@ -63,7 +64,7 @@ public class Robot {
      * @param opModeType  the type of opmode the robot is being used for
      * @return the robot instance
      */
-    public static Robot init(HardwareMap hardwareMap, Telemetry telemetry, OpModeType opModeType) {
+    public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
         robot = new Robot(hardwareMap, telemetry, opModeType);
         return robot;
     }
@@ -75,9 +76,11 @@ public class Robot {
         return robot;
     }
 
-    // enum to specify opmode type
+    // Enum to specify opmode type
     public enum OpModeType {
+        /** Driver controlled OpMode */
         TELEOP,
+        /** Autonomous OpMode */
         AUTO
     }
 }

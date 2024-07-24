@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
@@ -18,9 +16,9 @@ import java.util.Collection;
  * MecanumDrive implements the drive chassis for the robot.
  */
 @Config
-public class MecanumDrive extends SubsystemBaseEx {
+public class MecanumDrive extends SubsystemBase {
     private final Telemetry telemetry;
-    private final MotorEx rightFront, rightRear, leftFront, leftRear;
+    private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
 
     /**
      * MecanumDrive initializes a new mecanum drive train.
@@ -28,19 +26,19 @@ public class MecanumDrive extends SubsystemBaseEx {
      * @param hardwareMap the hardware map that contains the drone launcher hardware.
      * @param telemetry   the telemetry used to display data on the driver station.
      */
-    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
+    public MecanumDrive(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        leftFront = new MotorEx(hardwareMap, "leftFront");
-        leftRear = new MotorEx(hardwareMap, "leftRear");
-        rightFront = new MotorEx(hardwareMap, "rightFront");
-        rightRear = new MotorEx(hardwareMap, "rightRear");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
-        leftFront.setInverted(true);
-        leftRear.setInverted(true);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
 
-        Collection<MotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
-        for (MotorEx motor : motors) {
+        Collection<DcMotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        for (DcMotorEx motor : motors) {
             initMotor(motor);
         }
     }
@@ -50,11 +48,11 @@ public class MecanumDrive extends SubsystemBaseEx {
      *
      * @param motor the motor to be initialized.
      */
-    private void initMotor(MotorEx motor) {
-        MotorConfigurationType motorConfigurationType = motor.motor.getMotorType().clone();
+    private void initMotor(@NonNull DcMotorEx motor) {
+        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
         motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-        motor.motor.setMotorType(motorConfigurationType);
-        motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor.setMotorType(motorConfigurationType);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**
@@ -134,10 +132,10 @@ public class MecanumDrive extends SubsystemBaseEx {
         rightRearPower /= maxPower;
 
         // Now that the power have been normalized, go ahead and set power for the motors.
-        leftFront.set(leftFrontPower);
-        leftRear.set(leftRearPower);
-        rightFront.set(rightFrontPower);
-        rightRear.set(rightRearPower);
+        leftFront.setPower(leftFrontPower);
+        leftRear.setPower(leftRearPower);
+        rightFront.setPower(rightFrontPower);
+        rightRear.setPower(rightRearPower);
 
         telemetry.addData("[DRIVE] Left Front Power", leftFrontPower);
         telemetry.addData("[DRIVE] Left Rear Power", leftRearPower);
