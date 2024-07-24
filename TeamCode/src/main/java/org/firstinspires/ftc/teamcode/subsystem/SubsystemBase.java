@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
-
 /**
- * Base subsystem used by our subsystems. This extends the FTCLib subsystem so that includes some
- * methods used by multiple subsystems.
+ * Base subsystem used by our subsystems. This includes common methods that are useful to
+ * multiple subsystems.
  */
-public abstract class SubsystemBaseEx extends SubsystemBase implements SubsystemEx {
+public abstract class SubsystemBase implements Subsystem {
 
     /**
      * Modifies the power value so that it is between the minimum and maximum values.

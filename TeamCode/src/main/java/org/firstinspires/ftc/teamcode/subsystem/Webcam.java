@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamServer;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
  * A vision sensor used to create and obtain data from a vision processor and determine the
  * location of the team prop.
  */
-public class Webcam extends SubsystemBaseEx {
+public class Webcam extends SubsystemBase {
 
     private final VisionProcessor visionProcessor;
     private VisionPortal webcamPortal;
@@ -26,7 +27,7 @@ public class Webcam extends SubsystemBaseEx {
      * @param hardwareMap mapping of all the hardware on the robot
      * @param telemetry   the telemetry used to provide output on the driver station.
      */
-    public Webcam(String deviceName, HardwareMap hardwareMap, Telemetry telemetry) {
+    public Webcam(@NonNull String deviceName, @NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, deviceName);
 
@@ -34,14 +35,6 @@ public class Webcam extends SubsystemBaseEx {
         webcamPortal = VisionPortal.easyCreateWithDefaults(webcamName, visionProcessor);
         FtcDashboard.getInstance().startCameraStream(webcamPortal, 0);
         CameraStreamServer.getInstance().setSource(webcamPortal);
-    }
-
-    /**
-     * Update the video stream for the webcam
-     */
-    @Override
-    public void execute() {
-        // NO-OP
     }
 
     /**
