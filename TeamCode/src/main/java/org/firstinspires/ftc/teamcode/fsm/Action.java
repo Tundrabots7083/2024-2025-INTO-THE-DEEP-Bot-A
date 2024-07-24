@@ -8,7 +8,8 @@ public interface Action {
     /**
      * Called once the action is to run, but before the <code>execute</code> method is called.
      */
-    default void initialize() {};
+    default void initialize() {
+    }
 
     /**
      * Called repeatedly until the action is finished or is cancelled.
@@ -18,13 +19,15 @@ public interface Action {
     /**
      * Cancels the execution of an action.
      */
-    default void cancel() {}
+    default void cancel() {
+    }
 
     /**
      * Called when the action completes. This occurs when <code>cancel</code> is called, or when
      * <code>isFinished</code> returns <code>true</code>.
      */
-    default void end() {};
+    default void end() {
+    }
 
     boolean isFinished();
 }
