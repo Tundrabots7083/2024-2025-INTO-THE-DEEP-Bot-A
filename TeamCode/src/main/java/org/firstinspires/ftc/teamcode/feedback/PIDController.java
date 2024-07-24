@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.feedback;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -126,5 +128,20 @@ public class PIDController {
         }
 
         return derivative;
+    }
+
+    /**
+     * Gets a string representation of this PID controller.
+     *
+     * @return a string representation of this PID controller
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "PIDController{" +
+                "Kp=" + Kp +
+                ", Kd=" + Kd +
+                ", Ki=" + Ki +
+                '}';
     }
 }

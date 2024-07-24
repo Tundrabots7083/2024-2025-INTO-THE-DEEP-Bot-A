@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.feedback;
 
+import androidx.annotation.NonNull;
+
 /**
  * The MotionProfile class represents a motion profile with specified maximum acceleration, maximum velocity,
  * start position, and end position. It calculates the current position based on the elapsed time since the
@@ -109,5 +111,22 @@ public class MotionProfile {
         }
 
         return startPosition + direction * position;
+    }
+
+    /**
+     * Gets a string representation of this motion profile.
+     *
+     * @return a string representation of this motion profile
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "MotionProfile{" +
+                "maxAcceleration=" + maxAcceleration +
+                ", maxVelocity=" + maxVelocity +
+                ", startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", startTime=" + startTime +
+                '}';
     }
 }
