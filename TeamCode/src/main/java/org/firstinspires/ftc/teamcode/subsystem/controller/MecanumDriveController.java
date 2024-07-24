@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem.controller;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -70,5 +72,20 @@ public class MecanumDriveController implements SubsystemController {
         telemetry.addData("[DRIVE] Turn", turn);
 
         mecanumDrive.drive(x, y, turn);
+    }
+
+    /**
+     * Gets a string representation of this mecanum drive controller.
+     *
+     * @return a string representation of this mecanum drive controller
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "MecanumDriveController{" +
+                "mecanumDrive=" + mecanumDrive +
+                ", driveGain=" + driveGain +
+                ", turnGain=" + turnGain +
+                '}';
     }
 }

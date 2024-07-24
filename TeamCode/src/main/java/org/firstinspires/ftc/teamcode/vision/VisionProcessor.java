@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -187,5 +189,20 @@ public class VisionProcessor implements org.firstinspires.ftc.vision.VisionProce
      */
     public TeamElementLocation getSelection() {
         return selection;
+    }
+
+    /**
+     * Gets a string representation of this vision processor.
+     *
+     * @return a string representation of this vision processor
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "VisionProcessor{" +
+                "rectLeft=" + rectLeft +
+                ", rectMiddle=" + rectMiddle +
+                ", selection=" + selection +
+                '}';
     }
 }

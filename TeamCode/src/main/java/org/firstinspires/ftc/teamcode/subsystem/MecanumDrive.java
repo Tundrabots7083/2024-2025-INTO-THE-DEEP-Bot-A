@@ -142,4 +142,20 @@ public class MecanumDrive extends SubsystemBase {
         telemetry.addData("[DRIVE] Right Front Power", rightFrontPower);
         telemetry.addData("[DRIVE] Right Rear Power", rightRearPower);
     }
+
+    /**
+     * Gets a string representation of this mecanum drive.
+     *
+     * @return a string representation of this mecanum drive
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "MecanumDrive{" +
+                "rightFront=" + rightFront +
+                ", rightRear=" + rightRear +
+                ", leftFront=" + leftFront +
+                ", leftRear=" + leftRear +
+                '}';
+    }
 }

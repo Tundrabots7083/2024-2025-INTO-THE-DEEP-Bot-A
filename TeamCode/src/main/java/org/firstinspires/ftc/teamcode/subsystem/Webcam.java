@@ -68,4 +68,17 @@ public class Webcam extends SubsystemBase {
             webcamPortal = null;
         }
     }
+
+    /**
+     * Gets a string representation of the webcam.
+     * @return a string representation of the webcam
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "Webcam{" +
+                "visionProcessor=" + visionProcessor +
+                ", webcamPortal=" + webcamPortal +
+                '}';
+    }
 }

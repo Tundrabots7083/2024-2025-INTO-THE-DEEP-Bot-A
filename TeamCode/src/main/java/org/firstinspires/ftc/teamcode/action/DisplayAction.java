@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.action;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
@@ -30,5 +32,18 @@ public class DisplayAction implements Action {
     public boolean run(@NotNull TelemetryPacket telemetryPacket) {
         telemetryPacket.addLine(message);
         return false;
+    }
+
+    /**
+     * Gets a string representation of this action.
+     *
+     * @return a string representation of this action
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "DisplayAction{" +
+                "message='" + message + '\'' +
+                '}';
     }
 }
