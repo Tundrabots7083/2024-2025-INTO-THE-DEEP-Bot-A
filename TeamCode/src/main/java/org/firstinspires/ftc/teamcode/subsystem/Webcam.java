@@ -71,6 +71,7 @@ public class Webcam extends SubsystemBase {
 
     /**
      * Gets a string representation of the webcam.
+     *
      * @return a string representation of the webcam
      */
     @NonNull

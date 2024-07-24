@@ -1,25 +1,14 @@
 package org.firstinspires.ftc.teamcode.autonomous.drive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.Vector2dDual;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
-import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
-import org.firstinspires.ftc.teamcode.roadrunner.messages.TwoDeadWheelInputsMessage;
 
 /**
  * Localizer for RoadRunner that uses the SparkFunOTOS sensor.
@@ -38,7 +27,7 @@ public class SparkFunOTOSLocalizer implements Localizer {
     public static DistanceUnit LINEAR_UNIT = DistanceUnit.INCH;
 
     private final SparkFunOTOS otos;
-    private boolean initialized = false;
+    private final boolean initialized = false;
     private Pose2d lastPose;
 
     /**

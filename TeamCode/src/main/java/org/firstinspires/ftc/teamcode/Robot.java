@@ -76,14 +76,6 @@ public class Robot {
         return robot;
     }
 
-    // Enum to specify opmode type
-    public enum OpModeType {
-        /** Driver controlled OpMode */
-        TELEOP,
-        /** Autonomous OpMode */
-        AUTO
-    }
-
     /**
      * Gets a string representation of the robot.
      *
@@ -96,5 +88,17 @@ public class Robot {
                 "mecanumDrive=" + mecanumDrive +
                 ", webcam=" + webcam +
                 '}';
+    }
+
+    // Enum to specify opmode type
+    public enum OpModeType {
+        /**
+         * Driver controlled OpMode
+         */
+        TELEOP,
+        /**
+         * Autonomous OpMode
+         */
+        AUTO
     }
 }
