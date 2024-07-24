@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.feedback;
 
+import androidx.annotation.NonNull;
+
 /**
  * The Kalman filter is a recursive algorithm that estimates the state of a linear dynamic system
  * from a series of noisy measurements.
@@ -64,6 +66,24 @@ public class KalmanFilter {
         double kalmanGain = predictedErrorCovariance / (predictedErrorCovariance + measurementNoise);
         state = predictedState + kalmanGain * (measurement - predictedState);
         errorCovariance = (1 - kalmanGain) * predictedErrorCovariance;
+    }
+
+    /**
+     * Gets a string representation of this kalman filter.
+     *
+     * @return a string representation of this kalman filter
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "KalmanFilter{" +
+                "initialState=" + initialState +
+                ", initialErrorCovariance=" + initialErrorCovariance +
+                ", processNoise=" + processNoise +
+                ", measurementNoise=" + measurementNoise +
+                ", state=" + state +
+                ", errorCovariance=" + errorCovariance +
+                '}';
     }
 
     /*
