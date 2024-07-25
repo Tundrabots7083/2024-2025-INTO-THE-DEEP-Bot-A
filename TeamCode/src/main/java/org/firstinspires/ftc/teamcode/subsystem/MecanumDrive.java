@@ -17,6 +17,8 @@ import java.util.Collection;
  */
 @Config
 public class MecanumDrive extends SubsystemBase {
+    public double POWER_EXPONENT = 2.0;
+
     private final Telemetry telemetry;
     private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
 
@@ -104,7 +106,7 @@ public class MecanumDrive extends SubsystemBase {
         if (power < 0) {
             sign = -1;
         }
-        return Math.pow(power, 2) * sign;
+        return Math.pow(power, POWER_EXPONENT) * sign;
     }
 
     /**
