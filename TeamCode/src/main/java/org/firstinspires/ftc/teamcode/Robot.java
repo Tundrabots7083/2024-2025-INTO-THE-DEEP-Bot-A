@@ -33,6 +33,15 @@ public class Robot {
         robot = this;
         this.telemetry = telemetry;
 
+        // TODO: consider moving this to the OpMode, running this during initialization but with
+        //       bulk caching set to MANUAL, and calling the following each loop:
+        //           for (LynxModule hub : allHubs) {
+        //               hub.clearBulkCache();
+        //           }
+        //       It may be possible to come up with some way to handle this in the robot, such
+        //       as moving loop processing logic here. That way, all OpModes share the same
+        //       implementation and avoid the possibility of forgetting to clear the bulk cache
+        //       each loop.
         // Enable bulk reads. This is almost always the "correct" answer, and can speed up loop
         // times
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);

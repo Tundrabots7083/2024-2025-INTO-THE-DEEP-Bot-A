@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import java.util.Collection;
+
 /**
  * Base subsystem used by our subsystems. This includes common methods that are useful to
  * multiple subsystems.
@@ -22,5 +24,20 @@ public abstract class SubsystemBase implements Subsystem {
             power = 0;
         }
         return power;
+    }
+
+    /**
+     * Returns the maximum absolute value in the list of numbers. If no numbers are provided, the
+     * value of <code>0.0</code> is returned.
+     *
+     * @param values the list of values from which to find the maximum absolute value.
+     * @return the maximum absolute value from the list of values.
+     */
+    protected final double maxAbs(double... values) {
+        double max = 0.0;
+        for (double v : values) {
+            max = Math.max(max, Math.abs(v));
+        }
+        return max;
     }
 }
