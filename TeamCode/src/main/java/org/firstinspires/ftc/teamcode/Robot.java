@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Webcam;
+
+import java.util.List;
 
 /**
  * The Robot. This is implemented as a singleton, meaning there is one robot instance that exists.
@@ -29,6 +32,13 @@ public class Robot {
     private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
         robot = this;
         this.telemetry = telemetry;
+
+        // Enable bulk reads. This is almost always the "correct" answer, and can speed up loop
+        // times
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         // Instantiate all the hardware on the robot
         mecanumDrive = new MecanumDrive(hardwareMap, telemetry);
