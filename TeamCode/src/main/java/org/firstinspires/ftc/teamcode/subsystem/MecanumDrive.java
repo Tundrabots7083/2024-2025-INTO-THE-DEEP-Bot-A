@@ -18,6 +18,7 @@ import java.util.Collection;
 @Config
 public class MecanumDrive extends SubsystemBase {
     public double POWER_EXPONENT = 2.0;
+    public double STRAFING_ADJUSTMENT = 1.1;
 
     private final Telemetry telemetry;
     private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
@@ -66,6 +67,12 @@ public class MecanumDrive extends SubsystemBase {
      * @param turn how much to rotate the robot.
      */
     public void drive(double x, double y, double turn) {
+        // Adjust the values X, Y and turn to reduce the sensitivity of the controllers on the
+        // low-end
+        x = adjustValue(x * STRAFING_ADJUSTMENT); // Adjust for imperfect strafing
+        y = adjustValue(y);
+        turn = adjustValue(turn);
+
         double theta = Math.atan2(y, x);
         double power = Math.hypot(x, y);
 
@@ -78,7 +85,7 @@ public class MecanumDrive extends SubsystemBase {
         double leftRearPower = power * sin / max - turn;
         double rightRearPower = power * cos / max + turn;
 
-        // Reduce the power until we hit a maximum amount
+        // Reduce the power to reach a maximum amount
         if ((power + Math.abs(turn)) > 1) {
             leftFrontPower /= power + turn;
             rightFrontPower /= power + turn;
@@ -86,27 +93,24 @@ public class MecanumDrive extends SubsystemBase {
             rightRearPower /= power + turn;
         }
 
-        // Adjust the power to give a curve for ramping up power input
-        leftFrontPower = getAdjustedPower(leftFrontPower);
-        leftRearPower = getAdjustedPower(leftRearPower);
-        rightRearPower = getAdjustedPower(rightRearPower);
-        rightFrontPower = getAdjustedPower(rightFrontPower);
-
         setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
     }
 
     /**
-     * Adjust the power to provide more granular acceleration
+     * Adjust the value to reduce sensitivity of the joystick when pushed only a small distance
      *
-     * @param power the power based on the control
-     * @return the adjusted power
+     * @param value the value based from the controller
+     * @return the adjusted value
      */
-    private double getAdjustedPower(double power) {
-        double sign = 1;
-        if (power < 0) {
-            sign = -1;
+    private double adjustValue(double value) {
+        // Raise the value to the desired power to provide values on an exponential curve.
+        // If the original value was negative bu the new value raised to the exponent is positive,
+        // negate the new value.
+        double newValue = Math.pow(value, POWER_EXPONENT);
+        if (value < 0 && newValue > 0) {
+            newValue -= 1;
         }
-        return Math.pow(power, POWER_EXPONENT) * sign;
+        return newValue;
     }
 
     /**
@@ -119,11 +123,7 @@ public class MecanumDrive extends SubsystemBase {
      */
     public void setMotorPowers(double leftFrontPower, double leftRearPower, double rightRearPower, double rightFrontPower) {
         // Get the maximum power for any motor, or 1.0, whichever is greater
-        double maxPower = 1.0;
-        maxPower = Math.max(maxPower, Math.abs(leftFrontPower));
-        maxPower = Math.max(maxPower, Math.abs(leftRearPower));
-        maxPower = Math.max(maxPower, Math.abs(rightFrontPower));
-        maxPower = Math.max(maxPower, Math.abs(rightRearPower));
+        double maxPower = maxAbs(1.0, leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
 
         // Divide by the maximum power, which guarantees no motor's power will exceed 1.0.
         // This also ensures that all motors get a proportional amount of power should the
