@@ -59,8 +59,6 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
-## Version 10.1 (20240919-122750)
-
 ### Enhancements
 * Adds new OpenCV-based `VisionProcessor`s (which may be attached to a VisionPortal in either Java or Blocks) to help teams implement color processing via computer vision in the INTO THE DEEP game
   * `ColorBlobLocatorProcessor` implements OpenCV color "blob" detection. A new sample program `ConceptVisionColorLocator` demonstrates its use.
