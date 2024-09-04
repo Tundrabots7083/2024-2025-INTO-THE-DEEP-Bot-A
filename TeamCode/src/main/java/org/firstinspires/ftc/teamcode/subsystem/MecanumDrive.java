@@ -85,12 +85,13 @@ public class MecanumDrive extends SubsystemBase {
         double leftRearPower = power * sin / max - turn;
         double rightRearPower = power * cos / max + turn;
 
-        // Reduce the power to reach a maximum amount
-        if ((power + Math.abs(turn)) > 1) {
-            leftFrontPower /= power + turn;
-            rightFrontPower /= power + turn;
-            leftRearPower /= power + turn;
-            rightRearPower /= power + turn;
+        // Normalize motor powers to ensure none exceeds 1.0
+        double maxMotorPower = power + Math.abs(turn);
+        if (maxMotorPower > 1) {
+            leftFrontPower /= maxMotorPower;
+            rightFrontPower /= maxMotorPower;
+            leftRearPower /= maxMotorPower;
+            rightRearPower /= maxMotorPower;
         }
 
         setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
