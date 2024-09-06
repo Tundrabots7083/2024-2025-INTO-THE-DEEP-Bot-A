@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,74 +8,51 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.ftc7083.hardware.conversion.MotorConversion;
 
+@Config
 public class Motor implements DcMotorEx {
+    // Defaults for GoBilda 5203 Series Yellow Jacket Planetary Gear Motor
+    private static double DEFAULT_TICKS_PER_REV = 384.5;
+    private static double DEFAULT_GEAR_RATIO = 1.0;
+
     private final DcMotorEx motorImpl;
-    private final Telemetry telemetry;
-    private double inchesPerRev;
-    private double degreesPerRev;
+    private final MotorConversion conv;
 
     /**
      * Instantiate a new motor for the robot.
      *
      * @param hardwareMap the mapping for all hardware on the robot
-     * @param telemetry   the telemetry used to output data to the user
      * @param deviceName  the name of the motor as configured via the Driver Station
      */
-    public Motor(HardwareMap hardwareMap, Telemetry telemetry, String deviceName) {
-        this(hardwareMap.get(DcMotorEx.class, deviceName), telemetry);
+    public Motor(HardwareMap hardwareMap, String deviceName) {
+        this(hardwareMap, deviceName, DEFAULT_TICKS_PER_REV, DEFAULT_GEAR_RATIO);
     }
 
     /**
      * Instantiate a new motor for the robot.
      *
-     * @param motorImpl the motor as retrieved via the hardware map
+     * @param motorImpl   the motor as retrieved via the hardware map
+     * @param ticksPerRev the number of ticks per rotation of the motor
+     * @param gearRatio   the ratio of any external gears used with the motor
      */
-    protected Motor(DcMotorEx motorImpl, Telemetry telemetry) {
+    protected Motor(DcMotorEx motorImpl, double ticksPerRev, double gearRatio) {
         this.motorImpl = motorImpl;
-        this.telemetry = telemetry;
+        this.conv = new MotorConversion(ticksPerRev, gearRatio);
     }
 
     /**
-     * Gets the number of motor ticks required to move what is attached to the motor one inch.
+     * Instantiate a new motor for the robot.
      *
-     * @return the number of motor ticks required to move what is attached to the motor one inch
+     * @param hardwareMap the mapping for all hardware on the robot
+     * @param deviceName  the name of the motor as configured via the Driver Station
+     * @param ticksPerRev the number of ticks per rotation of the motor
+     * @param gearRatio   the ratio of any external gears used with the motor
      */
-    public double getInchesPerRev() {
-        return inchesPerRev;
-    }
-
-    /**
-     * Sets the number of inches that the hardware attached to the motor moves for every rotation
-     * of the motor.
-     *
-     * @param inchesPerRev the number of inches moved per revolution of the motor
-     */
-    public void setInchesPerRev(double inchesPerRev) {
-        this.inchesPerRev = inchesPerRev;
-    }
-
-    /**
-     * Gets the number of motor ticks required to move what is attached to the motor one degree
-     * of rotation.
-     *
-     * @return number of motor ticks to move one degree of rotation
-     */
-    public double getDegreesPerRev() {
-        return degreesPerRev;
-    }
-
-    /**
-     * Sets the number of motor degrees the device attached to the motor moves per motor revolution.
-     * For a gear ratio of 1:1, this is 360; for 2:1 it would be 180.
-     *
-     * @param degreesPerRev number of degrees achieved per motor revolution
-     */
-    public void setDegreesPerRev(double degreesPerRev) {
-        this.degreesPerRev = degreesPerRev;
+    public Motor(HardwareMap hardwareMap, String deviceName, double ticksPerRev, double gearRatio) {
+        this(hardwareMap.get(DcMotorEx.class, deviceName), ticksPerRev, gearRatio);
     }
 
     @Override
@@ -216,64 +194,22 @@ public class Motor implements DcMotorEx {
     }
 
     /**
-     * Gets the current degree offset of the motor.
-     * <p>
-     * Before using, make sure you call <code>setTicksPerDegree</code> to set the number of ticks
-     * required to move whatever is attached to the motor one degree.
-     *
-     * @return the current degree offset of the motor
-     */
-    public double getDegrees() {
-        double ticks = getCurrentPosition();
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double rotations = ticks / ticksPerRev;
-        return rotations * degreesPerRev;
-    }
-
-    /**
      * Sets the position of the motor to the specified number of degrees.
-     * <p>
-     * Before using, make sure you call <code>setTicksPerDegree</code> to set the number of ticks
-     * required to move whatever is attached to the motor one degree.
      *
      * @param degrees the degrees to which to set the motor
      */
     public void setDegrees(double degrees) {
-        double rotations = degrees / degreesPerRev;
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double ticks = rotations * ticksPerRev;
-        setTargetPosition((int) ticks);
+        double position = conv.degreesToPosition(degrees);
+        setTargetPosition((int) position);
     }
 
     /**
-     * Gets the current inches the motor has moved from the zero position.
+     * Gets the current degree offset of the motor.
      *
-     * <p>
-     * Before using, make sure you call <code>setTicksPerInches</code> to set the number of ticks
-     * required to move whatever is attached to the motor one inch.
-     *
-     * @return the current inches the motor has moved from the zero position
+     * @return the current degree offset of the motor
      */
-    public double getInches() {
-        double ticks = getCurrentPosition();
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double rotations = ticks / ticksPerRev;
-        return rotations * inchesPerRev;
-    }
-
-    /**
-     * Sets the position of the motor to the specified number of inches.
-     * <p>
-     * Before using, make sure you call <code>setTicksPerInches</code> to set the number of ticks
-     * required to move whatever is attached to the motor one inch.
-     *
-     * @param inches the inches to which to set the motor
-     */
-    public void setInches(double inches) {
-        double rotations = inches / inchesPerRev;
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double ticks = rotations * ticksPerRev;
-        setTargetPosition((int) ticks);
+    public double getCurrentDegrees() {
+        return conv.positionToDegrees(getCurrentPosition());
     }
 
     @Override
