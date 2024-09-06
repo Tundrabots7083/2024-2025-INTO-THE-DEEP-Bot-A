@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.ftc7083.feedback;
 
 import androidx.annotation.NonNull;
 
-import androidx.annotation.NonNull;
-
 /**
  * The Kalman filter is a recursive algorithm that estimates the state of a linear dynamic system
  * from a series of noisy measurements.

@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.ftc7083;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
@@ -115,19 +114,5 @@ public class Robot {
          * Autonomous OpMode
          */
         AUTO
-    }
-
-    /**
-     * Gets a string representation of the robot.
-     *
-     * @return a string representation of the robot
-     */
-    @NonNull
-    @Override
-    public String toString() {
-        return "Robot{" +
-                "mecanumDrive=" + mecanumDrive +
-                ", webcam=" + webcam +
-                '}';
     }
 }

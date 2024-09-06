@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +22,7 @@ public class MecanumDrive extends SubsystemBase {
     public static double MAX_DRIVE_POWER_GAIN = 1.0;
 
     private final Telemetry telemetry;
-    private final Motor rightFront, rightRear, leftFront, leftRear;
+    private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
     private double driveGain = MAX_DRIVE_POWER_GAIN;
 
     /**
@@ -36,10 +34,10 @@ public class MecanumDrive extends SubsystemBase {
     public MecanumDrive(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        leftFront = new Motor(hardwareMap, telemetry, "leftFront");
-        leftRear = new Motor(hardwareMap, telemetry, "leftRear");
-        rightFront = new Motor(hardwareMap, telemetry, "rightFront");
-        rightRear = new Motor(hardwareMap, telemetry, "rightRear");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);

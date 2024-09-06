@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.ftc7083.feedback;
 
 import androidx.annotation.NonNull;
 
-import androidx.annotation.NonNull;
-
 /**
  * The MotionProfile class represents a motion profile with specified maximum acceleration, maximum velocity,
  * start position, and end position. It calculates the current position based on the elapsed time since the
