@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class MecanumDrive extends SubsystemBase {
     public static double MAX_DRIVE_POWER_GAIN = 1.0;
 
     private final Telemetry telemetry;
-    private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
+    private final Motor rightFront, rightRear, leftFront, leftRear;
     private double driveGain = MAX_DRIVE_POWER_GAIN;
 
     /**
@@ -34,10 +35,10 @@ public class MecanumDrive extends SubsystemBase {
     public MecanumDrive(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        leftFront = new Motor(hardwareMap, "leftFront");
+        leftRear = new Motor(hardwareMap, "leftRear");
+        rightFront = new Motor(hardwareMap, "rightFront");
+        rightRear = new Motor(hardwareMap, "rightRear");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
