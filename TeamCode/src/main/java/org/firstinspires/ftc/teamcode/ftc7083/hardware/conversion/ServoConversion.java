@@ -14,14 +14,13 @@ public class ServoConversion {
 
     public double positionToDegrees(double position) {
         BigDecimal pos = new BigDecimal(position);
-        BigDecimal positionPercent = MAX_POSITION.divide(pos, MathContext.UNLIMITED);
-        BigDecimal degrees = maxDegrees.multiply(positionPercent);
+        BigDecimal degrees = pos.multiply(maxDegrees);
         return degrees.doubleValue();
     }
 
     public double degreesToPosition(double degrees) {
         BigDecimal deg = new BigDecimal(degrees);
-        BigDecimal degreePercent = maxDegrees.divide(deg, MathContext.UNLIMITED);
+        BigDecimal degreePercent = deg.divide(maxDegrees, MathContext.DECIMAL128);
         return degreePercent.doubleValue();
     }
 }
