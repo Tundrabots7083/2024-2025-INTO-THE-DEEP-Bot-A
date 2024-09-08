@@ -3,12 +3,16 @@ package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 
-import org.firstinspires.ftc.teamcode.ftc7083.hardware.conversion.ServoConversion;
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 public class Servo implements com.qualcomm.robotcore.hardware.Servo {
+    private static final BigDecimal MAX_POSITION = new BigDecimal("1.0");
+    private static double DEFAULT_MAX_DEGREES = 120.0;
 
     private final com.qualcomm.robotcore.hardware.Servo servoImpl;
-    private final ServoConversion conv;
+
+    private BigDecimal maxDegrees = new BigDecimal(DEFAULT_MAX_DEGREES);
 
     /**
      * Instantiate a new motor for the robot.
@@ -18,7 +22,6 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
      */
     protected Servo(com.qualcomm.robotcore.hardware.Servo servoImpl, double maxDegrees) {
         this.servoImpl = servoImpl;
-        conv = new ServoConversion(maxDegrees);
     }
 
     /**
@@ -53,12 +56,25 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
     }
 
     /**
+     * Sets the maximum number of degrees this servo may rotate.
+     *
+     * @param maxDegrees the maximum number of degrees this servo may rotate
+     * @return this servo
+     */
+    public Servo setMaxDegrees(int maxDegrees) {
+        this.maxDegrees = new BigDecimal(maxDegrees);
+        return this;
+    }
+
+    /**
      * Gets the current degree offset of the servo.
      *
      * @return the current degree offset of the servo
      */
     public double getDegrees() {
-        return conv.positionToDegrees(getPosition());
+        BigDecimal pos = BigDecimal.valueOf(getPosition());
+        BigDecimal degrees = pos.multiply(maxDegrees);
+        return degrees.doubleValue();
     }
 
     /**
@@ -67,8 +83,10 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
      * @param degrees the degrees to which to set the servo
      */
     public void setDegrees(double degrees) {
-        double position = conv.degreesToPosition(degrees);
-        servoImpl.setPosition(position);
+        BigDecimal deg = new BigDecimal(degrees);
+        BigDecimal position = deg.divide(maxDegrees, MathContext.DECIMAL128);
+        servoImpl.setPosition(position.doubleValue());
+        servoImpl.setPosition(deg.doubleValue());
     }
 
     @Override
