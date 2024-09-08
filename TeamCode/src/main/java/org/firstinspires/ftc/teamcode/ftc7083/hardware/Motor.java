@@ -10,16 +10,22 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.ftc7083.hardware.conversion.MotorConversion;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 @Config
 public class Motor implements DcMotorEx {
-    // Defaults for GoBilda 5203 Series Yellow Jacket Planetary Gear Motor
-    private static double DEFAULT_TICKS_PER_REV = 384.5;
+    private static final BigDecimal DEGREES_360 = new BigDecimal("360.0");
+
+    private static double DEFAULT_TICKS_PER_REV = 384.5; // Defaults for GoBilda 5203 Series Yellow Jacket Planetary Gear Motor
     private static double DEFAULT_GEAR_RATIO = 1.0;
+    private static double MECANUM_WHEEL_CIRCUMFRANCE_IN_MM = 96;
+    private static double DEFAULT_WHEEL_CIRCUMFRANCE_IN_INCHES = MECANUM_WHEEL_CIRCUMFRANCE_IN_MM / 25.4;
 
     private final DcMotorEx motorImpl;
-    private final MotorConversion conv;
+    private BigDecimal ticksPerDegree = new BigDecimal(DEFAULT_TICKS_PER_REV * DEFAULT_GEAR_RATIO);
+    private BigDecimal ticksPerInch = new BigDecimal(DEFAULT_WHEEL_CIRCUMFRANCE_IN_INCHES);
 
     /**
      * Instantiate a new motor for the robot.
@@ -40,7 +46,6 @@ public class Motor implements DcMotorEx {
      */
     protected Motor(DcMotorEx motorImpl, double ticksPerRev, double gearRatio) {
         this.motorImpl = motorImpl;
-        this.conv = new MotorConversion(ticksPerRev, gearRatio);
     }
 
     /**
@@ -53,6 +58,53 @@ public class Motor implements DcMotorEx {
      */
     public Motor(HardwareMap hardwareMap, String deviceName, double ticksPerRev, double gearRatio) {
         this(hardwareMap.get(DcMotorEx.class, deviceName), ticksPerRev, gearRatio);
+    }
+
+    /**
+     * Sets the number of motor ticks required to move what is attached to the motor one inch.
+     *
+     * @param ticksPerInch number of motor ticks to move one inch.
+     * @return this motor
+     */
+    public Motor setTicksPerInch(double ticksPerInch) {
+        this.ticksPerInch = new BigDecimal(ticksPerInch);
+        return this;
+    }
+
+    /**
+     * Sets the number of motor ticks required to move what is attached to the motor one inch.
+     *
+     * @param ticksPerRev  number of motor ticks to rotate the motor 360 degrees
+     * @param inchesPerRev the number of inches moved per revolution of the motor
+     * @return this motor
+     */
+    public Motor setTicksPerInch(double ticksPerRev, double inchesPerRev) {
+        return setTicksPerInch(ticksPerRev * inchesPerRev);
+    }
+
+    /**
+     * Sets the number of motor ticks required to move what is attached to the motor one degree
+     * of rotation.
+     *
+     * @param ticksPerDegree number of motor ticks to move one degree of rotation
+     * @return this motor
+     */
+    public Motor setTicksPerDegree(double ticksPerDegree) {
+        this.ticksPerDegree = new BigDecimal(ticksPerDegree);
+        return this;
+    }
+
+    /**
+     * Sets the number of motor ticks required to move what is attached to the motor one degree
+     * of rotation.
+     *
+     * @param ticksPerRev number of motor ticks to rotate the motor 360 degrees
+     * @param gearRatio   the gear ratio to modify the number of degrees moved by the motor per
+     *                    revolution
+     * @return this motor
+     */
+    public Motor setTicksPerDegree(double ticksPerRev, double gearRatio) {
+        return setTicksPerDegree(ticksPerRev * gearRatio);
     }
 
     @Override
@@ -199,8 +251,9 @@ public class Motor implements DcMotorEx {
      * @param degrees the degrees to which to set the motor
      */
     public void setDegrees(double degrees) {
-        double position = conv.degreesToPosition(degrees);
-        setTargetPosition((int) position);
+        BigDecimal deg = new BigDecimal(degrees);
+        BigDecimal position = deg.multiply(ticksPerDegree);
+        setTargetPosition(position.intValue());
     }
 
     /**
@@ -209,7 +262,31 @@ public class Motor implements DcMotorEx {
      * @return the current degree offset of the motor
      */
     public double getCurrentDegrees() {
-        return conv.positionToDegrees(getCurrentPosition());
+        BigDecimal pos = new BigDecimal(getCurrentPosition());
+        BigDecimal degrees = pos.divide(ticksPerDegree, MathContext.DECIMAL128);
+        return degrees.doubleValue();
+    }
+
+    /**
+     * Sets the position of the motor to the specified number of inches.
+     *
+     * @param inches the inches to which to set the motor
+     */
+    public void setInches(double inches) {
+        BigDecimal in = new BigDecimal(inches);
+        BigDecimal position = in.multiply(ticksPerInch);
+        setTargetPosition(position.intValue());
+    }
+
+    /**
+     * Gets the current inches the motor has moved from the zero position.
+     *
+     * @return the current inches the motor has moved from the zero position
+     */
+    public double getInches() {
+        BigDecimal pos = new BigDecimal(getCurrentPosition());
+        BigDecimal inches = pos.divide(ticksPerInch, MathContext.DECIMAL128);
+        return inches.doubleValue();
     }
 
     @Override
