@@ -16,7 +16,6 @@ import java.math.MathContext;
 
 public class Motor implements DcMotorEx {
     private final DcMotorEx motorImpl;
-    private final Telemetry telemetry;
     private BigDecimal ticksPerInch;
     private BigDecimal ticksPerDegree;
 
@@ -26,8 +25,8 @@ public class Motor implements DcMotorEx {
      * @param hardwareMap the mapping for all hardware on the robot
      * @param deviceName  the name of the motor as configured via the Driver Station
      */
-    public Motor(HardwareMap hardwareMap, Telemetry telemetry, String deviceName) {
-        this(hardwareMap.get(DcMotorEx.class, deviceName), telemetry);
+    public Motor(HardwareMap hardwareMap, String deviceName) {
+        this(hardwareMap.get(DcMotorEx.class, deviceName));
     }
 
     /**
@@ -35,9 +34,8 @@ public class Motor implements DcMotorEx {
      *
      * @param motorImpl the motor as retrieved via the hardware map
      */
-    protected Motor(DcMotorEx motorImpl, Telemetry telemetry) {
+    protected Motor(DcMotorEx motorImpl) {
         this.motorImpl = motorImpl;
-        this.telemetry = telemetry;
     }
 
     /**

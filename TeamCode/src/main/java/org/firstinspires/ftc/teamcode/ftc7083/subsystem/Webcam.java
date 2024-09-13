@@ -24,11 +24,11 @@ public class Webcam extends SubsystemBase {
     /**
      * Creates a new vision sensor for the webcam with the given name.
      *
-     * @param deviceName  name of the webcam
      * @param hardwareMap mapping of all the hardware on the robot
      * @param telemetry   the telemetry used to provide output on the driver station.
+     * @param deviceName  name of the webcam
      */
-    public Webcam(@NonNull String deviceName, @NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
+    public Webcam(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, @NonNull String deviceName) {
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, deviceName);
 
