@@ -5,6 +5,8 @@
 */
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.MecanumDriveController;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -31,12 +34,19 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         // Initialize the robot
         robot = Robot.init(hardwareMap, telemetry);
 
         telemetry.addLine("OTOS configured! Press start to get position data!");
         telemetry.addLine();
+        telemetry.update();
 
+        // Setup the drive train
+        MecanumDriveController driveController = new MecanumDriveController(robot.mecanumDrive, telemetry);
+
+        telemetry.update();
         // Wait for the start button to be pressed
         waitForStart();
 
@@ -60,6 +70,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();
+
+            // Drive the robot
+            driveController.execute(gamepad1, gamepad2);
 
             // Log the position to the telemetry
             telemetry.addData("X coordinate", pos.x);

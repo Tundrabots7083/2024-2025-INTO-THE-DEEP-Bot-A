@@ -24,11 +24,11 @@ import java.util.List;
 public class Robot {
     // SparkFun OTOS configuration
     private static final String OTOS_SENSOR_NAME = "otos_sensor";
-    public static double OTOS_OFFSET_X = 0;
-    public static double OTOS_OFFSET_Y = 0;
-    public static double OTOS_OFFSET_H = 0;
-    public static double OTOS_LINEAR_SCALAR = 1.0;
-    public static double OTOS_ANGULAR_SCALAR = 1.0;
+    public static double OTOS_OFFSET_X = 0.25; // For Robot A chassis
+    public static double OTOS_OFFSET_Y = 0.0;
+    public static double OTOS_OFFSET_H = 180.0;
+    public static double OTOS_LINEAR_SCALAR = 1.18215;
+    public static double OTOS_ANGULAR_SCALAR = 1.0126555556;
 
     private static Robot robot = null;
 

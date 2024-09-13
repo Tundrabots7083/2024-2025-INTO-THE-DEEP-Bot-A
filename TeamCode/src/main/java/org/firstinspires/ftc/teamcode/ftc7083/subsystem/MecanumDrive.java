@@ -24,7 +24,7 @@ public class MecanumDrive extends SubsystemBase {
     public static double MAX_DRIVE_POWER_GAIN = 1.0;
 
     private final Telemetry telemetry;
-    private final Motor rightFront, rightRear, leftFront, leftRear;
+    private final DcMotorEx rightFront, rightRear, leftFront, leftRear;
     private double driveGain = MAX_DRIVE_POWER_GAIN;
 
     /**
@@ -42,7 +42,7 @@ public class MecanumDrive extends SubsystemBase {
         rightRear = new Motor(hardwareMap, "rightRear");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
 
         Collection<DcMotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
         for (DcMotorEx motor : motors) {
@@ -147,6 +147,7 @@ public class MecanumDrive extends SubsystemBase {
         telemetry.addData("[DRIVE] Left Rear Power", leftRearPower);
         telemetry.addData("[DRIVE] Right Front Power", rightFrontPower);
         telemetry.addData("[DRIVE] Right Rear Power", rightRearPower);
+        telemetry.update();
     }
 
     /**
