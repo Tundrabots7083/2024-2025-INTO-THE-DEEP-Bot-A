@@ -36,10 +36,10 @@ public class MecanumDrive extends SubsystemBase {
     public MecanumDrive(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        leftFront = new Motor(hardwareMap, "leftFront");
-        leftRear = new Motor(hardwareMap, "leftRear");
-        rightFront = new Motor(hardwareMap, "rightFront");
-        rightRear = new Motor(hardwareMap, "rightRear");
+        leftFront = new Motor(hardwareMap, telemetry, "leftFront");
+        leftRear = new Motor(hardwareMap, telemetry, "leftRear");
+        rightFront = new Motor(hardwareMap, telemetry, "rightFront");
+        rightRear = new Motor(hardwareMap, telemetry, "rightRear");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
