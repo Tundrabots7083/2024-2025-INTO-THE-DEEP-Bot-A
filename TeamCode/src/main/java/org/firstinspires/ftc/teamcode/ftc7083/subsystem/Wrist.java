@@ -14,6 +14,7 @@ public class Wrist extends SubsystemBase {
 
     double pitch = 0.0;
     double yaw = 0.0;
+    double scorePosition = 90;
 
     public Wrist(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
