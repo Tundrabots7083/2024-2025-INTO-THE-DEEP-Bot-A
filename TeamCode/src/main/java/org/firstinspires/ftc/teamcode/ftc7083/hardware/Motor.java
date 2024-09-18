@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,8 +18,8 @@ import java.math.MathContext;
 public class Motor implements DcMotorEx {
     private final DcMotorEx motorImpl;
     private final Telemetry telemetry;
-    private BigDecimal ticksPerInch;
-    private BigDecimal ticksPerDegree;
+    private double inchesPerRev;
+    private double degreesPerRev;
 
     /**
      * Instantiate a new motor for the robot.
@@ -37,18 +38,8 @@ public class Motor implements DcMotorEx {
      */
     protected Motor(DcMotorEx motorImpl, Telemetry telemetry) {
         this.motorImpl = motorImpl;
-        this.telemetry = telemetry;
-    }
 
-    /**
-     * Sets the number of motor ticks required to move what is attached to the motor one inch.
-     *
-     * @param ticksPerRev  number of motor ticks to rotate the motor 360 degrees
-     * @param inchesPerRev the number of inches moved per revolution of the motor
-     * @return this motor
-     */
-    public Motor setTicksPerInch(double ticksPerRev, double inchesPerRev) {
-        return setTicksPerInch(ticksPerRev * inchesPerRev);
+        this.telemetry = telemetry;
     }
 
     /**
@@ -56,21 +47,19 @@ public class Motor implements DcMotorEx {
      *
      * @return the number of motor ticks required to move what is attached to the motor one inch
      */
-    public double getTicksPerInch() {
-        if (ticksPerInch == null) {
-            return 0;
-        }
-        return ticksPerInch.doubleValue();
+    public double getInchesPerRev() {
+        return inchesPerRev;
     }
 
     /**
-     * Sets the number of motor ticks required to move what is attached to the motor one inch.
+     * Sets the number of inches that the hardware attached to the motor moves for every rotation
+     * of the motor.
      *
-     * @param ticksPerInch number of motor ticks to move one inch.
+     * @param inchesPerRev the number of inches moved per revolution of the motor
      * @return this motor
      */
-    public Motor setTicksPerInch(double ticksPerInch) {
-        this.ticksPerInch = new BigDecimal(ticksPerInch);
+    public Motor setInchesPerRev(double inchesPerRev) {
+        this.inchesPerRev = inchesPerRev;
         return this;
     }
 
@@ -80,22 +69,19 @@ public class Motor implements DcMotorEx {
      *
      * @return number of motor ticks to move one degree of rotation
      */
-    public double getTicksPerDegree() {
-        if (ticksPerDegree == null) {
-            return 0;
-        }
-        return ticksPerDegree.doubleValue();
+    public double getDegreesPerRev() {
+        return degreesPerRev;
     }
 
     /**
-     * Sets the number of motor ticks required to move what is attached to the motor one degree
-     * of rotation.
+     * Sets the number of motor degrees the device attached to the motor moves per motor revolution.
+     * For a gear ratio of 1:1, this is 360; for 2:1 it would be 180.
      *
-     * @param ticksPerDegree number of motor ticks to move one degree of rotation
+     * @param degreesPerRev number of degrees achieved per motor revolution
      * @return this motor
      */
-    public Motor setTicksPerDegree(double ticksPerDegree) {
-        this.ticksPerDegree = new BigDecimal(ticksPerDegree);
+    public Motor setDegreesPerRev(double degreesPerRev) {
+        this.degreesPerRev = degreesPerRev;
         return this;
     }
 
@@ -246,9 +232,10 @@ public class Motor implements DcMotorEx {
      * @param degrees the degrees to which to set the motor
      */
     public void setDegrees(double degrees) {
-        BigDecimal deg = new BigDecimal(degrees);
-        BigDecimal position = deg.multiply(ticksPerDegree);
-        setTargetPosition(position.intValue());
+        double rotations = degrees / degreesPerRev;
+        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
+        double ticks = rotations * ticksPerRev;
+        setTargetPosition((int) ticks);
     }
 
     /**
@@ -259,10 +246,26 @@ public class Motor implements DcMotorEx {
      *
      * @return the current degree offset of the motor
      */
-    public double getCurrentDegrees() {
-        BigDecimal pos = new BigDecimal(getCurrentPosition());
-        BigDecimal degrees = pos.divide(ticksPerDegree, MathContext.DECIMAL128);
-        return degrees.doubleValue();
+    public double getDegrees() {
+        double ticks = getCurrentPosition();
+        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
+        double rotations = ticks / ticksPerRev;
+        return rotations * degreesPerRev;
+    }
+
+    /**
+     * Sets the position of the motor to the specified number of inches.
+     * <p>
+     * Before using, make sure you call <code>setTicksPerInches</code> to set the number of ticks
+     * required to move whatever is attached to the motor one inch.
+     *
+     * @param inches the inches to which to set the motor
+     */
+    public void setInches(double inches) {
+        double rotations = inches / inchesPerRev;
+        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
+        double ticks = rotations * ticksPerRev;
+        setTargetPosition((int) ticks);
     }
 
     /**
@@ -275,23 +278,10 @@ public class Motor implements DcMotorEx {
      * @return the current inches the motor has moved from the zero position
      */
     public double getInches() {
-        BigDecimal pos = new BigDecimal(getCurrentPosition());
-        BigDecimal inches = pos.divide(ticksPerInch, MathContext.DECIMAL128);
-        return inches.doubleValue();
-    }
-
-    /**
-     * Sets the position of the motor to the specified number of inches.
-     * <p>
-     * Before using, make sure you call <code>setTicksPerInches</code> to set the number of ticks
-     * required to move whatever is attached to the motor one inch.
-     *
-     * @param inches the inches to which to set the motor
-     */
-    public void setInches(double inches) {
-        BigDecimal in = new BigDecimal(inches);
-        BigDecimal position = in.multiply(ticksPerInch);
-        setTargetPosition(position.intValue());
+        double ticks = getCurrentPosition();
+        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
+        double rotations = ticks / ticksPerRev;
+        return rotations * inchesPerRev;
     }
 
     @Override
