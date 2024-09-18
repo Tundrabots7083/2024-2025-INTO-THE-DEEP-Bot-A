@@ -8,44 +8,55 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 
+/**
+ * Wrist implements the wrist on the arm.
+ */
 public class Wrist extends SubsystemBase {
 
     Telemetry telemetry;
 
     double pitch = 0.0;
     double yaw = 0.0;
-    double roll = 0.0;
     double scorePosition = 90;
-    Servo wristPitchServo;
-    Servo wristYawServo;
-    Servo wristRollServo;
+    Servo pitchServo;
+    Servo yawServo;
+    Servo rollServo;
 
+    /**
+     * Wrist initializes a new wrist as well as initializing all servos to be used.
+     *
+     * @param hardwareMap the hardware map that contains the servo hardware.
+     * @param telemetry   the telemetry used to display data on the driver station.
+     */
     public Wrist(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
-        Servo wristPitchServo = new Servo(hardwareMap, "wristPitchServo", 180);
-        Servo wristYawServo = new Servo(hardwareMap, "wristYawServo", 180);
-        Servo wristRollServo = new Servo(hardwareMap, "wristRollServo", 180);
+        pitchServo = new Servo(hardwareMap, "wristPitchServo", 180);
+        yawServo = new Servo(hardwareMap, "wristYawServo", 180);
     }
 
+    /**
+     * setPitch sets the target for the pitch servo.
+     *
+     * @param pitch the final pitch target in degrees.
+     * @return the set pitch.
+     */
     public double setPitch(double pitch) {
         this.pitch = pitch;
-        wristPitchServo.setDegrees(this.pitch);
+        pitchServo.setDegrees(this.pitch);
         telemetry.addData("Wrist pitch: ", this.pitch);
         return this.pitch;
     }
 
+    /**
+     * setYaw sets the target for the yaw servo.
+     *
+     * @param yaw the final yaw target in degrees.
+     * @return the set yaw.
+     */
     public double setYaw(double yaw) {
         this.yaw = yaw;
-        wristYawServo.setDegrees(this.yaw);
+        yawServo.setDegrees(this.yaw);
         telemetry.addData("Wrist yaw: ", this.yaw);
         return this.yaw;
     }
-
-    public double setRoll(double roll) {
-        this.roll = roll;
-        wristRollServo.setDegrees(this.roll);
-        telemetry.addData("Wrist roll: ", this.roll);
-        return this.roll;
-    }
-
 }
