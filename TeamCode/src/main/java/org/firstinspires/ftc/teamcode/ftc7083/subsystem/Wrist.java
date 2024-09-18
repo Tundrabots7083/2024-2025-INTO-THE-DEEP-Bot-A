@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 
 /**
- * Wrist implements the wrist on the arm.
+ * Wrist implements the servo operated wrist on the arm.
  */
 public class Wrist extends SubsystemBase {
 
@@ -20,7 +20,6 @@ public class Wrist extends SubsystemBase {
     double scorePosition = 90;
     Servo pitchServo;
     Servo yawServo;
-    Servo rollServo;
 
     /**
      * Wrist initializes a new wrist as well as initializing all servos to be used.
@@ -38,25 +37,39 @@ public class Wrist extends SubsystemBase {
      * setPitch sets the target for the pitch servo.
      *
      * @param pitch the final pitch target in degrees.
-     * @return the set pitch.
      */
-    public double setPitch(double pitch) {
+    public void setPitch(double pitch) {
         this.pitch = pitch;
         pitchServo.setDegrees(this.pitch);
         telemetry.addData("Wrist pitch: ", this.pitch);
-        return this.pitch;
     }
 
     /**
      * setYaw sets the target for the yaw servo.
      *
      * @param yaw the final yaw target in degrees.
-     * @return the set yaw.
      */
-    public double setYaw(double yaw) {
+    public void setYaw(double yaw) {
         this.yaw = yaw;
         yawServo.setDegrees(this.yaw);
         telemetry.addData("Wrist yaw: ", this.yaw);
+    }
+
+    /**
+     * getPitchPosition returns the current set pitch position.
+     *
+     * @return returns pitch position
+     */
+    public double getPitchPosition () {
+        return this.pitch;
+    }
+
+    /**
+     * getYawPosition returns the current set yaw position.
+     *
+     * @return returns yaw position
+     */
+    public double getYawPosition () {
         return this.yaw;
     }
 }
