@@ -24,9 +24,9 @@ import java.util.List;
 public class Robot {
     // SparkFun OTOS configuration
     private static final String OTOS_SENSOR_NAME = "otos_sensor";
-    public static double OTOS_OFFSET_X = 0.25; // For Robot A chassis
+    public static double OTOS_OFFSET_X = 0.25;    // For Robot A chassis
     public static double OTOS_OFFSET_Y = 0.0;
-    public static double OTOS_OFFSET_H = 180.0;
+    public static double OTOS_OFFSET_H = 180.0;   // For Robot A chassis
     public static double OTOS_LINEAR_SCALAR = 1.18215;
     public static double OTOS_ANGULAR_SCALAR = 1.0126555556;
 
@@ -124,8 +124,10 @@ public class Robot {
 
         // Set the desired units for linear and angular measurements. This setting is not
         // persisted in the sensor, so it must be reset each time the robot is initialized.
+        // We use radians for the angular unit, as this is what RoadRunner uses for path
+        // calculations.
         otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.DEGREES);
+        otos.setAngularUnit(AngleUnit.RADIANS);
 
         // Set the offset for where the sensor is attached relative to the center of the robot.
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(OTOS_OFFSET_X, OTOS_OFFSET_Y, OTOS_OFFSET_H);
