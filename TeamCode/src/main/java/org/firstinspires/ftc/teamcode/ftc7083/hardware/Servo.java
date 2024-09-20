@@ -3,36 +3,68 @@ package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
+/**
+ * Instances of Servo provide access to servo hardware devices.
+ */
 public class Servo implements com.qualcomm.robotcore.hardware.Servo {
-    private static final BigDecimal MAX_POSITION = new BigDecimal("1.0");
-    private static double DEFAULT_MAX_DEGREES = 120.0;
-
     private final com.qualcomm.robotcore.hardware.Servo servoImpl;
-
-    private BigDecimal maxDegrees = new BigDecimal(DEFAULT_MAX_DEGREES);
+    private double maxDegrees;
 
     /**
-     * Instantiate a new motor for the robot.
+     * Instantiates a new servo for the robot.
      *
      * @param servoImpl  the servo as retrieved via the hardware map
-     * @param maxDegrees the maximum number of degrees to which the servo can rotate
      */
-    protected Servo(com.qualcomm.robotcore.hardware.Servo servoImpl, double maxDegrees) {
+    protected Servo(com.qualcomm.robotcore.hardware.Servo servoImpl) {
         this.servoImpl = servoImpl;
     }
 
     /**
-     * Instantiate a new servo for the robot.
+     * Instantiates a new servo for the robot.
      *
      * @param hardwareMap the mapping for all hardware on the robot
      * @param deviceName  the name of the servo as configured via the Driver Station
-     * @param maxDegrees  the maximum number of degrees to which the servo can rotate
      */
-    public Servo(HardwareMap hardwareMap, String deviceName, double maxDegrees) {
-        this(hardwareMap.get(Servo.class, deviceName), maxDegrees);
+    public Servo(HardwareMap hardwareMap, String deviceName) {
+        this(hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, deviceName));
+    }
+
+    /**
+     * Gets the maximum number of degrees this servo may rotate.
+     *
+     * @return the maximum number of degrees this servo may rotate
+     */
+    public double getMaxDegrees() {
+        return maxDegrees;
+    }
+
+    /**
+     * Sets the maximum number of degrees this servo may rotate.
+     *
+     * @param maxDegrees the maximum number of degrees this servo may rotate
+     */
+    public void setMaxDegrees(double maxDegrees) {
+        this.maxDegrees = maxDegrees;
+    }
+
+    /**
+     * Gets the current degree offset of the servo.
+     *
+     * @return the current degree offset of the servo
+     */
+    public double getDegrees() {
+        double position = getPosition();
+        return position * maxDegrees;
+    }
+
+    /**
+     * Sets the position of the servo to the specified number of degrees.
+     *
+     * @param degrees the degrees to which to set the servo
+     */
+    public void setDegrees(double degrees) {
+        double position = degrees / maxDegrees;
+        servoImpl.setPosition(position);
     }
 
     @Override
@@ -53,40 +85,6 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
     @Override
     public void setDirection(Direction direction) {
         servoImpl.setDirection(direction);
-    }
-
-    /**
-     * Sets the maximum number of degrees this servo may rotate.
-     *
-     * @param maxDegrees the maximum number of degrees this servo may rotate
-     * @return this servo
-     */
-    public Servo setMaxDegrees(int maxDegrees) {
-        this.maxDegrees = new BigDecimal(maxDegrees);
-        return this;
-    }
-
-    /**
-     * Gets the current degree offset of the servo.
-     *
-     * @return the current degree offset of the servo
-     */
-    public double getDegrees() {
-        BigDecimal pos = BigDecimal.valueOf(getPosition());
-        BigDecimal degrees = pos.multiply(maxDegrees);
-        return degrees.doubleValue();
-    }
-
-    /**
-     * Sets the position of the servo to the specified number of degrees.
-     *
-     * @param degrees the degrees to which to set the servo
-     */
-    public void setDegrees(double degrees) {
-        BigDecimal deg = new BigDecimal(degrees);
-        BigDecimal position = deg.divide(maxDegrees, MathContext.DECIMAL128);
-        servoImpl.setPosition(position.doubleValue());
-        servoImpl.setPosition(deg.doubleValue());
     }
 
     @Override
