@@ -6,44 +6,42 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
- * Defines an arm with telemetry, slide motor, and sholder motor.
+ * Defines an arm with telemetry, shoulder motor.
  */
 
 public class Arm extends SubsystemBase {
-    private final Motor slideMotor;
-    private final Motor sholderMotor;
+    private final Motor shoulderMotor;
     private final Telemetry telemetry;
 
     /**
-     * Makes an arm that can raise, lower, retract, and extend.
+     * Makes an arm that can raise and lower.
      *
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
      */
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        slideMotor = new Motor(hardwareMap, telemetry, "armSlideMotor");
-        sholderMotor = new Motor(hardwareMap, telemetry, "armSholderMotor");
+        shoulderMotor = new Motor(hardwareMap, telemetry, "armShoulderMotor");
     }
 
     /**
-     * Sets the sholder motor to a position in degrees.
+     * Sets the shoulder motor to a position in degrees.
      *
-     * @param angle Angle of desired arm position in degrees
      */
-    public void setSholderAngle(double angle) {
-        sholderMotor.setDegrees(angle);
-
+    public void setShoulderAngle(double angle) {
+        shoulderMotor.setDegrees(angle);
     }
 
     /**
-     * Sets the slide length to a length in inches.
-     *
-     * @param length Length of desired slide position in inches.
+     * Gets the shoulder motor position to
+     * @return
      */
-    public void setSlideLength(double length) {
-        slideMotor.setInches(length);
+    public double getShoulderAngle() {
+        return shoulderMotor.getCurrentDegrees();
+    }
 
+    private void configMotor(Motor motor) {
+        
     }
 
 }
