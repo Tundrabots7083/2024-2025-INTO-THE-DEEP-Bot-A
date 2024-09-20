@@ -31,6 +31,7 @@ public class ServoTest extends OpMode {
 
     @Override
     public void loop() {
+        servo.setMaxDegrees(SERVO_MAX_DEGREES);
         servo.setDegrees(SERVO_DEGREES);
         telemetry.addData("Target Degrees", SERVO_DEGREES);
         telemetry.addData("Retrieved Degrees", servo.getDegrees());
