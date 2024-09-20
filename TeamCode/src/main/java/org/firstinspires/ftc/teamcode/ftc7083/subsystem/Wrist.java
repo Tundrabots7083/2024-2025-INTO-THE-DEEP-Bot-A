@@ -30,6 +30,7 @@ public class Wrist extends SubsystemBase {
     public Wrist(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
         pitchServo = new Servo(hardwareMap, "wristPitchServo", 180);
+        pitchServo.setMaxDegrees(120);
         yawServo = new Servo(hardwareMap, "wristYawServo", 180);
     }
 
@@ -42,6 +43,7 @@ public class Wrist extends SubsystemBase {
         this.pitch = pitch;
         pitchServo.setDegrees(this.pitch);
         telemetry.addData("Wrist pitch: ", this.pitch);
+        telemetry.update();
     }
 
     /**
@@ -53,6 +55,7 @@ public class Wrist extends SubsystemBase {
         this.yaw = yaw;
         yawServo.setDegrees(this.yaw);
         telemetry.addData("Wrist yaw: ", this.yaw);
+        telemetry.update();
     }
 
     /**
