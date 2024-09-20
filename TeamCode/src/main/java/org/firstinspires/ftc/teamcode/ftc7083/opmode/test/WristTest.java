@@ -9,8 +9,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 
+/**
+ * This OpMode tests the wrist using FTC Dashboard (http://192.168.43.1:8080/dash)
+ * to change the Pitch and Yaw servo positions.
+ */
 @Config
-@TeleOp(name = "Wrist Test TeleOp", group = "Active")
+@TeleOp(name = "Wrist Test TeleOp", group = "Test")
 public class WristTest extends OpMode {
 
     public static double PITCH = 0.0;
