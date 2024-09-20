@@ -32,7 +32,7 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
      * @param maxDegrees  the maximum number of degrees to which the servo can rotate
      */
     public Servo(HardwareMap hardwareMap, String deviceName, double maxDegrees) {
-        this(hardwareMap.get(Servo.class, deviceName), maxDegrees);
+        this(hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, deviceName), maxDegrees);
     }
 
     @Override
