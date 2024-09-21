@@ -26,7 +26,7 @@ public class Claw extends SubsystemBase {
      */
     public Claw(HardwareMap hardwareMap, String deviceName, double maxDegrees) {
         servo = new Servo(hardwareMap, deviceName);
-        servo.setDegrees(maxDegrees);
+        servo.setMaxDegrees(maxDegrees);
         // todo: May want to set initial position and direction for servo.
     }
 
@@ -51,6 +51,13 @@ public class Claw extends SubsystemBase {
         return servo.getDegrees();
     }
 
+    /**
+     * Creates a method of getting the degrees
+     * @return: returns the angle in degrees
+     */
+    public double getDegrees() {
+        return servo.getDegrees();
+    }
     /**
      * Totally close the claw back to 0 degrees.
      *
