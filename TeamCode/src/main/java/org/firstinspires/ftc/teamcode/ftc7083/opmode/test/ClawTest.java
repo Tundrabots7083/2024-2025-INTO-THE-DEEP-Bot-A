@@ -15,11 +15,16 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
 @Config
 @TeleOp(name = "Claw Test TeleOp", group = "Test")
 public class ClawTest extends OpMode {
-
+    /**
+     * Declaring and instantiating variables for the degrees to test in FTC dashboard
+     */
     public static double MAX_CLAW_DEGREES = 270;
     public static double CLAW_OPEN_DEGREES = 0.0;
     Claw claw;
 
+    /**
+     * Writing things in telemetry and including claw from Claw.java
+     */
     @Override
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -30,6 +35,10 @@ public class ClawTest extends OpMode {
         telemetry.update();
     }
 
+    /**
+     * Opening and returning to initial position the claw a certain amount of degrees
+     * based on the user's choice in FTC dashboard
+     */
     @Override
     public void loop() {
         claw.open(CLAW_OPEN_DEGREES);
