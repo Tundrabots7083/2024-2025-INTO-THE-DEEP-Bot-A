@@ -39,7 +39,7 @@ public class Arm extends SubsystemBase {
      * @return
      */
     public double getShoulderAngle() {
-        return shoulderMotor.getCurrentDegrees();
+        return shoulderMotor.getDegrees();
     }
 
     private void configMotor(Motor motor) {
