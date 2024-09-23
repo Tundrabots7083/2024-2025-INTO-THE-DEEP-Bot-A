@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
@@ -41,7 +43,12 @@ public class Arm extends SubsystemBase {
     }
 
     private void configMotor(Motor motor) {
-        
+        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+        motorConfigurationType.setTicksPerRev(1.0);
+        motorConfigurationType.setGearing(16.0);
+        motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+        motor.setMotorType(motorConfigurationType);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
