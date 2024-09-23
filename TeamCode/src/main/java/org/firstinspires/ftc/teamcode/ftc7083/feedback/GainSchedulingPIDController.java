@@ -21,20 +21,20 @@ public class GainSchedulingPIDController {
      * @param KiLUTArgs array of objects containing angles and the Ki constants for each angle.
      * @param KdLUTArgs array of objects containing angles and the Kd constants for each angle.
      */
-    public GainSchedulingPIDController(GainSchedulingLUTArgs[] KpLUTArgs,
-                          GainSchedulingLUTArgs[] KiLUTArgs,
-                          GainSchedulingLUTArgs[] KdLUTArgs) {
+    public GainSchedulingPIDController(LookUpTableArgs[] KpLUTArgs,
+                          LookUpTableArgs[] KiLUTArgs,
+                          LookUpTableArgs[] KdLUTArgs) {
 
-        for (GainSchedulingLUTArgs kp : KpLUTArgs) {
-            pCoefficients.add(kp.angle, kp.constantValue);
+        for (LookUpTableArgs kp : KpLUTArgs) {
+            pCoefficients.add(kp.state, kp.constantValue);
         }
 
-        for (GainSchedulingLUTArgs ki : KiLUTArgs) {
-            pCoefficients.add(ki.angle, ki.constantValue);
+        for (LookUpTableArgs ki : KiLUTArgs) {
+            pCoefficients.add(ki.state, ki.constantValue);
         }
 
-        for (GainSchedulingLUTArgs kd : KdLUTArgs) {
-            pCoefficients.add(kd.angle, kd.constantValue);
+        for (LookUpTableArgs kd : KdLUTArgs) {
+            pCoefficients.add(kd.state, kd.constantValue);
         }
     }
 
