@@ -41,7 +41,9 @@ public class Wrist extends SubsystemBase {
      * @param pitch the final pitch target in degrees.
      */
     public void setPitch(double pitch) {
-        this.pitch = pitch;
+        double maxPitch;
+        maxPitch = pitch > 0 ? 40 : -50;
+        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
         double frontServoPitch = 90 - pitch;
         double backServoPitch = 90 + pitch;
 
@@ -57,7 +59,7 @@ public class Wrist extends SubsystemBase {
      * @param yaw the final yaw target in degrees.
      */
     public void setYaw(double yaw) {
-        this.yaw = yaw;
+        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
         double frontServoYaw = 90 -  yaw;
         double backServoYaw = 90 - yaw;
 
@@ -75,6 +77,12 @@ public class Wrist extends SubsystemBase {
      * @param yaw wrist yaw
      */
     public void setPosition(double pitch, double yaw) {
+        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
+
+        double maxPitch;
+        maxPitch = pitch > 0 ? 40 : -50;
+        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
+
         double frontServoYaw = 90 -  yaw;
         double backServoYaw = 90 - yaw;
 
