@@ -32,11 +32,10 @@ public class WristTest extends OpMode {
 
     @Override
     public void loop() {
-        wrist.setPitch(PITCH);
-        wrist.setYaw(YAW);
+        wrist.setPosition(PITCH, YAW);
 
-        telemetry.addData("Pitch",wrist.getPitchPosition());
-        telemetry.addData("Yaw",wrist.getYawPosition());
+        telemetry.addData("Front/Right Servo: ",wrist.getFrontServoDegrees());
+        telemetry.addData("Back/Left Servo: ",wrist.getBackServoDegrees());
         telemetry.update();
     }
 
