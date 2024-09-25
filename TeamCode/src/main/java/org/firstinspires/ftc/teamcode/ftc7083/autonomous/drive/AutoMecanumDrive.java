@@ -239,7 +239,7 @@ public class AutoMecanumDrive {
             drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
 
             p.put("x", pose.position.x);
-            p.put("y", pose.position.y);
+            p.put("yDirection", pose.position.y);
             p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
 
             Pose2d error = txWorldTarget.value().minusExp(pose);

@@ -61,7 +61,7 @@ public class SparkFunOTOSLocalizer implements Localizer {
      * tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
      *
      * @param x x-coordinate
-     * @param y y-coordinate
+     * @param y yDirection-coordinate
      * @param h heading
      * @return this SparkFunOTOSLocalizer
      */
@@ -167,7 +167,7 @@ public class SparkFunOTOSLocalizer implements Localizer {
      * the OTOS location to match and it will continue to track from there.
      *
      * @param x x-coordinate
-     * @param y y-coordinate
+     * @param y yDirection-coordinate
      * @param h heading
      * @return this SparkFunOTOSLocalizer
      */
