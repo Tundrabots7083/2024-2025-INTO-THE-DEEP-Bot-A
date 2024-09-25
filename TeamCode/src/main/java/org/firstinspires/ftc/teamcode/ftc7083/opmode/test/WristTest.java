@@ -29,8 +29,8 @@ public class WristTest extends OpMode {
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+      
         wrist = new Wrist(hardwareMap,telemetry);
-
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
@@ -38,7 +38,6 @@ public class WristTest extends OpMode {
 
     @Override
     public void loop() {
-
         // Always get a copy of the current gamepads. The gamepads are updated in near real time,
         // so this ensures that a consistent set of values are used within each subsystem controller.
         currentGamepad1.copy(gamepad1);
@@ -52,5 +51,4 @@ public class WristTest extends OpMode {
         telemetry.addData("Back/Left Servo: ",wrist.getBackServoDegrees());
         telemetry.update();
     }
-
 }

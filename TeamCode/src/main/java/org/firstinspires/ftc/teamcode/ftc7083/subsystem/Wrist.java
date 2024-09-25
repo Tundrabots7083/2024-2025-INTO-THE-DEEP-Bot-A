@@ -49,6 +49,7 @@ public class Wrist extends SubsystemBase {
 
         frontServo.setDegrees(frontServoPitch);
         backServo.setDegrees(backServoPitch);
+      
         telemetry.addData("Wrist pitch: ", this.pitch);
         telemetry.update();
     }
@@ -65,6 +66,7 @@ public class Wrist extends SubsystemBase {
 
         frontServo.setDegrees(frontServoYaw);
         backServo.setDegrees(backServoYaw);
+
         telemetry.addData("Wrist yaw: ", this.yaw);
         telemetry.update();
     }
