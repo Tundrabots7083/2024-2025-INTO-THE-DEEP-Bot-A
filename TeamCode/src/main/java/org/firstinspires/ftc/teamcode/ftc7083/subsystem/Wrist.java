@@ -18,8 +18,8 @@ public class Wrist extends SubsystemBase {
     double pitch = 0.0;
     double yaw = 0.0;
     double scorePosition = 90;
-    Servo pitchServo;
-    Servo yawServo;
+    Servo frontServo;
+    Servo backServo;
 
     /**
      * Wrist initializes a new wrist as well as initializing all servos to be used.
@@ -29,10 +29,10 @@ public class Wrist extends SubsystemBase {
      */
     public Wrist(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
         this.telemetry = telemetry;
-        pitchServo = new Servo(hardwareMap, "wristPitchServo");
-        pitchServo.setMaxDegrees(120);
-        yawServo = new Servo(hardwareMap, "wristYawServo");
-        yawServo.setMaxDegrees(270);
+        frontServo = new Servo(hardwareMap, "wristFrontServo");
+        frontServo.setMaxDegrees(180);
+        backServo = new Servo(hardwareMap, "wristBackServo");
+        backServo.setMaxDegrees(180);
     }
 
     /**
@@ -41,8 +41,15 @@ public class Wrist extends SubsystemBase {
      * @param pitch the final pitch target in degrees.
      */
     public void setPitch(double pitch) {
-        this.pitch = pitch;
-        pitchServo.setDegrees(this.pitch);
+        double maxPitch;
+        maxPitch = pitch > 0 ? 40 : -50;
+        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
+        double frontServoPitch = 90 - pitch;
+        double backServoPitch = 90 + pitch;
+
+        frontServo.setDegrees(frontServoPitch);
+        backServo.setDegrees(backServoPitch);
+      
         telemetry.addData("Wrist pitch: ", this.pitch);
         telemetry.update();
     }
@@ -53,10 +60,39 @@ public class Wrist extends SubsystemBase {
      * @param yaw the final yaw target in degrees.
      */
     public void setYaw(double yaw) {
-        this.yaw = yaw;
-        yawServo.setDegrees(this.yaw);
+        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
+        double frontServoYaw = 90 -  yaw;
+        double backServoYaw = 90 - yaw;
+
+        frontServo.setDegrees(frontServoYaw);
+        backServo.setDegrees(backServoYaw);
+
         telemetry.addData("Wrist yaw: ", this.yaw);
         telemetry.update();
+    }
+
+    /**
+     * This method calculates the values to assign to the frontServo and backServo
+     * given the pitch and yaw and sets the servos to their respective values.
+     *
+     * @param pitch wrist pitch
+     * @param yaw wrist yaw
+     */
+    public void setPosition(double pitch, double yaw) {
+        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
+
+        double maxPitch;
+        maxPitch = pitch > 0 ? 40 : -50;
+        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
+
+        double frontServoYaw = 90 -  yaw;
+        double backServoYaw = 90 - yaw;
+
+        double frontServoPosition = (frontServoYaw - pitch) <= 180 ? (frontServoYaw - pitch) : 180;
+        double backServoPosition = (backServoYaw + pitch) <= 180 ? (backServoYaw + pitch) : 180;
+
+        frontServo.setDegrees(frontServoPosition);
+        backServo.setDegrees(backServoPosition);
     }
 
     /**
@@ -76,4 +112,16 @@ public class Wrist extends SubsystemBase {
     public double getYawPosition () {
         return this.yaw;
     }
+
+    /**
+     * Returns the position of the front servo in degrees.
+     * @return frontServo degrees
+     */
+    public double getFrontServoDegrees () {return frontServo.getDegrees();}
+
+    /**
+     * Returns the position of the back servo in degrees.
+     * @return backServo degrees
+     */
+    public double getBackServoDegrees () {return backServo.getDegrees();}
 }
