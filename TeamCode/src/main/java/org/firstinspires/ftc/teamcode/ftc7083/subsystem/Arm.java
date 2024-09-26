@@ -31,11 +31,23 @@ public class Arm extends SubsystemBase {
     public LookUpTableArgs[] KpLUTArgs;
     public LookUpTableArgs[] KiLUTArgs;
     public LookUpTableArgs[] KdLUTArgs;
+
     /**
      * Makes an arm that can raise and lower.
      *
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
+     */
+    public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
+        this(hardwareMap, telemetry, 0);
+    }
+
+    /**
+     * Makes an arm that can raise and lower.
+     *
+     * @param hardwareMap Hardware Map
+     * @param telemetry   Telemetry
+     * @param feedforward feedforward
      */
     public Arm(HardwareMap hardwareMap, Telemetry telemetry, double feedforward) {
         this.telemetry = telemetry;

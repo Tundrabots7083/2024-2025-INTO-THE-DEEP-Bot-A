@@ -31,7 +31,7 @@ public class ClawTest extends OpMode {
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        claw = new Claw(hardwareMap, "clawServo", MAX_CLAW_DEGREES);
+        claw = new Claw(hardwareMap, telemetry);
         telemetry.addLine("Initialization Complete");
         telemetry.update();
     }

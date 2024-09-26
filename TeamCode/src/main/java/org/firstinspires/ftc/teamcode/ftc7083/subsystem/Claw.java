@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 
 /**
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
  */
 @Config
 public class Claw extends SubsystemBase {
+    public static String CLAW_SERVO = "clawServo";
     // Make default open/close degrees settable by FTC dashboard
     public static double DEFAULT_OPEN_DEGREES = 45.0;
     public static double DEFAULT_CLOSE_DEGREES = 0.0;
@@ -21,20 +23,29 @@ public class Claw extends SubsystemBase {
     public static double MAX_CLAW_DEGREES = 270.0;
     // Implement the claw using a Servo class
     private final Servo servo;
+    private final Telemetry telemetry;
 
     /**
      * Constructor
      *
      * @param hardwareMap Servo configuration information
-     * @param deviceName  Name of servo configuration information -- must match name configured
-     *                    in Control Hub or Expansion Hub
-     * @param maxDegrees  Maximum number of degrees that the claw servo can be opened to.
+     * @param telemetry telemetry used for output of information to the user.
      */
-    public Claw(HardwareMap hardwareMap, String deviceName, double maxDegrees) {
-        servo = new Servo(hardwareMap, deviceName);
+    public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+
+        servo = new Servo(hardwareMap, CLAW_SERVO);
         servo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD);
-        servo.setMaxDegrees(maxDegrees);
         servo.setDegrees(DEFAULT_CLOSE_DEGREES);
+    }
+
+    /**
+     * Sets the maximum number of degrees the servo can move to.
+     *
+     * @param degrees the maximum number of degrees the servo can move to.
+     */
+    public void setMaxDegrees(double degrees) {
+        servo.setMaxDegrees(degrees);
     }
 
     /**
