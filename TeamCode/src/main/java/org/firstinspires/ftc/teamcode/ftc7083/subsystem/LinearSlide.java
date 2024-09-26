@@ -4,25 +4,30 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
- * Defines an arm with telemetry, slide motor, and PID.
+ * A linear slide can extend and retract the wrist and claw attached to the robot's scoring
+ * subsystem.
  */
 @Config
 public class LinearSlide extends SubsystemBase {
     public static double SPOOL_DIAMETER = 1.4; // in inches
-    public static double TICKS_PER_REV = 380;
+    public static double TICKS_PER_REV = 384;
     public double GEARING = 1.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
 
-    public static double KP = 0.1;
-    public static double KI = 0.05;
-    public static double KD = 0.0;
-    public static double TOLERABLE_ERROR = 0.1; // inches
+    public static double KP = 0.32;
+    public static double KI = 0.13;
+    public static double KD = 0.02;
+    public static double TOLERABLE_ERROR = 0.05; // inches
+
+    public static double MIN_EXTENSION_LENGTH = 0.0;
+    public static double MAX_EXTENSION_LENGTH = 35.0;
 
     private final Motor slideMotor;
     private final Telemetry telemetry;
@@ -30,8 +35,7 @@ public class LinearSlide extends SubsystemBase {
     private double targetLength = 0;
 
     /**
-     * Makes an arm that can raise, lower, retract, and extend.
-     * sets the pid controller
+     * Instantiates the linear slide for the robot.
      *
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
@@ -59,8 +63,9 @@ public class LinearSlide extends SubsystemBase {
      * @param length Length of desired slide position in inches.
      */
     public void setLength(double length) {
-        if (targetLength != length) {
-            targetLength = length;
+        double targetLength = Range.clip(length, MIN_EXTENSION_LENGTH, MAX_EXTENSION_LENGTH);
+        if (this.targetLength != targetLength) {
+            this.targetLength = targetLength;
             pidController.reset();
         }
     }
@@ -72,13 +77,17 @@ public class LinearSlide extends SubsystemBase {
      * @return slide length in inches
      */
     public double getCurrentLength() {
-        return slideMotor.getInches();
+        return -slideMotor.getInches();
     }
 
     /**
      * Configures the motor used for the linear slide
      *
-     * @param motor
+<<<<<<< HEAD
+     * @param motor motor
+=======
+     * @param motor the motor to be configured
+>>>>>>> 65d7d00 (limit arm and slide movement)
      */
     private void configMotor(Motor motor) {
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -88,7 +97,7 @@ public class LinearSlide extends SubsystemBase {
         motor.setMotorType(motorConfigurationType);
         motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
@@ -97,10 +106,10 @@ public class LinearSlide extends SubsystemBase {
      */
     public void execute() {
         if (!isAtTarget()) {
-            double power = pidController.calculate(targetLength, slideMotor.getInches());
+            double power = pidController.calculate(targetLength, getCurrentLength());
             slideMotor.setPower(power);
             telemetry.addData("[Slide] power", power);
-            telemetry.addData("[Slide] inches", slideMotor.getInches());
+            telemetry.addData("[Slide] inches", getCurrentLength());
             telemetry.addData("[Slide] ticks", slideMotor.getCurrentPosition());
         }
     }
@@ -109,10 +118,10 @@ public class LinearSlide extends SubsystemBase {
      * checks if the length is within the tolerable error and if it is then the motor will stop
      */
     public boolean isAtTarget() {
-        double error = Math.abs(targetLength - slideMotor.getInches());
+        double error = Math.abs(targetLength - getCurrentLength());
         telemetry.addData("[Slide] error", error);
         telemetry.addData("[Slide] target", targetLength);
-        telemetry.addData("[Slide] current", slideMotor.getInches());
+        telemetry.addData("[Slide] current", getCurrentLength());
         return error <= TOLERABLE_ERROR;
     }
 }
