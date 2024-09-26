@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.feedback.GainSchedulingPIDController;
+import org.firstinspires.ftc.teamcode.ftc7083.feedback.LookUpTableArgs;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
@@ -22,18 +24,31 @@ public class Arm extends SubsystemBase {
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
     public PIDController pidController;
+    public GainSchedulingPIDController gainSchedulingPIDController;
     private double angle = 0.0;
+    private double feedforward;
+
+    public LookUpTableArgs[] KpLUTArgs;
+    public LookUpTableArgs[] KiLUTArgs;
+    public LookUpTableArgs[] KdLUTArgs;
     /**
      * Makes an arm that can raise and lower.
      *
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
      */
-    public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Arm(HardwareMap hardwareMap, Telemetry telemetry, double feedforward) {
         this.telemetry = telemetry;
+        this.feedforward = feedforward;
         shoulderMotor = new Motor(hardwareMap, telemetry, "armShoulderMotor");
         configMotor(shoulderMotor);
         pidController = new PIDController(kP, kI, kD);
+
+        KpLUTArgs = new LookUpTableArgs[]{new LookUpTableArgs(40, 0.08), new LookUpTableArgs(90, 0.001), new LookUpTableArgs(-75, 0.05)};
+        KiLUTArgs = new LookUpTableArgs[]{new LookUpTableArgs(40, 0.08), new LookUpTableArgs(90, 0.001), new LookUpTableArgs(-75, 0.05)};
+        KdLUTArgs = new LookUpTableArgs[]{new LookUpTableArgs(40, 0.08), new LookUpTableArgs(90, 0.001), new LookUpTableArgs(-75, 0.05)};
+
+        gainSchedulingPIDController = new GainSchedulingPIDController(KpLUTArgs, KiLUTArgs, KdLUTArgs);
     }
 
     /**
@@ -49,7 +64,7 @@ public class Arm extends SubsystemBase {
      * Gets the shoulder motor position to
      */
     public double getShoulderAngle() {
-        return shoulderMotor.getCurrentDegrees();
+        return shoulderMotor.getDegrees();
     }
 
     /**
@@ -71,7 +86,7 @@ public class Arm extends SubsystemBase {
      * Sends power to the PID controller.
      */
     public void execute() {
-        double power = pidController.calculate(angle, shoulderMotor.getDegrees());
+        double power = gainSchedulingPIDController.calculate(angle, shoulderMotor.getDegrees()) + this.feedforward;
         shoulderMotor.setPower(power);
     }
 
