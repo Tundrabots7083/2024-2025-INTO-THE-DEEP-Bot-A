@@ -6,8 +6,12 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.LinearSlide;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 
 import java.util.List;
 
@@ -22,6 +26,10 @@ public class Robot {
     // Subsystems
     public final MecanumDrive mecanumDrive;
     public final Webcam webcam;
+    public final Arm arm;
+    public final LinearSlide linearSlide;
+    public final Wrist wrist;
+    public final Claw claw;
 
     // All lynx module huba
     public final List<LynxModule> allHubs;
@@ -53,6 +61,10 @@ public class Robot {
         } else {
             webcam = null;
         }
+        arm = new Arm(hardwareMap, telemetry);
+        linearSlide = new LinearSlide(hardwareMap, telemetry);
+        wrist = new Wrist(hardwareMap, telemetry);
+        claw = new Claw(hardwareMap, telemetry);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
