@@ -21,6 +21,8 @@ public class ArmSubsystemTest extends OpMode {
     public static double xTargetPosition = 0.0;
     public static double zTargetPosition = 0.0;
 
+    public double feedforward = 0.0;
+
     Wrist wrist;
     Arm arm;
     LinearSlide linearSlide;
@@ -34,7 +36,7 @@ public class ArmSubsystemTest extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         wrist = new Wrist(hardwareMap,telemetry);
-        arm = new Arm(hardwareMap,telemetry);
+        arm = new Arm(hardwareMap,telemetry,this.feedforward);
         linearSlide = new LinearSlide(hardwareMap,telemetry);
 
         armSubsystemController = new ArmSubsystemController(armHeight, wrist, arm, linearSlide);
@@ -53,6 +55,8 @@ public class ArmSubsystemTest extends OpMode {
         Position2d targetPosition = new Position2d(xTargetPosition,zTargetPosition);
 
         armSubsystemController.moveToPosition(targetPosition,true);
+
+        this.feedforward = armSubsystemController.armFeedforward();
 
         targetPosition.x = gamepad1.right_stick_x;
         targetPosition.z = -gamepad1.right_stick_y;

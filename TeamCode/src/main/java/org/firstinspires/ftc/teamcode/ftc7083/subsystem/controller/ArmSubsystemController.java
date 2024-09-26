@@ -106,7 +106,7 @@ public class ArmSubsystemController {
      * returns a calculated feedforward value specifically for the shoulder motor to be added instead of the i term
      * @return the feedforward value
      */
-    private double armFeedforward () {
+    public double armFeedforward () {
         double Ka = 0.05;
         return Ka * linearSlide.getCurrentLength();
     }
