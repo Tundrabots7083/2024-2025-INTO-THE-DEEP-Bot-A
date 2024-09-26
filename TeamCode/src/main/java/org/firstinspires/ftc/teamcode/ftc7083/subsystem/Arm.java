@@ -26,6 +26,7 @@ public class Arm extends SubsystemBase {
     public PIDController pidController;
     public GainSchedulingPIDController gainSchedulingPIDController;
     private double angle = 0.0;
+    private double feedforward;
 
     public LookUpTableArgs[] KpLUTArgs;
     public LookUpTableArgs[] KiLUTArgs;
@@ -36,8 +37,9 @@ public class Arm extends SubsystemBase {
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
      */
-    public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Arm(HardwareMap hardwareMap, Telemetry telemetry, double feedforward) {
         this.telemetry = telemetry;
+        this.feedforward = feedforward;
         shoulderMotor = new Motor(hardwareMap, telemetry, "armShoulderMotor");
         configMotor(shoulderMotor);
         pidController = new PIDController(kP, kI, kD);
@@ -84,7 +86,7 @@ public class Arm extends SubsystemBase {
      * Sends power to the PID controller.
      */
     public void execute() {
-        double power = gainSchedulingPIDController.calculate(angle, shoulderMotor.getDegrees());
+        double power = gainSchedulingPIDController.calculate(angle, shoulderMotor.getDegrees()) + this.feedforward;
         shoulderMotor.setPower(power);
     }
 
