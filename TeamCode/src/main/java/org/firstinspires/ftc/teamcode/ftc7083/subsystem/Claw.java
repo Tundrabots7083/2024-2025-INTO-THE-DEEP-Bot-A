@@ -35,6 +35,7 @@ public class Claw extends SubsystemBase {
         this.telemetry = telemetry;
 
         servo = new Servo(hardwareMap, CLAW_SERVO);
+        servo.setMaxDegrees(MAX_CLAW_DEGREES);
         servo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD);
         servo.setDegrees(DEFAULT_CLOSE_DEGREES);
     }
