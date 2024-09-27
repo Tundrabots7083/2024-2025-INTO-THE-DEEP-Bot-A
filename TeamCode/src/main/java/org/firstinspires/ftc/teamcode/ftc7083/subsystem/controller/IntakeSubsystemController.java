@@ -41,7 +41,7 @@ public class IntakeSubsystemController {
 
     /**
      * Updates the robot drive speed based on the left and right joysticks on gamepad1. In addition,
-     * the left bumper on gampedad1 can be used to toggle the gain for the X axis, Y axis and
+     * the left bumper on gamepad1 can be used to toggle the gain for the X axis, Y axis and
      * turn speed.
      *
      * @param gamepad1 Gamepad1
