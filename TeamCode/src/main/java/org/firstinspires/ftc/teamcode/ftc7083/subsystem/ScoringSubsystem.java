@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 
 /**
  * This class implements sequences of actions that are needed
@@ -29,20 +30,22 @@ public class ScoringSubsystem extends SubsystemBase {
     // of the robot.
     public static double ROBOT_LENGTH = 18.0;
 
-    Arm arm;
-    LinearSlide slide;
-    Wrist wrist;
-    Claw claw;
-
     boolean settingChamberHighPosition = false;
     boolean settingBasketHighPosition = false;
+    private final Robot robot;
+
+    /**
+     * Constructor
+     */
+    public ScoringSubsystem() {
+        robot = Robot.getInstance();
+    }
 
     /**
      * Moves the arm, slide, wrist, and claw to prepare the robot
      * to score on the high chamber bar.
      */
     void setChamberHighPosition() {
-
     }
 
     /**
