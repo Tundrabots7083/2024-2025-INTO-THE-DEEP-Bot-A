@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
@@ -42,9 +43,10 @@ public class IntakeSubsystem extends SubsystemBase {
     /**
      * Instantiates a new instance of the intake subsystem.
      *
-     * @param telemetry the telemetry to be used to output data to the driver station and FTC dashboard
+     * @param hardwareMap the mapping of hardware on the control hub
+     * @param telemetry   the telemetry to be used to output data to the driver station and FTC dashboard
      */
-    public IntakeSubsystem(Telemetry telemetry) {
+    public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.robot = Robot.getInstance();
     }
