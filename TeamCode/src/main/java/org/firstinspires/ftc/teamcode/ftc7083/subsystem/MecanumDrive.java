@@ -42,7 +42,7 @@ public class MecanumDrive extends SubsystemBase {
         rightRear = new Motor(hardwareMap, telemetry, "rightRear");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
 
         Collection<DcMotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
         for (DcMotorEx motor : motors) {

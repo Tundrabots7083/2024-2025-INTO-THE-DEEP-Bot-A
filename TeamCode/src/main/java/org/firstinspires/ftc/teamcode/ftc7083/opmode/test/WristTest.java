@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.SubsystemCont
  * to change the Pitch and Yaw servo positions.
  */
 @Config
-@TeleOp(name = "Wrist Test TeleOp", group = "Test")
+@TeleOp(name = "Wrist Test TeleOp", group = "tests")
 public class WristTest extends OpMode {
 
     public static double PITCH = 0.0;
