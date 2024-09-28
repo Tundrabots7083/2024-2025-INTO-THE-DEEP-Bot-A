@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
  * This OpMode tests the claw using FTC Dashboard (http://192.168.43.1:8080/dash)
  */
 @Config
-@TeleOp(name = "Claw Test TeleOp", group = "Test")
+@TeleOp(name = "Claw Test TeleOp", group = "tests")
 public class ClawTest extends OpMode {
     // Specifies the number of degrees the claw is to be opened to
     public static double CLAW_OPEN_DEGREES = 0.0;

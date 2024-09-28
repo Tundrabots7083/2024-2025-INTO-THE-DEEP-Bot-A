@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
  */
 @Config
 public class LinearSlide extends SubsystemBase {
-    public static double KP;
-    public static double KI;
-    public static double KD;
-    public static double TOLERABLE_ERROR = 1.0;
+    public static double KP = 1.0;
+    public static double KI = 0.0;
+    public static double KD = 0.0;
+    public static double TOLERABLE_ERROR = 0.25; // inches
 
     private final Motor slideMotor;
     private final Telemetry telemetry;
@@ -48,7 +48,6 @@ public class LinearSlide extends SubsystemBase {
     public void setLength(double length) {
         this.length = length;
         pidController.reset();
-
     }
 
     /**
@@ -93,6 +92,9 @@ public class LinearSlide extends SubsystemBase {
     public void execute() {
         double power = pidController.calculate(length, slideMotor.getInches());
         slideMotor.setPower(power);
+        telemetry.addData("[Slide] power", power);
+        telemetry.addData("[Slide] inches", slideMotor.getInches());
+        telemetry.addData("[Slide] ticks", slideMotor.getCurrentPosition());
     }
 
     /**
@@ -100,6 +102,7 @@ public class LinearSlide extends SubsystemBase {
      */
     public boolean isAtTarget() {
         double error = Math.abs(length - slideMotor.getInches());
+        telemetry.addData("[Slide] error", error);
         return error <= TOLERABLE_ERROR;
     }
 }

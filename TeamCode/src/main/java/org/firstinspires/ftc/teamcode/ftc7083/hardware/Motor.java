@@ -15,7 +15,6 @@ public class Motor implements DcMotorEx {
     private final DcMotorEx motorImpl;
     private final Telemetry telemetry;
     private double inchesPerRev;
-    private double degreesPerRev;
 
     /**
      * Instantiate a new motor for the robot.
@@ -64,17 +63,10 @@ public class Motor implements DcMotorEx {
      * @return number of motor ticks to move one degree of rotation
      */
     public double getDegreesPerRev() {
-        return degreesPerRev;
-    }
-
-    /**
-     * Sets the number of motor degrees the device attached to the motor moves per motor revolution.
-     * For a gear ratio of 1:1, this is 360; for 2:1 it would be 180.
-     *
-     * @param degreesPerRev number of degrees achieved per motor revolution
-     */
-    public void setDegreesPerRev(double degreesPerRev) {
-        this.degreesPerRev = degreesPerRev;
+        MotorConfigurationType config = motorImpl.getMotorType();
+        double ticksPerRev = config.getTicksPerRev();
+        double gearing = config.getGearing();
+        return ticksPerRev * gearing;
     }
 
     @Override
@@ -227,6 +219,7 @@ public class Motor implements DcMotorEx {
         double ticks = getCurrentPosition();
         double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
         double rotations = ticks / ticksPerRev;
+        double degreesPerRev = getDegreesPerRev();
         return rotations * degreesPerRev;
     }
 
@@ -239,7 +232,7 @@ public class Motor implements DcMotorEx {
      * @param degrees the degrees to which to set the motor
      */
     public void setDegrees(double degrees) {
-        double rotations = degrees / degreesPerRev;
+        double rotations = degrees / getDegreesPerRev();
         double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
         double ticks = rotations * ticksPerRev;
         setTargetPosition((int) ticks);
