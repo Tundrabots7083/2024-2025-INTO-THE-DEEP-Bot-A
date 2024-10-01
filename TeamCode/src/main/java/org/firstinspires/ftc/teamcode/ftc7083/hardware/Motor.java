@@ -64,9 +64,8 @@ public class Motor implements DcMotorEx {
      */
     public double getDegreesPerRev() {
         MotorConfigurationType config = motorImpl.getMotorType();
-        double ticksPerRev = config.getTicksPerRev();
-        double gearing = config.getGearing();
-        return ticksPerRev * gearing;
+        double gearing = config.getGearing(); // 5.0
+        return 360.0 / gearing;
     }
 
     @Override
@@ -216,11 +215,14 @@ public class Motor implements DcMotorEx {
      * @return the current degree offset of the motor
      */
     public double getDegrees() {
-        double ticks = getCurrentPosition();
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double rotations = ticks / ticksPerRev;
-        double degreesPerRev = getDegreesPerRev();
-        return rotations * degreesPerRev;
+        MotorConfigurationType motorType = motorImpl.getMotorType();
+        double ticksPerRev = motorType.getTicksPerRev();
+        double gearing = motorType.getGearing();
+
+        double currentTicks = getCurrentPosition();
+        double rotations = currentTicks / ticksPerRev;
+        double degreesPerRotation = 360.0 / gearing;
+        return rotations * degreesPerRotation;
     }
 
     /**
@@ -232,10 +234,14 @@ public class Motor implements DcMotorEx {
      * @param degrees the degrees to which to set the motor
      */
     public void setDegrees(double degrees) {
-        double rotations = degrees / getDegreesPerRev();
-        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
-        double ticks = rotations * ticksPerRev;
-        setTargetPosition((int) ticks);
+        MotorConfigurationType motorType = motorImpl.getMotorType();
+        double ticksPerRev = motorType.getTicksPerRev();
+        double gearing = motorType.getGearing();
+
+        double outputTicksPerRev = ticksPerRev * gearing;
+        double rotations = degrees / 360.0;
+        double outputTicks = outputTicksPerRev * rotations;
+        setTargetPosition((int) outputTicks);
     }
 
     /**
