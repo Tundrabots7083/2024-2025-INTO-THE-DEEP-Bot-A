@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 @Config
 @TeleOp(name = "Arm Test", group = "tests")
 public class ArmTest extends OpMode {
-    public static double ARM_ANGLE = 0.0;
+    public static double ARM_ANGLE = Arm.START_ANGLE;
     private Arm arm;
 
     @Override
