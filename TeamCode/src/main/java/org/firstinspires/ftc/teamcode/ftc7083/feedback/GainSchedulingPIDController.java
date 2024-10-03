@@ -13,9 +13,13 @@ public class GainSchedulingPIDController {
     private final InterpLUT pCoefficients = new InterpLUT();
     private final InterpLUT iCoefficients = new InterpLUT();
     private final InterpLUT dCoefficients = new InterpLUT();
+    private double Kp = 0.0;
+    private double Ki = 0.0;
+    private double Kd = 0.0;
+    public PIDController controller;
 
     /**
-     * Sets values to LUTs for Kp, Ki, and Kd.
+     * Sets values to LUTs for Kp, Ki, and Kd. Creates a PID controller, and sets preliminary values for the PID.
      *
      * @param KpLUTArgs array of objects containing angles and the Kp constants for each angle.
      * @param KiLUTArgs array of objects containing angles and the Ki constants for each angle.
@@ -25,32 +29,43 @@ public class GainSchedulingPIDController {
                           LookUpTableArgs[] KiLUTArgs,
                           LookUpTableArgs[] KdLUTArgs) {
 
-        for (LookUpTableArgs kp : KpLUTArgs) {
-            pCoefficients.add(kp.state, kp.constantValue);
+
+        for (LookUpTableArgs kpLUTArg : KpLUTArgs) {
+            pCoefficients.add(kpLUTArg.state, kpLUTArg.constantValue);
         }
 
-        for (LookUpTableArgs ki : KiLUTArgs) {
-            pCoefficients.add(ki.state, ki.constantValue);
+        for (LookUpTableArgs kiLUTArg : KiLUTArgs) {
+            iCoefficients.add(kiLUTArg.state, kiLUTArg.constantValue);
         }
 
-        for (LookUpTableArgs kd : KdLUTArgs) {
-            pCoefficients.add(kd.state, kd.constantValue);
+        for (LookUpTableArgs kdLUTArg : KdLUTArgs) {
+            dCoefficients.add(kdLUTArg.state, kdLUTArg.constantValue);
         }
-    }
-
-    public double calculate(double target, double state) {
 
         pCoefficients.createLUT();
         iCoefficients.createLUT();
         dCoefficients.createLUT();
 
-        double Kp = pCoefficients.get(state);
-        double Ki = iCoefficients.get(state);
-        double Kd = dCoefficients.get(state);
+        controller = new PIDController(Kp, Ki, Kd);
+        //controller.setIntegrationBounds(0.0,1.0);
 
-        PIDController controller = new PIDController(Kp, Ki, Kd);
+    }
 
-        return controller.calculate(target, state);
+    public double calculate(double target, double state) {
 
+        Kp = pCoefficients.get(state);
+        Ki = iCoefficients.get(state);
+        Kd = dCoefficients.get(state);
+
+        controller.Kp = Kp;
+        controller.Ki = Ki;
+        controller.Kd = Kd;
+
+        return controller.calculate(target,state);
+
+    }
+
+    public void reset(){
+        controller.reset();
     }
 }

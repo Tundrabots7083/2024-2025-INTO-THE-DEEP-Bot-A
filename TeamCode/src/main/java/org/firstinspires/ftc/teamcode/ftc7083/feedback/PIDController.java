@@ -14,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public class PIDController {
 
-    private final double Kp;
-    private final double Ki;
-    private final double Kd;
+    public double Kp;
+    public double Ki;
+    public double Kd;
 
     private boolean hasRun = false;
 

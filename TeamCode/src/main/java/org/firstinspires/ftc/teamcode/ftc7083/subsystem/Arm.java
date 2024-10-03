@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.GainSchedulingPIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.LookUpTableArgs;
-import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
@@ -20,9 +19,11 @@ public class Arm extends SubsystemBase {
     public static double START_ANGLE = -50;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
     public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
-    //public static double GEARING = 0.03175 * 2; // TODO: check out whether doubling works
-    public static double GEARING = 120.0 / 24.0;
-    public static double kP = 0.1;
+    public double GEARING = 120.0 / 24.0;
+    public static double KD1 = 0.006;
+    public static double KD2 = 0.0075;
+    public static double KD3 = 0.003;
+    public static double KD4 = 0.008;
     public static double kI;
     public static double kD;
     public static double TOLERABLE_ERROR = 0.25; // In degrees
@@ -30,7 +31,7 @@ public class Arm extends SubsystemBase {
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
     private final double feedforward;
-    private final PIDController pidController;
+    //private final PIDController pidController;
     private final GainSchedulingPIDController gainSchedulingPIDController;
     private double angle = START_ANGLE;
 
@@ -58,20 +59,27 @@ public class Arm extends SubsystemBase {
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-45, 0.08),
-                new LookUpTableArgs(40, 0.08),
-                new LookUpTableArgs(90, 0.08)};
+                new LookUpTableArgs(-52, 0.01),
+                new LookUpTableArgs(0, 0.04),
+                new LookUpTableArgs(90, 0.019),
+                new LookUpTableArgs(120, 0.025),
+                new LookUpTableArgs(180, 0.032),
+                new LookUpTableArgs(230, 0.01)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-45, 0.00),
-                new LookUpTableArgs(40, 0.00),
-                new LookUpTableArgs(90, 0.00)};
+                new LookUpTableArgs(-52, 0.1),
+                new LookUpTableArgs(0, 0.1),
+                new LookUpTableArgs(90, 0.07),
+                new LookUpTableArgs(150, 0.09),
+                new LookUpTableArgs(230, 0.1)};
         LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-45, 0.00),
-                new LookUpTableArgs(40, 0.00),
-                new LookUpTableArgs(90, 0.00)};
+                new LookUpTableArgs(-52, 0.006),
+                new LookUpTableArgs(0, 0.0075),
+                new LookUpTableArgs(90, 0.003),
+                new LookUpTableArgs(150, 0.008),
+                new LookUpTableArgs(230, 0.006)};
 
         gainSchedulingPIDController = new GainSchedulingPIDController(kpLUTArgs, kiLUTArgs, kdLUTArgs);
-        pidController = new PIDController(kP, kI, kD);
+        //pidController = new PIDController(kP, kI, kD);
     }
 
     /**
@@ -87,7 +95,7 @@ public class Arm extends SubsystemBase {
     public void setShoulderAngle(double angle) {
         if (this.angle != angle) {
             this.angle = angle;
-            pidController.reset();
+            gainSchedulingPIDController.reset();
         }
     }
 
@@ -112,8 +120,8 @@ public class Arm extends SubsystemBase {
      */
     public void execute() {
         double degrees = shoulderMotor.getDegrees() + START_ANGLE;
-        double power = pidController.calculate(angle, degrees) + this.feedforward;
-        // double power = gainSchedulingPIDController.calculate(angle, degrees) + this.feedforward;
+       // double power = pidController.calculate(angle, degrees) + this.feedforward;
+        double power = gainSchedulingPIDController.calculate(angle, degrees) + this.feedforward;
         shoulderMotor.setPower(power);
         telemetry.addData("[Arm] Target", angle);
         telemetry.addData("[Arm] Current", degrees);
