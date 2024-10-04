@@ -87,9 +87,9 @@ public class ArmSubsystemController {
     private double calculateArmAngle(Position2d targetPosition) {
 
         double armAngle = Math.atan(targetPosition.x /
-                armHeight - targetPosition.z);
+                (armHeight - targetPosition.z));
 
-        return Math.toDegrees(armAngle);
+        return (90 - Math.toDegrees(armAngle));
     }
 
     /**
@@ -107,7 +107,7 @@ public class ArmSubsystemController {
      * @return the feedforward value
      */
     public double armFeedforward () {
-        double Ka = 0.05;
+        double Ka = 0.0;
         return Ka * linearSlide.getCurrentLength();
     }
 }

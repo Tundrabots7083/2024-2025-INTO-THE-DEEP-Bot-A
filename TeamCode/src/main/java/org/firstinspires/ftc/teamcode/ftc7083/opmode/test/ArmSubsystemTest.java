@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.ArmSubsystemC
 @TeleOp(name = "Arm Subsystem Cumulative Test",group = "Test")
 public class ArmSubsystemTest extends OpMode {
 
-    public static double armHeight = 40.0;
+    public static double armHeight = 15.0;
     public static double xTargetPosition = 0.0;
     public static double zTargetPosition = 0.0;
 
