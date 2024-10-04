@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -53,6 +54,7 @@ public class Motor implements DcMotorEx {
      * @param inchesPerRev the number of inches moved per revolution of the motor
      */
     public void setInchesPerRev(double inchesPerRev) {
+        telemetry.addData("[Motor] set inches per rev", inchesPerRev);
         this.inchesPerRev = inchesPerRev;
     }
 

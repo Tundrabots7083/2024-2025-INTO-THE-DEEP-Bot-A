@@ -29,8 +29,9 @@ public class LinearSlideTest extends OpMode {
     public void loop() {
         linearSlide.setLength(LINEAR_SLIDE_LENGTH);
         linearSlide.execute();
-        telemetry.addData("Target Length", LINEAR_SLIDE_LENGTH);
-        telemetry.addData("Current Length", linearSlide.getLength());
+        telemetry.addData("Target Length", linearSlide.getTargetLength());
+        telemetry.addData("Current Length", linearSlide.getCurrentLength());
+        telemetry.update();
     }
 
 }

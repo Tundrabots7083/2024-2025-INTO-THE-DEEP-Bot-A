@@ -179,7 +179,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 telemetry.addData("[Intake] arm angle", targetArmAngle);
             }
             double target = getSlideLength(targetArmAngle, targetArmReach);
-            if (robot.linearSlide.getLength() != target) {
+            if (robot.linearSlide.getTargetLength() != target) {
                 robot.linearSlide.setLength(target);
                 telemetry.addData("[Intake] slide length", target);
             }
