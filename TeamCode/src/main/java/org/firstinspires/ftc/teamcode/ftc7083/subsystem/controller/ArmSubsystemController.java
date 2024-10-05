@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller;
 
-import org.firstinspires.ftc.teamcode.ftc7083.shared.Pose2d;
 import org.firstinspires.ftc.teamcode.ftc7083.shared.Position2d;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.LinearSlide;
@@ -52,17 +51,15 @@ public class ArmSubsystemController {
     }
 
     /**
-     * Provides the Pose2d as x, z, and the angle of the wrist in the yDirection direction.
+     * Provides the Position2d as x, z, and the angle of the wrist in the yDirection direction.
      */
-    public Pose2d getCurrentPose2d() {
+    public Position2d getCurrentPosition2d() {
     double armAngle = arm.getShoulderAngle();
     double slideLength = linearSlide.getCurrentLength();
 
-    double z = - slideLength * Math.cos(armAngle) - this.armHeight;
-    double x = Math.tan(armAngle) * (this.armHeight - z);
-    double yDirection = wrist.getYawPosition();
-
-    return new Pose2d(x,z,yDirection);
+    double x = getX(armAngle, slideLength);
+    double z = getZ(armAngle, slideLength);
+    return new Position2d(x,z);
     }
 
     /**
@@ -73,9 +70,9 @@ public class ArmSubsystemController {
      */
     private double calculateLength(Position2d targetPosition) {
 
-        return targetPosition.x /
-                Math.sin(Math.atan(targetPosition.x /
-                (armHeight - targetPosition.z)));
+        return Math.sqrt(Math.pow(targetPosition.x,2)
+               + Math.pow((armHeight - targetPosition.z),2));
+
     }
 
     /**
@@ -85,11 +82,43 @@ public class ArmSubsystemController {
      * @return the angle (theta) in degrees
      */
     private double calculateArmAngle(Position2d targetPosition) {
+        double armAngle = 0.0;
 
-        double armAngle = Math.atan(targetPosition.x /
-                (armHeight - targetPosition.z));
+        if (targetPosition.z < armHeight) {
+            armAngle = Math.atan(targetPosition.x /
+                    (armHeight - targetPosition.z));
+            return (Math.toDegrees(armAngle) - 90);
+        } else if (targetPosition.z > armHeight) {
+            armAngle = Math.atan((targetPosition.z - armHeight) / targetPosition.x);
+            return Math.toDegrees(armAngle);
+        } else {
+            return 0.0;
+        }
+    }
 
-        return (90 - Math.toDegrees(armAngle));
+    public double getX(double armAngle, double slideLength) {
+        double armAngleRad = Math.toRadians(armAngle);
+
+        if(armAngle < 0) {
+            return Math.sin(armAngleRad + (Math.PI/2)) * slideLength;
+        } else if(armAngle > 0) {
+            return Math.cos(armAngleRad) * slideLength;
+        } else {
+            return slideLength;
+        }
+    }
+
+    public double getZ(double armAngle, double slideLength) {
+        double armAngleRad = Math.toRadians(armAngle);
+
+        if (armAngle < 0) {
+            return armHeight - slideLength * Math.cos(armAngleRad + (Math.PI / 2));
+        } else if(armAngle > 0) {
+            return slideLength * Math.sin(armAngleRad) + armHeight;
+        } else {
+            return 15.0;
+        }
+
     }
 
     /**
