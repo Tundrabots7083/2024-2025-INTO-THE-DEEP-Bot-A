@@ -54,7 +54,7 @@ public class ArmSubsystemTest extends OpMode {
 
         Position2d targetPosition = new Position2d(xTargetPosition,zTargetPosition);
 
-        armSubsystemController.moveToPosition(targetPosition,true);
+        armSubsystemController.moveToPosition(targetPosition,false);
 
         this.feedforward = armSubsystemController.armFeedforward();
 

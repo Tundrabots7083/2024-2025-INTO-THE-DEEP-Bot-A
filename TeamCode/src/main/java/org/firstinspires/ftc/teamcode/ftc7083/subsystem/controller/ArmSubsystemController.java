@@ -32,7 +32,7 @@ public class ArmSubsystemController {
     }
 
     /**
-     * This method takes a Position3d object and moves to that position using calculated
+     * This method takes a Position2d object and moves to that position using calculated
      * length and armAngle values.
      *
      * @param targetPosition the target position in inches x,z
@@ -64,7 +64,7 @@ public class ArmSubsystemController {
 
     /**
      * This method calculates the length the arm should extend to in order to
-     * get to the position described by Position3d. All values are in inches.
+     * get to the position described by Position2d. All values are in inches.
      *
      * @return the length in inches
      */
@@ -77,12 +77,12 @@ public class ArmSubsystemController {
 
     /**
      * This method calculates the angle the arm should be at in order to
-     * get to the position described by Position3d. All input values are in inches and 0° is at horizontal.
+     * get to the position described by Position2d. All input values are in inches and 0° is at horizontal.
      *
      * @return the angle (theta) in degrees
      */
     private double calculateArmAngle(Position2d targetPosition) {
-        double armAngle = 0.0;
+        double armAngle;
 
         if (targetPosition.z < armHeight) {
             armAngle = Math.atan(targetPosition.x /
@@ -96,6 +96,14 @@ public class ArmSubsystemController {
         }
     }
 
+    /**
+     * Calculates the x value of the end effector using the arm angle
+     * and slide length as inputs.
+     *
+     * @param armAngle current anble of the arm
+     * @param slideLength current length of the arm
+     * @return the x value
+     */
     public double getX(double armAngle, double slideLength) {
         double armAngleRad = Math.toRadians(armAngle);
 
@@ -108,6 +116,14 @@ public class ArmSubsystemController {
         }
     }
 
+    /**
+     * Calculates the x value of the end effector using the arm angle
+     * and slide length as inputs.
+     *
+     * @param armAngle the angle of the arm in degrees
+     * @param slideLength the length of the slide in inches
+     * @return the z value in inches
+     */
     public double getZ(double armAngle, double slideLength) {
         double armAngleRad = Math.toRadians(armAngle);
 
