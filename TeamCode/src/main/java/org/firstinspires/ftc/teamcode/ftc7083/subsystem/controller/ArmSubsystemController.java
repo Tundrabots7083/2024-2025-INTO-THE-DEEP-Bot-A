@@ -16,6 +16,7 @@ public class ArmSubsystemController {
     Wrist wrist;
     Arm arm;
     LinearSlide linearSlide;
+    Position2d currentPosition;
 
     /**
      *The Constructor
@@ -23,11 +24,12 @@ public class ArmSubsystemController {
      * @param armHeight is the height of the shoulder from the ground in inches. Assumed to be fixed.
      * @param wrist is an instance of the wrist
      */
-    public ArmSubsystemController(double armHeight, Wrist wrist, Arm arm, LinearSlide linearSlide) {
+    public ArmSubsystemController(double armHeight, Wrist wrist, Arm arm, LinearSlide linearSlide, Position2d startingPosition) {
         this.armHeight = armHeight;
         this.wrist = wrist;
         this.arm = arm;
         this.linearSlide = linearSlide;
+        this.currentPosition = startingPosition;
 
     }
 
@@ -57,9 +59,9 @@ public class ArmSubsystemController {
     double armAngle = arm.getShoulderAngle();
     double slideLength = linearSlide.getCurrentLength();
 
-    double x = getX(armAngle, slideLength);
-    double z = getZ(armAngle, slideLength);
-    return new Position2d(x,z);
+    currentPosition.x = getX(armAngle, slideLength);
+    currentPosition.z = getZ(armAngle, slideLength);
+    return currentPosition;
     }
 
     /**
@@ -70,9 +72,13 @@ public class ArmSubsystemController {
      */
     private double calculateLength(Position2d targetPosition) {
 
-        return Math.sqrt(Math.pow(targetPosition.x,2)
-               + Math.pow((armHeight - targetPosition.z),2));
-
+        if(targetPosition.x > 0){
+            return Math.sqrt(Math.pow(targetPosition.x, 2) + Math.pow((armHeight - targetPosition.z), 2));
+        } else if (targetPosition.x < 0) {
+            return -Math.sqrt(Math.pow(targetPosition.x, 2) + Math.pow((armHeight - targetPosition.z), 2));
+        } else {
+            return 0.0;
+        }
     }
 
     /**
@@ -82,18 +88,28 @@ public class ArmSubsystemController {
      * @return the angle (theta) in degrees
      */
     private double calculateArmAngle(Position2d targetPosition) {
-        double armAngle;
+        double calculatedArmAngle = 0.0;
+        double realArmAngle = 0.0;
 
-        if (targetPosition.z < armHeight) {
-            armAngle = Math.atan(targetPosition.x /
-                    (armHeight - targetPosition.z));
-            return (Math.toDegrees(armAngle) - 90);
-        } else if (targetPosition.z > armHeight) {
-            armAngle = Math.atan((targetPosition.z - armHeight) / targetPosition.x);
-            return Math.toDegrees(armAngle);
-        } else {
-            return 0.0;
+        if (targetPosition.z != armHeight && targetPosition.x != 0.0) {
+            calculatedArmAngle = Math.atan((targetPosition.z - armHeight) / targetPosition.x);
+        } else if (targetPosition.z == armHeight){
+            realArmAngle = 0.0;
         }
+
+        if (targetPosition.x > 0.0) {
+            realArmAngle = Math.toDegrees(calculatedArmAngle);
+        } else if (targetPosition.x < 0.0) {
+            realArmAngle = Math.toDegrees(calculatedArmAngle) + 180;
+        } else {
+            if (targetPosition.z < armHeight) {
+                realArmAngle = -90;
+            } else if (targetPosition.z > armHeight) {
+                realArmAngle = 90;
+            }
+        }
+
+        return realArmAngle;
     }
 
     /**

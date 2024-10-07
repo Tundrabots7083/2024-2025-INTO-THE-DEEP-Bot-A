@@ -26,6 +26,7 @@ public class ArmSubsystemTest extends OpMode {
     Wrist wrist;
     Arm arm;
     LinearSlide linearSlide;
+    Position2d startingPosition;
     ArmSubsystemController armSubsystemController;
     private final Gamepad currentGamepad1 = new Gamepad();
 
@@ -38,8 +39,9 @@ public class ArmSubsystemTest extends OpMode {
         wrist = new Wrist(hardwareMap,telemetry);
         arm = new Arm(hardwareMap,telemetry,this.feedforward);
         linearSlide = new LinearSlide(hardwareMap,telemetry);
+        startingPosition = new Position2d(18,0);
 
-        armSubsystemController = new ArmSubsystemController(armHeight, wrist, arm, linearSlide);
+        armSubsystemController = new ArmSubsystemController(armHeight, wrist, arm, linearSlide, startingPosition);
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
@@ -61,8 +63,10 @@ public class ArmSubsystemTest extends OpMode {
         targetPosition.x = gamepad1.right_stick_x;
         targetPosition.z = -gamepad1.right_stick_y;
 
-        telemetry.addData("x value: ",targetPosition.x);
-        telemetry.addData("z value: ",targetPosition.z);
+        telemetry.addData("x target value: ",targetPosition.x);
+        telemetry.addData("z target value: ",targetPosition.z);
+        telemetry.addData("z current value: ", armSubsystemController.getCurrentPosition2d().z);
+        telemetry.addData("z current value: ", armSubsystemController.getCurrentPosition2d().x);
 
     }
 }
