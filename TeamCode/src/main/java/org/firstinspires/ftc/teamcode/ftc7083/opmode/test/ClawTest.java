@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.test;
 
 import static org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw.DEFAULT_OPEN_DEGREES;
-import static org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw.MAX_CLAW_DEGREES;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
