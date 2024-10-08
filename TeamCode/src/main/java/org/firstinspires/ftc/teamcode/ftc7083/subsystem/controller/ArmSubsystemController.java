@@ -85,32 +85,32 @@ public class ArmSubsystemController {
      * This method calculates the angle the arm should be at in order to
      * get to the position described by Position2d. All input values are in inches and 0° is at horizontal.
      *
+     * @param targetPosition the target position described as x and z coordinates
      * @return the angle (theta) in degrees
      */
-    private double calculateArmAngle(Position2d targetPosition) {
-        double calculatedArmAngle = 0.0;
-        double realArmAngle = 0.0;
+    public double calculateArmAngle(Position2d targetPosition) {
+        double realArmAngle;
 
-        if (targetPosition.z != armHeight && targetPosition.x != 0.0) {
-            calculatedArmAngle = Math.atan((targetPosition.z - armHeight) / targetPosition.x);
-        } else if (targetPosition.z == armHeight){
-            realArmAngle = 0.0;
-        }
+        // Use atan2 for correct angle calculation based on x and z
+        realArmAngle = Math.toDegrees(Math.atan2(targetPosition.z - armHeight, targetPosition.x));
 
-        if (targetPosition.x > 0.0) {
-            realArmAngle = Math.toDegrees(calculatedArmAngle);
-        } else if (targetPosition.x < 0.0) {
-            realArmAngle = Math.toDegrees(calculatedArmAngle) + 180;
+        // Check for different x values to adjust the angle accordingly
+        if (targetPosition.x > 0) {
+            return realArmAngle;
+        } else if (targetPosition.x < 0) {
+            return realArmAngle + 360;
         } else {
+            // Special case when x == 0
             if (targetPosition.z < armHeight) {
-                realArmAngle = -90;
+                return -90;
             } else if (targetPosition.z > armHeight) {
-                realArmAngle = 90;
+                return 90;
+            } else {
+                return 0.0;
             }
         }
-
-        return realArmAngle;
     }
+
 
     /**
      * Calculates the x value of the end effector using the arm angle
