@@ -17,10 +17,10 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 public class Claw extends SubsystemBase {
     public static String CLAW_SERVO = "clawServo";
     // Make default open/close degrees settable by FTC dashboard
-    public static double DEFAULT_OPEN_DEGREES = 45.0;
+    public static double DEFAULT_OPEN_DEGREES = 180.0;
     public static double DEFAULT_CLOSE_DEGREES = 0.0;
     // Make max claw degrees settable by FTC dashboard
-    public static double MAX_CLAW_DEGREES = 270.0;
+    public static double MAX_CLAW_DEGREES = 180.0;
     // Implement the claw using a Servo class
     private final Servo servo;
     private final Telemetry telemetry;
@@ -36,7 +36,7 @@ public class Claw extends SubsystemBase {
 
         servo = new Servo(hardwareMap, CLAW_SERVO);
         servo.setMaxDegrees(MAX_CLAW_DEGREES);
-        servo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD);
+        servo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
         servo.setDegrees(DEFAULT_CLOSE_DEGREES);
     }
 

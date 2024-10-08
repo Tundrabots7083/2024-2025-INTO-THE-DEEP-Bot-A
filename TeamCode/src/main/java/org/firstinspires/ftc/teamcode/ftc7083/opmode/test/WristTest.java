@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
-import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.SubsystemController;
 
 /**
  * This OpMode tests the wrist using FTC Dashboard (http://192.168.43.1:8080/dash)
@@ -18,6 +17,8 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.SubsystemCont
 @TeleOp(name = "Wrist Test TeleOp", group = "tests")
 public class WristTest extends OpMode {
 
+    public static int UPWARD_PITCH_LIMIT = 50;
+    public static int DOWNWARD_PITCH_LIMIT = 50;
     public static double PITCH = 0.0;
     public static double YAW = 0.0;
     public double gamepadPitch;
@@ -29,7 +30,7 @@ public class WristTest extends OpMode {
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-      
+
         wrist = new Wrist(hardwareMap,telemetry);
 
         telemetry.addLine("Initialization Complete");
@@ -42,8 +43,8 @@ public class WristTest extends OpMode {
         // so this ensures that a consistent set of values are used within each subsystem controller.
         currentGamepad1.copy(gamepad1);
 
-        this.gamepadPitch = -gamepad1.right_stick_y * 50;
-        this.gamepadYaw = gamepad1.right_stick_x * 80;
+        this.gamepadPitch = -gamepad1.right_stick_y * UPWARD_PITCH_LIMIT;
+        this.gamepadYaw = gamepad1.right_stick_x * DOWNWARD_PITCH_LIMIT;
 
         wrist.setPosition(gamepadPitch, gamepadYaw);
 
