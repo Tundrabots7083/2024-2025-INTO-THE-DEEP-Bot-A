@@ -4,13 +4,15 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
- * Defines an arm with telemetry, slide motor, and PID.
+ * A linear slide can extend and retract the wrist and claw attached to the robot's scoring
+ * subsystem.
  */
 @Config
 public class LinearSlide extends SubsystemBase {
@@ -24,14 +26,16 @@ public class LinearSlide extends SubsystemBase {
     public static double KD = 0.0;
     public static double TOLERABLE_ERROR = 0.1; // inches
 
+    public static double MIN_EXTENSION_LENGTH = 0.0;
+    public static double MAX_EXTENSION_LENGTH = 35.0;
+
     private final Motor slideMotor;
     private final Telemetry telemetry;
     private final PIDController pidController;
     private double targetLength = 0;
 
     /**
-     * Makes an arm that can raise, lower, retract, and extend.
-     * sets the pid controller
+     * Instantiates the linear slide for the robot.
      *
      * @param hardwareMap Hardware Map
      * @param telemetry   Telemetry
@@ -59,8 +63,9 @@ public class LinearSlide extends SubsystemBase {
      * @param length Length of desired slide position in inches.
      */
     public void setLength(double length) {
-        if (targetLength != length) {
-            targetLength = length;
+        double targetLength = Range.clip(length, MIN_EXTENSION_LENGTH, MAX_EXTENSION_LENGTH);
+        if (this.targetLength != targetLength) {
+            this.targetLength = targetLength;
             pidController.reset();
         }
     }
@@ -78,7 +83,7 @@ public class LinearSlide extends SubsystemBase {
     /**
      * Configures the motor used for the linear slide
      *
-     * @param motor
+     * @param motor the motor to be configured
      */
     private void configMotor(Motor motor) {
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
