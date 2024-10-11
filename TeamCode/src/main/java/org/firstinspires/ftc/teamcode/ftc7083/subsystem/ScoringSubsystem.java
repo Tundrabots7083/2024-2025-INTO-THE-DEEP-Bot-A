@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.conv.Coordinate;
 
 /**
  * The IntakeSubsystem is responsible for acquiring up samples and specimens so they may be
@@ -170,6 +171,43 @@ public class ScoringSubsystem extends SubsystemBase {
         // Determine how much the linear slide needs to extend to reach the target length. This
         // accounts for the arm length when the linear slide is fully retracted.
         return armLength - RETRACTED_ARM_LENGTH;
+    }
+
+    /**
+     * Sets the position for the scoring subsystem so that the claw is positioned at the
+     * {x,y} cartesian coordinates.
+     *
+     * @param x the length at which the claw should be positioned
+     * @param y the height at which the claw should be positioned
+     */
+    public void setCoordinates(double x, double y) {
+        Coordinate coordinate = Coordinate.fromCartesian(x, y);
+        double theta = coordinate.theta();
+        double radians = coordinate.radians();
+        robot.arm.setShoulderAngle(theta);
+        robot.linearSlide.setLength(radians);
+        telemetry.addData("[Scoring] x", x);
+        telemetry.addData("[Scoring] y", y);
+        telemetry.addData("[Scoring] theta", theta);
+        telemetry.addData("[Scoring] radians", radians);
+    }
+
+    /**
+     * Gets the distance the arm can reach in inches
+     * @return the distance the arm can reach in inches
+     */
+    public double getX() {
+        Coordinate coordinate = Coordinate.fromPolar(robot.arm.getShoulderAngle(), robot.linearSlide.getCurrentLength());
+        return coordinate.x();
+    }
+
+    /**
+     * Gets the height of the arm in inches
+     * @return the height of the arm in inches
+     */
+    public double getY() {
+        Coordinate coordinate = Coordinate.fromPolar(robot.arm.getShoulderAngle(), robot.linearSlide.getCurrentLength());
+        return coordinate.y();
     }
 
     /**
