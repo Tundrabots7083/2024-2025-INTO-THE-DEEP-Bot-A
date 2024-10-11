@@ -20,7 +20,7 @@ public class ScoringSubsystemTest extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Robot robot = Robot.init(hardwareMap, telemetry);
-        intakeSubsystemController = new ScoringSubsystemController(robot.intakeSubsystem, telemetry);
+        intakeSubsystemController = new ScoringSubsystemController(robot.scoringSubsystem, telemetry);
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();

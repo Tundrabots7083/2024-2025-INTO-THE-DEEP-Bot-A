@@ -9,10 +9,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.MecanumDriveController;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.ScoringSubsystemController;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.SubsystemController;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @TeleOp(name = "Primary TeleOp", group = "Active")
 public class PrimaryTeleOp extends OpMode {
@@ -29,7 +31,8 @@ public class PrimaryTeleOp extends OpMode {
         robot = Robot.init(hardwareMap, telemetry);
 
         MecanumDriveController mecanumDriveController = new MecanumDriveController(robot.mecanumDrive, telemetry);
-        controllers = Arrays.asList(mecanumDriveController);
+        ScoringSubsystemController scoringSubsystemController = new ScoringSubsystemController(robot.scoringSubsystem, telemetry);
+        controllers = Arrays.asList(mecanumDriveController, scoringSubsystemController);
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();

@@ -26,7 +26,7 @@ public class Robot {
 
     // Subsystems
     public final MecanumDrive mecanumDrive;
-    public final ScoringSubsystem intakeSubsystem;
+    public final ScoringSubsystem scoringSubsystem;
     public final Webcam webcam;
     public final Arm arm;
     public final LinearSlide linearSlide;
@@ -67,7 +67,7 @@ public class Robot {
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
-        intakeSubsystem = new ScoringSubsystem(hardwareMap, telemetry);
+        scoringSubsystem = new ScoringSubsystem(hardwareMap, telemetry);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
