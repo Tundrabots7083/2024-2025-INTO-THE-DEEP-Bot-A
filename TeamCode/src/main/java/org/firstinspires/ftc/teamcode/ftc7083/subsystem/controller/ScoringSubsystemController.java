@@ -47,7 +47,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
  *     </li>
  * </ul>
  */
-public class ScoringSubsystemController {
+public class ScoringSubsystemController implements SubsystemController{
     private final ScoringSubsystem scoringSubsystem;
     private final Telemetry telemetry;
 
