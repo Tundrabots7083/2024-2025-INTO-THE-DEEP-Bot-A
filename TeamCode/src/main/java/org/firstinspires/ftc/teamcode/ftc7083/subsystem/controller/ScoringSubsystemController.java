@@ -47,7 +47,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
  *     </li>
  * </ul>
  */
-public class ScoringSubsystemController implements SubsystemController{
+public class ScoringSubsystemController implements SubsystemController {
     private final ScoringSubsystem scoringSubsystem;
     private final Telemetry telemetry;
 
@@ -57,8 +57,9 @@ public class ScoringSubsystemController implements SubsystemController{
     /**
      * Instantiate a scoring subsystem controller, which uses gamepad controls to control the
      * scoring subsystem.
-     * @param scoringSubsystem
-     * @param telemetry
+     *
+     * @param scoringSubsystem the scoring subsystem being controlled
+     * @param telemetry the telemetry used to provide user output on the driver station and FTC dashboard
      */
     public ScoringSubsystemController(ScoringSubsystem scoringSubsystem, Telemetry telemetry) {
         this.scoringSubsystem = scoringSubsystem;
@@ -98,10 +99,18 @@ public class ScoringSubsystemController implements SubsystemController{
         // Manual override controls for the arm and linear slide
         if (gamepad2.left_stick_y != 0.0) {
             // TODO : Extend/retract arm
+            // get the arm angle
+            // get the slide length, and add the negative value of the left_stick_y to it (times a scalar value)
+            // convert to the cartesian coordinates on the plane
+            // set the new {x,y} coordinate values
             telemetry.addData("[Scoring] slide", -gamepad2.left_stick_y);
         }
         if (gamepad2.right_stick_y != 0.0) {
             // TODO : Raise/lower arm
+            // get the arm angle
+            // get the arm angle, and add the negative value of the right_stick_y to it (times a scalar value)
+            // convert to the cartesian coordinates on the plane
+            // set the new {x,y} coordinate values
             telemetry.addData("[Scoring] arm", -gamepad2.left_stick_y);
         }
 
@@ -114,6 +123,10 @@ public class ScoringSubsystemController implements SubsystemController{
             scoringSubsystem.closeClaw();
             telemetry.addData("[Scoring] claw", "close");
         }
+
+        // Update the scoring subsystem. This allows it to adjust the position of the managed
+        // components as they move to a target position.
+        scoringSubsystem.execute();
 
         previousGamepad1.copy(gamepad1);
         previousGamepad2.copy(gamepad2);
