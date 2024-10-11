@@ -27,14 +27,14 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeSubsystem;
  *     </li>
  * </ul>
  */
-public class IntakeSubsystemController {
+public class ScoringSubsystemController {
     private final IntakeSubsystem intakeSubsystem;
     private final Telemetry telemetry;
 
     private final Gamepad previousGamepad1 = new Gamepad();
     private final Gamepad previousGamepad2 = new Gamepad();
 
-    public IntakeSubsystemController(IntakeSubsystem intakeSubsystem, Telemetry telemetry) {
+    public ScoringSubsystemController(IntakeSubsystem intakeSubsystem, Telemetry telemetry) {
         this.intakeSubsystem = intakeSubsystem;
         this.telemetry = telemetry;
     }
@@ -48,18 +48,33 @@ public class IntakeSubsystemController {
      * @param gamepad2 Gamepad2
      */
     public void execute(Gamepad gamepad1, Gamepad gamepad2) {
-        if (gamepad1.dpad_down && !previousGamepad1.dpad_down) {
-            intakeSubsystem.moveToIntakePosition();
+        if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
+            // TODO : Move to score chamber low
+        } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up){
+            // TODO : Move to score chamber high
+        } else if (gamepad2.triangle && !previousGamepad2.triangle){
+            // TODO : Score bucket high
+        } else if (gamepad2.cross && !previousGamepad2.cross){
+            // TODO : Score bucket low
+        } else if(gamepad2.circle && !previousGamepad2.circle){
+            // TODO : Move to intake position
         }
-        if (gamepad1.dpad_left && !previousGamepad1.dpad_left) {
-            intakeSubsystem.moveToNeutralPosition();
+
+
+        if (gamepad2.left_stick_y != 0.0) {
+            // TODO : Extend/retract arm
         }
-        if (gamepad1.cross && !previousGamepad1.cross) {
-            intakeSubsystem.acquireScoringElement();
+
+        if (gamepad2.right_stick_y != 0.0) {
+            // TODO : Raise/lower arm
         }
-        if (gamepad1.triangle && !previousGamepad1.triangle) {
-            intakeSubsystem.depositScoringElement();
+
+        if (gamepad2.left_bumper && !previousGamepad2.left_bumper) {
+            // TODO : Open claw
+        } else if (gamepad2.right_bumper && !previousGamepad2.right_bumper) {
+            // TODO : Close claw
         }
+
 
         previousGamepad1.copy(gamepad1);
         previousGamepad2.copy(gamepad2);
