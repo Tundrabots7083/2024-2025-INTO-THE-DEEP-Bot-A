@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.GainSchedulingPIDController;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
  */
 @Config
 public class Arm extends SubsystemBase {
-    public static double START_ANGLE = -50;
+    public static double START_ANGLE = -50.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
     public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
     public double GEARING = 120.0 / 24.0;
@@ -28,12 +29,15 @@ public class Arm extends SubsystemBase {
     public static double kD;
     public static double TOLERABLE_ERROR = 0.25; // In degrees
 
+    public static double MIN_ANGLE = -50.0;
+    public static double MAX_ANGLE = 90.0;
+
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
     private final double feedforward;
     //private final PIDController pidController;
     private final GainSchedulingPIDController gainSchedulingPIDController;
-    private double angle = START_ANGLE;
+    private double targetAngle = START_ANGLE;
 
     /**
      * Makes an arm that can raise and lower.
@@ -93,8 +97,9 @@ public class Arm extends SubsystemBase {
      * Sets the shoulder motor to a position in degrees.
      */
     public void setShoulderAngle(double angle) {
-        if (this.angle != angle) {
-            this.angle = angle;
+        double targetAngle = Range.clip(angle, MIN_ANGLE, MAX_ANGLE);
+        if (this.targetAngle != targetAngle) {
+            this.targetAngle = targetAngle;
             gainSchedulingPIDController.reset();
         }
     }
@@ -121,9 +126,9 @@ public class Arm extends SubsystemBase {
     public void execute() {
         double degrees = shoulderMotor.getDegrees() + START_ANGLE;
        // double power = pidController.calculate(angle, degrees) + this.feedforward;
-        double power = gainSchedulingPIDController.calculate(angle, degrees) + this.feedforward;
+        double power = gainSchedulingPIDController.calculate(targetAngle, degrees) + this.feedforward;
         shoulderMotor.setPower(power);
-        telemetry.addData("[Arm] Target", angle);
+        telemetry.addData("[Arm] Target", targetAngle);
         telemetry.addData("[Arm] Current", degrees);
     }
 
@@ -134,7 +139,7 @@ public class Arm extends SubsystemBase {
      */
     public boolean isAtTarget() {
         double degrees = shoulderMotor.getDegrees() + START_ANGLE;
-        double error = Math.abs(angle - degrees);
+        double error = Math.abs(targetAngle - degrees);
         return error <= TOLERABLE_ERROR;
     }
 }
