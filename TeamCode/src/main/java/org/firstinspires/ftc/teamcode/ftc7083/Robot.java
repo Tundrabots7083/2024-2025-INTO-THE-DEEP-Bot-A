@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
-import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.LinearSlide;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
@@ -26,7 +26,7 @@ public class Robot {
 
     // Subsystems
     public final MecanumDrive mecanumDrive;
-    public final IntakeSubsystem intakeSubsystem;
+    public final ScoringSubsystem intakeSubsystem;
     public final Webcam webcam;
     public final Arm arm;
     public final LinearSlide linearSlide;
@@ -67,7 +67,7 @@ public class Robot {
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
-        intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
+        intakeSubsystem = new ScoringSubsystem(hardwareMap, telemetry);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
