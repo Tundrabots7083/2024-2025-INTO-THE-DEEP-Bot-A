@@ -28,15 +28,24 @@ import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 @Config
 public class ScoringSubsystem extends SubsystemBase {
     public static double RETRACTED_ARM_LENGTH = 21.0;
-    public static double POSITION_NEUTRAL_HORIZONTAL_DISTANCE = RETRACTED_ARM_LENGTH;
-    public static double POSITION_NEUTRAL_HEIGHT = 11.0;
-    public static double POSITION_INTAKE_HORIZONTAL_DISTANCE = 30.0;
-    public static double POSITION_INTAKE_HEIGHT = 1.5;
+
+    public static double POSITION_SCORE_BUCKET_HIGH_X = 0.0;
+    public static double POSITION_SCORE_BUCKET_HIGH_Y = 0.0;
+    public static double POSITION_SCORE_BUCKET_LOW_X = 0.0;
+    public static double POSITION_SCORE_BUCKET_LOW_Y = 0.0;
+    public static double POSITION_SCORE_CHAMBER_HIGH_X = 0.0;
+    public static double POSITION_SCORE_CHAMBER_HIGH_Y = 0.0;
+    public static double POSITION_SCORE_CHAMBER_LOW_X = 0.0;
+    public static double POSITION_SCORE_CHAMBER_LOW_Y = 0.0;
+    public static double POSITION_INTAKE_X = 30.0;
+    public static double POSITION_INTAKE_Y = 1.5;
+    public static double POSITION_NEUTRAL_X = RETRACTED_ARM_LENGTH;
+    public static double POSITION_NEUTRAL_Y = 11.0;
 
     private final Telemetry telemetry;
     private final Robot robot;
     private double targetArmAngle;
-    private double targetArmReach;
+    private double targetArmLength;
 
     private boolean updateIntakeSubsystem = false;
 
@@ -56,8 +65,8 @@ public class ScoringSubsystem extends SubsystemBase {
      * This will lower and extend the arm so the claw may be used to pickup a sample or specimen.
      */
     public void moveToIntakePosition() {
-        targetArmAngle = getArmAngle(POSITION_INTAKE_HORIZONTAL_DISTANCE, POSITION_INTAKE_HEIGHT);
-        targetArmReach = POSITION_INTAKE_HORIZONTAL_DISTANCE;
+        targetArmAngle = getArmAngle(POSITION_INTAKE_X, POSITION_INTAKE_Y);
+        targetArmLength = POSITION_INTAKE_X;
         updateIntakeSubsystem = true;
         robot.claw.open();
         telemetry.addData("[Intake] position", "intake");
@@ -68,8 +77,8 @@ public class ScoringSubsystem extends SubsystemBase {
      * arm so the robot may be maneuvered into a scoring position by the IntakeAndScoringSubsystem.
      */
     public void moveToNeutralPosition() {
-        targetArmAngle = getArmAngle(POSITION_NEUTRAL_HORIZONTAL_DISTANCE, POSITION_NEUTRAL_HEIGHT);
-        targetArmReach = POSITION_NEUTRAL_HORIZONTAL_DISTANCE;
+        targetArmAngle = getArmAngle(POSITION_NEUTRAL_X, POSITION_NEUTRAL_Y);
+        targetArmLength = POSITION_NEUTRAL_X;
         updateIntakeSubsystem = true;
         telemetry.addData("[Intake] position", "neutral");
     }
@@ -178,7 +187,7 @@ public class ScoringSubsystem extends SubsystemBase {
                 robot.arm.setShoulderAngle(targetArmAngle);
                 telemetry.addData("[Intake] arm angle", targetArmAngle);
             }
-            double target = getSlideLength(targetArmAngle, targetArmReach);
+            double target = getSlideLength(targetArmAngle, targetArmLength);
             if (robot.linearSlide.getTargetLength() != target) {
                 robot.linearSlide.setLength(target);
                 telemetry.addData("[Intake] slide length", target);
