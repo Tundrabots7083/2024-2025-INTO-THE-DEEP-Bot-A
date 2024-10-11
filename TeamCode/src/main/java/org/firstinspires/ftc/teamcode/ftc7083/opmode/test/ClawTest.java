@@ -25,7 +25,7 @@ public class ClawTest extends OpMode {
     // When true causes the claw to be closed to the 0 degrees position
     public static boolean CLOSE = false;
     Claw claw;
-
+    
     @Override
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
