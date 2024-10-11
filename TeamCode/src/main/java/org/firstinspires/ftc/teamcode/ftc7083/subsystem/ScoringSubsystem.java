@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.Robot;
  * </ul>
  */
 @Config
-public class IntakeSubsystem extends SubsystemBase {
+public class ScoringSubsystem extends SubsystemBase {
     public static double RETRACTED_ARM_LENGTH = 21.0;
     public static double POSITION_NEUTRAL_HORIZONTAL_DISTANCE = RETRACTED_ARM_LENGTH;
     public static double POSITION_NEUTRAL_HEIGHT = 11.0;
@@ -46,7 +46,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param hardwareMap the mapping of hardware on the control hub
      * @param telemetry   the telemetry to be used to output data to the driver station and FTC dashboard
      */
-    public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+    public ScoringSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.robot = Robot.getInstance();
     }
@@ -79,7 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * acquiring the scoring element; the <code>moveToAcquiredPosition</code> method is used for
      * that purpose.
      */
-    public void acquireScoringElement() {
+    public void closeClaw() {
         robot.claw.close();
         telemetry.addData("[Intake] claw", "close");
     }
@@ -89,7 +89,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * scoring element is released by the intake subsystem. The claw will be opened, but the arm
      * is not moved; the <code>moveToIntakePosition</code> method is used for moving the arm.
      */
-    public void depositScoringElement() {
+    public void openClaw() {
         robot.claw.open();
         telemetry.addData("[Intake] claw", "open");
     }
