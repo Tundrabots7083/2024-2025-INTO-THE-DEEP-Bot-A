@@ -15,14 +15,14 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 @Config
 public class LinearSlide extends SubsystemBase {
     public static double SPOOL_DIAMETER = 1.4; // in inches
-    public static double TICKS_PER_REV = 384;
+    public static double TICKS_PER_REV = 380;
     public double GEARING = 1.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
 
-    public static double KP = 0.32;
-    public static double KI = 0.13;
-    public static double KD = 0.02;
-    public static double TOLERABLE_ERROR = 0.05; // inches
+    public static double KP = 0.1;
+    public static double KI = 0.05;
+    public static double KD = 0.0;
+    public static double TOLERABLE_ERROR = 0.1; // inches
 
     private final Motor slideMotor;
     private final Telemetry telemetry;
@@ -72,13 +72,13 @@ public class LinearSlide extends SubsystemBase {
      * @return slide length in inches
      */
     public double getCurrentLength() {
-        return -slideMotor.getInches();
+        return slideMotor.getInches();
     }
 
     /**
      * Configures the motor used for the linear slide
      *
-     * @param motor motor
+     * @param motor
      */
     private void configMotor(Motor motor) {
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -88,7 +88,7 @@ public class LinearSlide extends SubsystemBase {
         motor.setMotorType(motorConfigurationType);
         motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
@@ -97,10 +97,10 @@ public class LinearSlide extends SubsystemBase {
      */
     public void execute() {
         if (!isAtTarget()) {
-            double power = pidController.calculate(targetLength, getCurrentLength());
+            double power = pidController.calculate(targetLength, slideMotor.getInches());
             slideMotor.setPower(power);
             telemetry.addData("[Slide] power", power);
-            telemetry.addData("[Slide] inches", getCurrentLength());
+            telemetry.addData("[Slide] inches", slideMotor.getInches());
             telemetry.addData("[Slide] ticks", slideMotor.getCurrentPosition());
         }
     }
@@ -109,10 +109,10 @@ public class LinearSlide extends SubsystemBase {
      * checks if the length is within the tolerable error and if it is then the motor will stop
      */
     public boolean isAtTarget() {
-        double error = Math.abs(targetLength - getCurrentLength());
+        double error = Math.abs(targetLength - slideMotor.getInches());
         telemetry.addData("[Slide] error", error);
         telemetry.addData("[Slide] target", targetLength);
-        telemetry.addData("[Slide] current", getCurrentLength());
+        telemetry.addData("[Slide] current", slideMotor.getInches());
         return error <= TOLERABLE_ERROR;
     }
 }
