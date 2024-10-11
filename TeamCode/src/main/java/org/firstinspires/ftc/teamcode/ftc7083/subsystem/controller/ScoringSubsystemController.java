@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.conv.Coordinate;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
 
 /**
@@ -47,7 +49,11 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
  *     </li>
  * </ul>
  */
+@Config
 public class ScoringSubsystemController implements SubsystemController {
+    public static double SCALAR_X = 0.25;
+    public static double SCALAR_Y = 0.25;
+
     private final ScoringSubsystem scoringSubsystem;
     private final Telemetry telemetry;
 
@@ -59,11 +65,32 @@ public class ScoringSubsystemController implements SubsystemController {
      * scoring subsystem.
      *
      * @param scoringSubsystem the scoring subsystem being controlled
-     * @param telemetry the telemetry used to provide user output on the driver station and FTC dashboard
+     * @param telemetry        the telemetry used to provide user output on the driver station and FTC dashboard
      */
     public ScoringSubsystemController(ScoringSubsystem scoringSubsystem, Telemetry telemetry) {
         this.scoringSubsystem = scoringSubsystem;
         this.telemetry = telemetry;
+    }
+
+    /**
+     * Sets the scoring subsystem to the specified cartesian coordinates.
+     *
+     * @param x the distance along the x-axis
+     * @param y the height along the y-axis
+     */
+    private void setToCartesianCoordinates(double x, double y) {
+        scoringSubsystem.setCoordinates(x, y);
+    }
+
+    /**
+     * Sets the scoring subsystem to the specified polar coordinates.
+     *
+     * @param theta   the angle for the polar coordinate
+     * @param radians the radians (radius) for the polar coordinate
+     */
+    private void setToPolarCoordinates(double theta, double radians) {
+        Coordinate coordinate = Coordinate.fromPolar(theta, radians);
+        setToCartesianCoordinates(coordinate.x(), coordinate.y());
     }
 
     /**
@@ -98,20 +125,18 @@ public class ScoringSubsystemController implements SubsystemController {
 
         // Manual override controls for the arm and linear slide
         if (gamepad2.left_stick_y != 0.0) {
-            // TODO : Extend/retract arm
-            // get the arm angle
-            // get the slide length, and add the negative value of the left_stick_y to it (times a scalar value)
-            // convert to the cartesian coordinates on the plane
-            // set the new {x,y} coordinate values
-            telemetry.addData("[Scoring] slide", -gamepad2.left_stick_y);
+            double adjustY = -gamepad2.left_stick_y * SCALAR_Y;
+            double x = scoringSubsystem.getX();
+            double y = scoringSubsystem.getY() + adjustY;
+            setToCartesianCoordinates(x, y);
+            telemetry.addData("[Scoring] adjust y", adjustY);
         }
         if (gamepad2.right_stick_y != 0.0) {
-            // TODO : Raise/lower arm
-            // get the arm angle
-            // get the arm angle, and add the negative value of the right_stick_y to it (times a scalar value)
-            // convert to the cartesian coordinates on the plane
-            // set the new {x,y} coordinate values
-            telemetry.addData("[Scoring] arm", -gamepad2.left_stick_y);
+            double adjustX = -gamepad2.left_stick_y * SCALAR_X;
+            double x = scoringSubsystem.getX() + adjustX;
+            double y = scoringSubsystem.getY();
+            setToCartesianCoordinates(x, y);
+            telemetry.addData("[Scoring] adjust x", adjustX);
         }
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
