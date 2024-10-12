@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
 /**
  * Manages the intake subsystem within a TeleOp OpMode. The following controls are used to manage
@@ -47,8 +48,12 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.ScoringSubsystem;
  *     </li>
  * </ul>
  */
-public class ScoringSubsystemController implements SubsystemController {
-    private final ScoringSubsystem scoringSubsystem;
+@Config
+public class IntakeAndScoringSubsystemController implements SubsystemController {
+    public static double SCALAR_X = 0.25;
+    public static double SCALAR_Y = 0.25;
+
+    private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     private final Telemetry telemetry;
 
     private final Gamepad previousGamepad1 = new Gamepad();
@@ -58,11 +63,11 @@ public class ScoringSubsystemController implements SubsystemController {
      * Instantiate a scoring subsystem controller, which uses gamepad controls to control the
      * scoring subsystem.
      *
-     * @param scoringSubsystem the scoring subsystem being controlled
-     * @param telemetry the telemetry used to provide user output on the driver station and FTC dashboard
+     * @param intakeAndScoringSubsystem the scoring subsystem being controlled
+     * @param telemetry                 the telemetry used to provide user output on the driver station and FTC dashboard
      */
-    public ScoringSubsystemController(ScoringSubsystem scoringSubsystem, Telemetry telemetry) {
-        this.scoringSubsystem = scoringSubsystem;
+    public IntakeAndScoringSubsystemController(IntakeAndScoringSubsystem intakeAndScoringSubsystem, Telemetry telemetry) {
+        this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
         this.telemetry = telemetry;
     }
 
@@ -77,56 +82,54 @@ public class ScoringSubsystemController implements SubsystemController {
     public void execute(Gamepad gamepad1, Gamepad gamepad2) {
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
-            // TODO : Move to score chamber low
+            intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
             telemetry.addData("[Scoring] position", "low chamber");
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            // TODO : Move to score chamber high
+            intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
             telemetry.addData("[Scoring] position", "high chamber");
         } else if (gamepad2.cross && !previousGamepad2.cross) {
-            // TODO : Score bucket low
-            telemetry.addData("[Scoring] position", "low chamber");
+            intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
+            telemetry.addData("[Scoring] position", "low basket");
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
-            // TODO : Score bucket high
-            telemetry.addData("[Scoring] position", "high chamber");
+            intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+            telemetry.addData("[Scoring] position", "high basket");
         } else if (gamepad2.circle && !previousGamepad2.circle) {
-            scoringSubsystem.moveToIntakePosition();
+            intakeAndScoringSubsystem.moveToIntakePosition();
             telemetry.addData("[Scoring] position", "intake");
         } else if (gamepad2.square && !previousGamepad2.square) {
-            scoringSubsystem.moveToNeutralPosition();
+            intakeAndScoringSubsystem.moveToNeutralPosition();
             telemetry.addData("[Scoring] position", "neutral");
         }
 
         // Manual override controls for the arm and linear slide
         if (gamepad2.left_stick_y != 0.0) {
-            // TODO : Extend/retract arm
-            // get the arm angle
-            // get the slide length, and add the negative value of the left_stick_y to it (times a scalar value)
-            // convert to the cartesian coordinates on the plane
-            // set the new {x,y} coordinate values
-            telemetry.addData("[Scoring] slide", -gamepad2.left_stick_y);
+            double adjustY = -gamepad2.left_stick_y * SCALAR_Y;
+            double y = intakeAndScoringSubsystem.getCurrentY() + adjustY;
+            double x = intakeAndScoringSubsystem.getCurrentX();
+            intakeAndScoringSubsystem.moveToPosition(x, y);
+            telemetry.addData("[Scoring] adjust Y", adjustY);
         }
         if (gamepad2.right_stick_y != 0.0) {
-            // TODO : Raise/lower arm
-            // get the arm angle
-            // get the arm angle, and add the negative value of the right_stick_y to it (times a scalar value)
-            // convert to the cartesian coordinates on the plane
-            // set the new {x,y} coordinate values
-            telemetry.addData("[Scoring] arm", -gamepad2.left_stick_y);
+            double adjustX = -gamepad2.right_stick_y * SCALAR_X;
+            double y = intakeAndScoringSubsystem.getCurrentY();
+            double x = intakeAndScoringSubsystem.getCurrentX() + adjustX;
+            intakeAndScoringSubsystem.moveToPosition(x, y);
+            telemetry.addData("[Scoring] adjust X", adjustX);
         }
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
         // or depositing them
         if (gamepad2.left_bumper && !previousGamepad2.left_bumper) {
-            scoringSubsystem.openClaw();
+            intakeAndScoringSubsystem.openClaw();
             telemetry.addData("[Scoring] claw", "open");
         } else if (gamepad2.right_bumper && !previousGamepad2.right_bumper) {
-            scoringSubsystem.closeClaw();
+            intakeAndScoringSubsystem.closeClaw();
             telemetry.addData("[Scoring] claw", "close");
         }
 
         // Update the scoring subsystem. This allows it to adjust the position of the managed
         // components as they move to a target position.
-        scoringSubsystem.execute();
+        intakeAndScoringSubsystem.execute();
 
         previousGamepad1.copy(gamepad1);
         previousGamepad2.copy(gamepad2);
