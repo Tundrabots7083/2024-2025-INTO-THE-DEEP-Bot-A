@@ -83,11 +83,7 @@ public class LinearSlide extends SubsystemBase {
     /**
      * Configures the motor used for the linear slide
      *
-<<<<<<< HEAD
-     * @param motor motor
-=======
      * @param motor the motor to be configured
->>>>>>> 65d7d00 (limit arm and slide movement)
      */
     private void configMotor(Motor motor) {
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
