@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 public class Claw extends SubsystemBase {
     public static String CLAW_SERVO = "clawServo";
     // Make default open/close degrees settable by FTC dashboard
-    public static double DEFAULT_OPEN_DEGREES = 180.0;
+    public static double DEFAULT_OPEN_DEGREES = 45.0;
     public static double DEFAULT_CLOSE_DEGREES = 0.0;
     // Make max claw degrees settable by FTC dashboard
     public static double MAX_CLAW_DEGREES = 180.0;
@@ -38,15 +38,6 @@ public class Claw extends SubsystemBase {
         servo.setMaxDegrees(MAX_CLAW_DEGREES);
         servo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
         servo.setDegrees(DEFAULT_CLOSE_DEGREES);
-    }
-
-    /**
-     * Sets the maximum number of degrees the servo can move to.
-     *
-     * @param degrees the maximum number of degrees the servo can move to.
-     */
-    public void setMaxDegrees(double degrees) {
-        servo.setMaxDegrees(degrees);
     }
 
     /**

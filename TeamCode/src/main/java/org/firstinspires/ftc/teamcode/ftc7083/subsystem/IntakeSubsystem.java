@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 
 /**
  * The IntakeSubsystem is responsible for acquiring up samples and specimens so they may be
- * scored by the ScoringSubsystem. The IntakeSubsystem manages the following subsystems on the
+ * scored by the IntakeAndScoringSubsystem. The IntakeSubsystem manages the following subsystems on the
  * robot:
  * <ul>
  *     <li>
@@ -65,7 +65,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Moves the arm after a sample or specimen has been picked up. This will raise and retract the
-     * arm so the robot may be maneuvered into a scoring position by the ScoringSubsystem.
+     * arm so the robot may be maneuvered into a scoring position by the IntakeAndScoringSubsystem.
      */
     public void moveToNeutralPosition() {
         targetArmAngle = getArmAngle(POSITION_NEUTRAL_HORIZONTAL_DISTANCE, POSITION_NEUTRAL_HEIGHT);
@@ -170,7 +170,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void execute() {
         // If we are moving the intake subsystem to a target position, update the controlled
-        // subsystems. Otherwise, the execute method is a no-op, which allows the ScoringSubsystem
+        // subsystems. Otherwise, the execute method is a no-op, which allows the IntakeAndScoringSubsystem
         // to manage the shared hardware
         if (updateIntakeSubsystem) {
             // Calculate and set the arm angle and linear slide length, if either has changed
@@ -193,7 +193,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         // Allow each of the scoring subsystem elements to perform any updates they need to.
-        // Ideally, these would be called only once, but since the ScoringSubsystem and IntakeSubsystem
+        // Ideally, these would be called only once, but since the IntakeAndScoringSubsystem and IntakeSubsystem
         // share the same underlying subsystem components, the execute() methods for each may be
         // called twice. This won't have any negative effect on the robot so it is safe to make
         // the calls.
