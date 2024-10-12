@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
@@ -43,10 +42,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT - ARM_HEIGHT + 1;
     public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
     public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT - ARM_HEIGHT + 1;
+    public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
+    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT - ARM_HEIGHT + 1;
+    public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
+    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT - ARM_HEIGHT + 1;
 
     // Other scoring constants
     public static double SCORE_SPECIMEN_HEIGHT_DECREMENT = 3.0;
-    
+
     private final Telemetry telemetry;
     private final Robot robot;
     private double targetX;
@@ -89,6 +92,28 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         robot.linearSlide.execute();
         robot.wrist.execute();
         robot.claw.execute();
+    }
+
+    /**
+     * Gets the current length along the x-axis.
+     *
+     * @return the current length along the x-axis
+     */
+    public double getCurrentX() {
+        double angle = robot.arm.getShoulderAngle();
+        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
+        return getX(angle, hypotenuse);
+    }
+
+    /**
+     * Gets the current length along the y-axis.
+     *
+     * @return the current length along the y-axis
+     */
+    public double getCurrentY() {
+        double angle = robot.arm.getShoulderAngle();
+        double x = getCurrentX();
+        return getY(angle, x);
     }
 
     /**
@@ -174,6 +199,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Moves the arm, slide, wrist, and claw to prepare the robot
+     * to score on the low chamber bar.
+     */
+    public void moveToChamberLowScoringPosition() {
+        moveToPosition(LOW_CHAMBER_SCORING_X, LOW_CHAMBER_SCORING_Y);
+    }
+
+    /**
      * Moves the arm, slide, wrist, and claw to score a specimen
      * on either the high or low chamber bar.
      */
@@ -188,5 +221,13 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToBasketHighScoringPosition() {
         moveToPosition(HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y);
+    }
+
+    /**
+     * Moves the arm, slide, wrist, and claw to prepare the robot
+     * to score on the low basket.
+     */
+    public void moveToBasketLowScoringPosition() {
+        moveToPosition(LOW_BASKET_SCORING_X, LOW_BASKET_SCORING_Y);
     }
 }
