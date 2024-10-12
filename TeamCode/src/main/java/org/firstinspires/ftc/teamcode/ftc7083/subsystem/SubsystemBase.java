@@ -38,4 +38,65 @@ public abstract class SubsystemBase implements Subsystem {
         }
         return max;
     }
+
+    /**
+     * Calculates the angle in degrees from the x-axis for a point,
+     * (x, y) anywhere on a two dimensional plane.
+     *
+     * @param x The length in inches of the arm and the wrist
+     *          with zero extension.
+     * @param y The height in inches of the arm's center of rotation
+     *          from the floor.
+     * @return double The angle in degrees from the x-axis associated
+     *                with the input (x, y) point on a two dimensional plane.
+     */
+    protected final double getAngle(double x, double y) {
+        double targetAngleRadians = Math.atan2(y, x);
+        return Math.toDegrees(targetAngleRadians);
+    }
+
+    /**
+     * Calculates the hypotenuse of a right triangle given the length
+     * of the base (x) and the length of the height (y) of the triangle
+     * in inches.
+     *
+     * @param x  Length of base of triangle in inches.
+     * @param y  Lenth of height of triangle in inches.
+     * @return double Length of hypotenuse in inches.
+     */
+    protected final double getHypotenuse(double x, double y) {
+        double hypotenuse = Math.hypot(x, y);
+        return hypotenuse;
+    }
+
+    /**
+     * Calculates the height, in inches of a right triangle given the
+     * angle the hypotenuse makes relative to the base and the length
+     * of the base in inches.
+     *
+     * @param angle    The angle of the hypotenuse of a right triangle relative
+     *                 to its base, in degrees.
+     * @param base     The length of the hypotenuse of a right triangle in inches.
+     * @return double  The height, in inches, of the right triangle.
+     */
+    protected final double getY(double angle, double base) {
+        double y = base * Math.tan(Math.toRadians(angle));
+        return y;
+    }
+
+    /**
+     * Calculates the length of the base of a right triangle, in inches, given the
+     * angle the hypotenuse makes relative to the base and the length
+     * of the hypotenuse in inches.
+     *
+     * @param angle       The angle of the hypotenuse of a right triangle relative
+     *                    to its base, in degrees.
+     * @param hypotenuse  The length of the hypotenuse of a right triangle in inches.
+     * @return double     The length of the base, in inches, of the right triangle.
+     */
+    protected final double getX(double angle, double hypotenuse) {
+        double x = hypotenuse * Math.cos(Math.toRadians(angle));
+        return x;
+    }
+
 }
