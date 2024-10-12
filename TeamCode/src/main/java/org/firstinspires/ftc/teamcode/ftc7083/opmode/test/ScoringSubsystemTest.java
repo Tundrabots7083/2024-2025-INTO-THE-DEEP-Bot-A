@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
-import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.ScoringSubsystemController;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.IntakeAndScoringSubsystemController;
 
 @TeleOp(name = "Intake Subsystem Test", group = "tests")
 public class ScoringSubsystemTest extends OpMode {
-    private ScoringSubsystemController intakeSubsystemController;
+    private IntakeAndScoringSubsystemController intakeSubsystemController;
     private final Gamepad currentGamepad1 = new Gamepad();
     private final Gamepad currentGamepad2 = new Gamepad();
 
@@ -20,7 +20,7 @@ public class ScoringSubsystemTest extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Robot robot = Robot.init(hardwareMap, telemetry);
-        intakeSubsystemController = new ScoringSubsystemController(robot.scoringSubsystem, telemetry);
+        intakeSubsystemController = new IntakeAndScoringSubsystemController(robot.intakeAndScoringSubsystem, telemetry);
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
