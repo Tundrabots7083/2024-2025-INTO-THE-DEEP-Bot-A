@@ -85,7 +85,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         // never exceed, the target X distance of the final position for the arm and slide. If
         // the intermediate slide length hasn't changed, then this will be a no-op in the
         // `LinearSlide` subsystem, so there is no need to keep track of it here.
-        double intermediateY = getY(robot.arm.getShoulderAngle(), targetX);
+        double intermediateY = getY(robot.arm.getCurrentAngle(), targetX);
         double intermediateSlideLength = getHypotenuse(targetX, intermediateY) - ARM_LENGTH;
         robot.linearSlide.setLength(intermediateSlideLength);
 
@@ -102,7 +102,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * @return the current length along the x-axis
      */
     public double getCurrentX() {
-        double angle = robot.arm.getShoulderAngle();
+        double angle = robot.arm.getCurrentAngle();
         double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
         return getX(angle, hypotenuse);
     }
@@ -113,7 +113,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * @return the current length along the y-axis
      */
     public double getCurrentY() {
-        double angle = robot.arm.getShoulderAngle();
+        double angle = robot.arm.getCurrentAngle();
         double x = getCurrentX();
         return getY(angle, x);
     }
@@ -139,7 +139,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
             // Calculate and set the target arm angle, based on the target X and Y coordinates.
             double targetAngle = getAngle(targetX, targetY);
-            robot.arm.setShoulderAngle(targetAngle);
+            robot.arm.setTargetAngle(targetAngle);
         }
     }
 
@@ -213,7 +213,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * on either the high or low chamber bar.
      */
     public void scoreSpecimen() {
-        double y = getY(robot.arm.getShoulderAngle(), targetX) - SCORE_SPECIMEN_HEIGHT_DECREMENT;
+        double y = getY(robot.arm.getCurrentAngle(), targetX) - SCORE_SPECIMEN_HEIGHT_DECREMENT;
         moveToPosition(targetX, y);
     }
 

@@ -77,7 +77,7 @@ public class LinearSlide extends SubsystemBase {
      * @return slide length in inches
      */
     public double getCurrentLength() {
-        return -slideMotor.getInches();
+        return -slideMotor.getCurrentInches();
     }
 
     /**

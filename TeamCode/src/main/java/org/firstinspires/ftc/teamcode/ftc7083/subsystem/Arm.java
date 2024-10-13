@@ -20,23 +20,14 @@ public class Arm extends SubsystemBase {
     public static double START_ANGLE = -50.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
     public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
-    public double GEARING = 120.0 / 24.0;
-    public static double KD1 = 0.006;
-    public static double KD2 = 0.0075;
-    public static double KD3 = 0.003;
-    public static double KD4 = 0.008;
-    public static double kI;
-    public static double kD;
     public static double TOLERABLE_ERROR = 0.25; // In degrees
-
     public static double MIN_ANGLE = -50.0;
     public static double MAX_ANGLE = 90.0;
-
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
     private final double feedforward;
-    //private final PIDController pidController;
     private final GainSchedulingPIDController gainSchedulingPIDController;
+    public double GEARING = 120.0 / 24.0;
     private double targetAngle = START_ANGLE;
 
     /**
@@ -83,20 +74,30 @@ public class Arm extends SubsystemBase {
                 new LookUpTableArgs(230, 0.006)};
 
         gainSchedulingPIDController = new GainSchedulingPIDController(kpLUTArgs, kiLUTArgs, kdLUTArgs);
-        //pidController = new PIDController(kP, kI, kD);
     }
 
     /**
-     * Gets the shoulder motor position to which we are moving
+     * Gets the arm current in degrees to which the arm has moved.
+     *
+     * @return the current position in degrees to which the arm has moved
      */
-    public double getShoulderAngle() {
-        return shoulderMotor.getDegrees();
+    public double getCurrentAngle() {
+        return shoulderMotor.getCurrentDegrees();
+    }
+
+    /**
+     * Gets the arm position in degrees to which the arm is moving.
+     *
+     * @return the target position in degrees to which the arm is moving
+     */
+    public double getTargetAngle() {
+        return shoulderMotor.getTargetDegrees();
     }
 
     /**
      * Sets the shoulder motor to a position in degrees.
      */
-    public void setShoulderAngle(double angle) {
+    public void setTargetAngle(double angle) {
         double targetAngle = Range.clip(angle, MIN_ANGLE, MAX_ANGLE);
         if (this.targetAngle != targetAngle) {
             this.targetAngle = targetAngle;
@@ -116,7 +117,7 @@ public class Arm extends SubsystemBase {
         motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
         motor.setMotorType(motorConfigurationType);
         motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER); // TODO: was RUN_WITH_ENCODER, but that seems wrong
+        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -124,8 +125,7 @@ public class Arm extends SubsystemBase {
      * Sends power to the shoulder motor.
      */
     public void execute() {
-        double degrees = shoulderMotor.getDegrees() + START_ANGLE;
-       // double power = pidController.calculate(angle, degrees) + this.feedforward;
+        double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double power = gainSchedulingPIDController.calculate(targetAngle, degrees) + this.feedforward;
         shoulderMotor.setPower(power);
         telemetry.addData("[Arm] Target", targetAngle);
@@ -138,7 +138,7 @@ public class Arm extends SubsystemBase {
      * @return <code>true</code> if the arm is at the target angle; <code>false</code> otherwise.
      */
     public boolean isAtTarget() {
-        double degrees = shoulderMotor.getDegrees() + START_ANGLE;
+        double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double error = Math.abs(targetAngle - degrees);
         return error <= TOLERABLE_ERROR;
     }

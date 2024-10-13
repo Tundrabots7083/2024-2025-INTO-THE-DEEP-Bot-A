@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -216,13 +215,32 @@ public class Motor implements DcMotorEx {
      *
      * @return the current degree offset of the motor
      */
-    public double getDegrees() {
+    public double getCurrentDegrees() {
         MotorConfigurationType motorType = motorImpl.getMotorType();
         double ticksPerRev = motorType.getTicksPerRev();
         double gearing = motorType.getGearing();
 
         double currentTicks = getCurrentPosition();
         double rotations = currentTicks / ticksPerRev;
+        double degreesPerRotation = 360.0 / gearing;
+        return rotations * degreesPerRotation;
+    }
+
+    /**
+     * Gets the target position of the motor in degrees.
+     * <p>
+     * Before using, make sure you call <code>setTicksPerDegree</code> to set the number of ticks
+     * required to move whatever is attached to the motor one degree.
+     *
+     * @return the target degree offset of the motor
+     */
+    public double getTargetDegrees() {
+        MotorConfigurationType motorType = motorImpl.getMotorType();
+        double ticksPerRev = motorType.getTicksPerRev();
+        double gearing = motorType.getGearing();
+
+        double targetTicks = motorImpl.getTargetPosition();
+        double rotations = targetTicks / ticksPerRev;
         double degreesPerRotation = 360.0 / gearing;
         return rotations * degreesPerRotation;
     }
@@ -235,7 +253,7 @@ public class Motor implements DcMotorEx {
      *
      * @param degrees the degrees to which to set the motor
      */
-    public void setDegrees(double degrees) {
+    public void setTargetDegrees(double degrees) {
         MotorConfigurationType motorType = motorImpl.getMotorType();
         double ticksPerRev = motorType.getTicksPerRev();
         double gearing = motorType.getGearing();
@@ -255,8 +273,24 @@ public class Motor implements DcMotorEx {
      *
      * @return the current inches the motor has moved from the zero position
      */
-    public double getInches() {
+    public double getCurrentInches() {
         double ticks = getCurrentPosition();
+        double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
+        double rotations = ticks / ticksPerRev;
+        return rotations * inchesPerRev;
+    }
+
+    /**
+     * Gets the target inches the motor is to move from the zero position.
+     *
+     * <p>
+     * Before using, make sure you call <code>setTicksPerInches</code> to set the number of ticks
+     * required to move whatever is attached to the motor one inch.
+     *
+     * @return the target inches the motor is to move from the zero position
+     */
+    public double getTargetInches() {
+        double ticks = getTargetPosition();
         double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
         double rotations = ticks / ticksPerRev;
         return rotations * inchesPerRev;
@@ -270,7 +304,7 @@ public class Motor implements DcMotorEx {
      *
      * @param inches the inches to which to set the motor
      */
-    public void setInches(double inches) {
+    public void setTargetInches(double inches) {
         double rotations = inches / inchesPerRev;
         double ticksPerRev = motorImpl.getMotorType().getTicksPerRev();
         double ticks = rotations * ticksPerRev;

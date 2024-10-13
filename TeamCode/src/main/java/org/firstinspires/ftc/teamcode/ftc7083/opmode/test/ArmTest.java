@@ -26,7 +26,7 @@ public class ArmTest extends OpMode {
 
     @Override
     public void loop() {
-        arm.setShoulderAngle(ARM_ANGLE);
+        arm.setTargetAngle(ARM_ANGLE);
         arm.execute();
     }
 

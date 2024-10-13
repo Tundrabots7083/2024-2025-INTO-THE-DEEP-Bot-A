@@ -52,6 +52,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
 public class IntakeAndScoringSubsystemController implements SubsystemController {
     public static double SCALAR_X = 0.25;
     public static double SCALAR_Y = 0.25;
+    public static double MIN_JOYSTICK_VALUE = 0.05;
 
     private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     private final Telemetry telemetry;
@@ -83,48 +84,48 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
             intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
-            telemetry.addData("[Scoring] position", "low chamber");
+            telemetry.addData("[IAS C] position", "low chamber");
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
             intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
-            telemetry.addData("[Scoring] position", "high chamber");
+            telemetry.addData("[IAS C] position", "high chamber");
         } else if (gamepad2.cross && !previousGamepad2.cross) {
             intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
-            telemetry.addData("[Scoring] position", "low basket");
+            telemetry.addData("[IAS C] position", "low basket");
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
             intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
-            telemetry.addData("[Scoring] position", "high basket");
+            telemetry.addData("[IAS C] position", "high basket");
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             intakeAndScoringSubsystem.moveToIntakePosition();
-            telemetry.addData("[Scoring] position", "intake");
+            telemetry.addData("[IAS C] position", "intake");
         } else if (gamepad2.square && !previousGamepad2.square) {
             intakeAndScoringSubsystem.moveToNeutralPosition();
-            telemetry.addData("[Scoring] position", "neutral");
+            telemetry.addData("[IAS C] position", "neutral");
         }
 
         // Manual override controls for the arm and linear slide
-        if (gamepad2.left_stick_y != 0.0) {
+        if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustY = -gamepad2.left_stick_y * SCALAR_Y;
             double y = intakeAndScoringSubsystem.getCurrentY() + adjustY;
             double x = intakeAndScoringSubsystem.getCurrentX();
             intakeAndScoringSubsystem.moveToPosition(x, y);
-            telemetry.addData("[Scoring] adjust Y", adjustY);
+            telemetry.addData("[IAS C] adjust Y", adjustY);
         }
-        if (gamepad2.right_stick_y != 0.0) {
+        if (Math.abs(gamepad2.right_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustX = -gamepad2.right_stick_y * SCALAR_X;
             double y = intakeAndScoringSubsystem.getCurrentY();
             double x = intakeAndScoringSubsystem.getCurrentX() + adjustX;
             intakeAndScoringSubsystem.moveToPosition(x, y);
-            telemetry.addData("[Scoring] adjust X", adjustX);
+            telemetry.addData("[IAS C] adjust X", adjustX);
         }
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
         // or depositing them
         if (gamepad2.left_bumper && !previousGamepad2.left_bumper) {
             intakeAndScoringSubsystem.openClaw();
-            telemetry.addData("[Scoring] claw", "open");
+            telemetry.addData("[IAS C] claw", "open");
         } else if (gamepad2.right_bumper && !previousGamepad2.right_bumper) {
             intakeAndScoringSubsystem.closeClaw();
-            telemetry.addData("[Scoring] claw", "close");
+            telemetry.addData("[IAS C] claw", "close");
         }
 
         // Update the scoring subsystem. This allows it to adjust the position of the managed
