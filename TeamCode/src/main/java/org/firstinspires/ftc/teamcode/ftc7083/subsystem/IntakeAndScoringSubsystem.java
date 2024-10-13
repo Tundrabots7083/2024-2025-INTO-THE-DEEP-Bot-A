@@ -15,9 +15,9 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Robot measurements
     // Length of the arm and the wrist with zero extension in inches.
-    public static double ARM_LENGTH = 23.0;
+    public static double ARM_LENGTH = 22.0;
     // Height from the field to the center of rotation of the arm in inches.
-    public static double ARM_HEIGHT = 15.0;
+    public static double ARM_HEIGHT = 16.5;
     // Distance from the front of the robot to the back of the robot in inches.
     public static double ROBOT_LENGTH = 18.0;
     // Distance the arm can reach from the center of rotation of the arm in inches.
@@ -59,8 +59,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     private final Telemetry telemetry;
     private final Robot robot;
-    private double targetX;
-    private double targetY;
+    private double targetX = INTAKE_X;
+    private double targetY = INTAKE_Y;
 
     /**
      * Constructor
@@ -86,36 +86,15 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     @Override
     public void execute() {
-        robot.linearSlide.setLength(getIntermediateSlideLength());
+        // Calculate the linear slide length, based on the target X and Y coordinates
+        double slideLength = Math.hypot(targetX, targetY) - ARM_LENGTH;
+        robot.linearSlide.setLength(slideLength);
 
         // Update each components of the intake/scoring subsystem.
         robot.arm.execute();
         robot.linearSlide.execute();
         robot.wrist.execute();
         robot.claw.execute();
-    }
-
-    /**
-     * Calculate and set the intermediate slide length. This ensures the arm can reach, but
-     * never exceed, the target X distance of the final position for the arm and slide. If
-     * the intermediate slide length hasn't changed, then this will be a no-op in the
-     * `LinearSlide` subsystem, so there is no need to keep track of it here.
-     *
-     * @return the intermediate slide length given the current arm angle.
-     */
-    private double getIntermediateSlideLength() {
-        double armAngle = robot.arm.getCurrentAngle();
-        double slideLength = robot.linearSlide.getCurrentLength();
-        double hypotenuse = slideLength + ARM_LENGTH;
-        double intermediateY = getY(armAngle, hypotenuse);
-        double intermediateSlideLength = Math.hypot(targetX, intermediateY) - ARM_LENGTH;
-
-        telemetry.addData("[IAS] arm angle", armAngle);
-        telemetry.addData("[IAS] hypot", hypotenuse);
-        telemetry.addData("[IAS] int Y", intermediateY);
-        telemetry.addData("[IAS] int slide len", intermediateSlideLength);
-
-        return intermediateSlideLength;
     }
 
     /**
@@ -160,8 +139,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
             targetY = Math.max(y - ARM_HEIGHT, -ARM_HEIGHT);
 
             // Calculate and set the target arm angle, based on the target X and Y coordinates.
-            // This is done in moveToPosition as it is only calculated and set once when either the
-            // X and/or Y coordinates change.
             robot.arm.setTargetAngle(getAngle(targetX, targetY));
 
             telemetry.addData("[IAS] X", x);

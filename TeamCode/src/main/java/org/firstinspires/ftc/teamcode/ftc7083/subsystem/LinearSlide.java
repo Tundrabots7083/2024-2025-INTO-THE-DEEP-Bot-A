@@ -27,7 +27,7 @@ public class LinearSlide extends SubsystemBase {
     public static double TOLERABLE_ERROR = 0.05; // inches
 
     public static double MIN_EXTENSION_LENGTH = 0.0;
-    public static double MAX_EXTENSION_LENGTH = 19.0;
+    public static double MAX_EXTENSION_LENGTH = 18;
 
     private final Motor slideMotor;
     private final Telemetry telemetry;
@@ -64,6 +64,9 @@ public class LinearSlide extends SubsystemBase {
      */
     public void setLength(double length) {
         double targetLength = Range.clip(length, MIN_EXTENSION_LENGTH, MAX_EXTENSION_LENGTH);
+        if (length != targetLength) {
+            telemetry.addData("[Slide] clipped", length);
+        }
         if (this.targetLength != targetLength) {
             this.targetLength = targetLength;
             pidController.reset();

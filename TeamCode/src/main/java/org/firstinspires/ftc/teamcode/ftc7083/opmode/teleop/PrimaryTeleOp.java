@@ -38,6 +38,11 @@ public class PrimaryTeleOp extends OpMode {
     }
 
     @Override
+    public void start() {
+        robot.intakeAndScoringSubsystem.moveToNeutralPosition();
+    }
+
+    @Override
     public void loop() {
         // Clear the bulk cache for each Lynx module hub. This must be performed once per loop
         // as the bulk read caches are being handled manually.
