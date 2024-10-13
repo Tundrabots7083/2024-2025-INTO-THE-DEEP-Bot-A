@@ -102,7 +102,8 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             intakeAndScoringSubsystem.moveToStartPosition();
         }
 
-        // Manual override controls for the arm and linear slide
+        // Manual override controls for the arm and linear slide. The left joystick will raise and
+        // lower the arm; the right joystick will extend and retract the linear slide.
         if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustY = -gamepad2.left_stick_y * SCALAR_Y;
             double y = intakeAndScoringSubsystem.getCurrentY() + adjustY;
