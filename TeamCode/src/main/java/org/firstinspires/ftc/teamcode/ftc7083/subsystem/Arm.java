@@ -54,20 +54,20 @@ public class Arm extends SubsystemBase {
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-52, 0.01),
+                new LookUpTableArgs(-53, 0.01),
                 new LookUpTableArgs(0, 0.04),
                 new LookUpTableArgs(90, 0.019),
                 new LookUpTableArgs(120, 0.025),
                 new LookUpTableArgs(180, 0.032),
                 new LookUpTableArgs(230, 0.01)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-52, 0.1),
+                new LookUpTableArgs(-53, 0.1),
                 new LookUpTableArgs(0, 0.1),
                 new LookUpTableArgs(90, 0.07),
                 new LookUpTableArgs(150, 0.09),
                 new LookUpTableArgs(230, 0.1)};
         LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-52, 0.006),
+                new LookUpTableArgs(-53, 0.006),
                 new LookUpTableArgs(0, 0.0075),
                 new LookUpTableArgs(90, 0.003),
                 new LookUpTableArgs(150, 0.008),
@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase {
      * @return the current position in degrees to which the arm has moved
      */
     public double getCurrentAngle() {
-        return shoulderMotor.getCurrentDegrees();
+        return shoulderMotor.getCurrentDegrees()  + START_ANGLE;
     }
 
     /**
@@ -127,6 +127,7 @@ public class Arm extends SubsystemBase {
     public void execute() {
         double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double power = gainSchedulingPIDController.calculate(targetAngle, degrees) + this.feedforward;
+
         shoulderMotor.setPower(power);
         telemetry.addData("[Arm] Target", targetAngle);
         telemetry.addData("[Arm] Current", degrees);

@@ -15,7 +15,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Robot measurements
     // Length of the arm and the wrist with zero extension in inches.
-    public static double ARM_LENGTH = 21.5;
+    public static double ARM_LENGTH = 23.0;
     // Height from the field to the center of rotation of the arm in inches.
     public static double ARM_HEIGHT = 15.0;
     // Distance from the front of the robot to the back of the robot in inches.
@@ -24,9 +24,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double MAX_ARM_LENGTH = 40.5;
 
     // Intake constants
-    public static double POSITION_NEUTRAL_HORIZONTAL_DISTANCE = ARM_LENGTH;
-    public static double POSITION_INTAKE_HORIZONTAL_DISTANCE = 30.0;
-    public static double POSITION_INTAKE_HEIGHT = 1.5;
+    public static double START_X = 14;
+    public static double START_Y = 0.0;
+    public static double NEUTRAL_X = ARM_LENGTH;
+    public static double NEUTRAL_Y = ARM_HEIGHT;
+    public static double INTAKE_X = 23.0;
+    public static double INTAKE_Y = 1.0;
+
+    // Start position
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
@@ -41,13 +46,13 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     // the arm that the scoring subsystem needs to reach to score in
     // different places.
     public static double HIGH_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT - ARM_HEIGHT + 1;
+    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 1;
     public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
-    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT - ARM_HEIGHT + 1;
+    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 1;
     public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT - ARM_HEIGHT + 1;
+    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 1;
     public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
-    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT - ARM_HEIGHT + 1;
+    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 1;
 
     // Other scoring constants
     public static double SCORE_SPECIMEN_HEIGHT_DECREMENT = 3.0;
@@ -81,19 +86,36 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     @Override
     public void execute() {
-        // Calculate and set the intermediate slide length. This ensures the arm can reach, but
-        // never exceed, the target X distance of the final position for the arm and slide. If
-        // the intermediate slide length hasn't changed, then this will be a no-op in the
-        // `LinearSlide` subsystem, so there is no need to keep track of it here.
-        double intermediateY = getY(robot.arm.getCurrentAngle(), targetX);
-        double intermediateSlideLength = getHypotenuse(targetX, intermediateY) - ARM_LENGTH;
-        robot.linearSlide.setLength(intermediateSlideLength);
+        robot.linearSlide.setLength(getIntermediateSlideLength());
 
         // Update each components of the intake/scoring subsystem.
         robot.arm.execute();
         robot.linearSlide.execute();
         robot.wrist.execute();
         robot.claw.execute();
+    }
+
+    /**
+     * Calculate and set the intermediate slide length. This ensures the arm can reach, but
+     * never exceed, the target X distance of the final position for the arm and slide. If
+     * the intermediate slide length hasn't changed, then this will be a no-op in the
+     * `LinearSlide` subsystem, so there is no need to keep track of it here.
+     *
+     * @return the intermediate slide length given the current arm angle.
+     */
+    private double getIntermediateSlideLength() {
+        double armAngle = robot.arm.getCurrentAngle();
+        double slideLength = robot.linearSlide.getCurrentLength();
+        double hypotenuse = slideLength + ARM_LENGTH;
+        double intermediateY = getY(armAngle, hypotenuse);
+        double intermediateSlideLength = Math.hypot(targetX, intermediateY) - ARM_LENGTH;
+
+        telemetry.addData("[IAS] arm angle", armAngle);
+        telemetry.addData("[IAS] hypot", hypotenuse);
+        telemetry.addData("[IAS] int Y", intermediateY);
+        telemetry.addData("[IAS] int slide len", intermediateSlideLength);
+
+        return intermediateSlideLength;
     }
 
     /**
@@ -108,14 +130,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the current length along the y-axis.
+     * Gets the current height along the y-axis.
      *
-     * @return the current length along the y-axis
+     * @return the current height along the y-axis
      */
     public double getCurrentY() {
         double angle = robot.arm.getCurrentAngle();
-        double x = getCurrentX();
-        return getY(angle, x);
+        double currentX = getCurrentX();
+        return getY(angle, currentX);
     }
 
     /**
@@ -135,12 +157,27 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         // target X or new target Y values have changed
         if (targetX != x || targetY != y) {
             targetX = x;
-            targetY = y;
+            targetY = Math.max(y - ARM_HEIGHT, -ARM_HEIGHT);
 
             // Calculate and set the target arm angle, based on the target X and Y coordinates.
-            double targetAngle = getAngle(targetX, targetY);
-            robot.arm.setTargetAngle(targetAngle);
+            // This is done in moveToPosition as it is only calculated and set once when either the
+            // X and/or Y coordinates change.
+            robot.arm.setTargetAngle(getAngle(targetX, targetY));
+
+            telemetry.addData("[IAS] X", x);
+            telemetry.addData("[IAS] Y", y);
+            telemetry.addData("[IAS] target X", targetX);
+            telemetry.addData("[IAS] target Y", targetY);
         }
+    }
+
+    /**
+     * Moves the subsystem to the starting position, with the claw closed.
+     */
+    public void moveToStartPosition() {
+        moveToPosition(START_X, START_Y);
+        robot.claw.close();
+        telemetry.addData("[IAS] position", "start");
     }
 
     /**
@@ -148,7 +185,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * This will lower and extend the arm so the claw may be used to pickup a sample or specimen.
      */
     public void moveToIntakePosition() {
-        moveToPosition(POSITION_INTAKE_HORIZONTAL_DISTANCE, POSITION_INTAKE_HEIGHT);
+        moveToPosition(INTAKE_X, INTAKE_Y);
         robot.claw.open();
         telemetry.addData("[IAS] position", "intake");
     }
@@ -158,7 +195,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * arm so the robot may be maneuvered into a scoring position by the IntakeAndScoringSubsystem.
      */
     public void moveToNeutralPosition() {
-        moveToPosition(POSITION_NEUTRAL_HORIZONTAL_DISTANCE, ARM_HEIGHT);
+        moveToPosition(NEUTRAL_X, NEUTRAL_Y);
         telemetry.addData("[IAS] position", "neutral");
     }
 
@@ -189,7 +226,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void reset() {
         closeClaw();
         moveToNeutralPosition();
-        telemetry.addLine("[IAS] reset intake subsystem");
+        telemetry.addLine("[IAS] reset intake");
     }
 
     /**
@@ -198,6 +235,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToChamberHighScoringPosition() {
         moveToPosition(HIGH_CHAMBER_SCORING_X, HIGH_CHAMBER_SCORING_Y);
+        telemetry.addData("[IAS] position", "high chamber");
     }
 
     /**
@@ -206,6 +244,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToChamberLowScoringPosition() {
         moveToPosition(LOW_CHAMBER_SCORING_X, LOW_CHAMBER_SCORING_Y);
+        telemetry.addData("[IAS] position", "low chamber");
     }
 
     /**
@@ -215,6 +254,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void scoreSpecimen() {
         double y = getY(robot.arm.getCurrentAngle(), targetX) - SCORE_SPECIMEN_HEIGHT_DECREMENT;
         moveToPosition(targetX, y);
+        telemetry.addData("[IAS] position", "score specimen");
     }
 
     /**
@@ -223,6 +263,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToBasketHighScoringPosition() {
         moveToPosition(HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y);
+        telemetry.addData("[IAS] position", "high basket");
     }
 
     /**
@@ -231,5 +272,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToBasketLowScoringPosition() {
         moveToPosition(LOW_BASKET_SCORING_X, LOW_BASKET_SCORING_Y);
+        telemetry.addData("[IAS] position", "low basket");
     }
 }

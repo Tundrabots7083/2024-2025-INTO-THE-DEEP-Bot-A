@@ -27,12 +27,16 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  *         raise the arm and extend the linear slide.
  *     </li>
  *     <li>
- *         <em>gamepad2.circle</em>: move the sco9ring subsystem to the intake position. This will
+ *         <em>gamepad2.circle</em>: move the scoring subsystem to the intake position. This will
  *         lower the arm and extend the linear slide.
  *     </li>
  *     <li>
  *         <em>gamepad2.square</em>: move the scoring subsystem to a neutral position, where the arm is
  *         extended horizontal to the ground and the linear slide is fully retracted.
+ *     </li>
+ *     <li>
+ *         <em>gamepad2.option</em>: move the scoring subsystem to a starting position, where the arm is
+ *         all the way down and the linear slide is fully retracted.
  *     </li>
  *     <li>
  *         <em>gamepad2.left_stick_y</em>: manually extend and retract the linear slide.
@@ -84,22 +88,18 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
             intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
-            telemetry.addData("[IAS C] position", "low chamber");
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
             intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
-            telemetry.addData("[IAS C] position", "high chamber");
         } else if (gamepad2.cross && !previousGamepad2.cross) {
             intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
-            telemetry.addData("[IAS C] position", "low basket");
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
             intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
-            telemetry.addData("[IAS C] position", "high basket");
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             intakeAndScoringSubsystem.moveToIntakePosition();
-            telemetry.addData("[IAS C] position", "intake");
         } else if (gamepad2.square && !previousGamepad2.square) {
             intakeAndScoringSubsystem.moveToNeutralPosition();
-            telemetry.addData("[IAS C] position", "neutral");
+        } else if (gamepad2.options) {
+            intakeAndScoringSubsystem.moveToStartPosition();
         }
 
         // Manual override controls for the arm and linear slide
@@ -122,10 +122,8 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         // or depositing them
         if (gamepad2.left_bumper && !previousGamepad2.left_bumper) {
             intakeAndScoringSubsystem.openClaw();
-            telemetry.addData("[IAS C] claw", "open");
         } else if (gamepad2.right_bumper && !previousGamepad2.right_bumper) {
             intakeAndScoringSubsystem.closeClaw();
-            telemetry.addData("[IAS C] claw", "close");
         }
 
         // Update the scoring subsystem. This allows it to adjust the position of the managed
