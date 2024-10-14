@@ -31,8 +31,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double INTAKE_X = 23.0;
     public static double INTAKE_Y = 1.0;
 
-    // Start position
-
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
     public static double LOW_CHAMBER_HEIGHT = 13.0;
@@ -71,6 +69,21 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Called by FTC opmode loop to take action if needed.
+     */
+    @Override
+    public void execute() {
+        // Update each components of the intake/scoring subsystem.
+        robot.arm.execute();
+        robot.linearSlide.execute();
+        robot.wrist.execute();
+        robot.claw.execute();
+
+        telemetry.addData("[IAS] target X", targetX);
+        telemetry.addData("[IAS] target Y", targetY);
+    }
+
+    /**
      * Returns indication as to whether the intake and scoring subsystem has reached the target
      * position.
      *
@@ -82,32 +95,12 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Called by FTC opmode loop to take action if needed.
-     */
-    @Override
-    public void execute() {
-        // Calculate the linear slide length, based on the target X and Y coordinates
-        double slideLength = Math.hypot(targetX, targetY) - ARM_LENGTH;
-        robot.linearSlide.setLength(slideLength);
-
-        // Update each components of the intake/scoring subsystem.
-        robot.arm.execute();
-        // robot.linearSlide.execute();
-        robot.wrist.execute();
-        robot.claw.execute();
-    }
-
-    /**
      * Gets the current length along the x-axis.
      *
      * @return the current length along the x-axis
      */
-    public double getCurrentX() {
-        telemetry.addData("[IAS DELETE] X", targetX);
+    public double getTargetX() {
         return targetX;
-//        double angle = robot.arm.getCurrentAngle();
-//        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
-//        return getX(angle, hypotenuse);
     }
 
     /**
@@ -115,12 +108,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      *
      * @return the current height along the y-axis
      */
-    public double getCurrentY() {
-        telemetry.addData("[IAS DELETE] Y", targetY);
-        return targetY + ARM_HEIGHT;
-//        double angle = robot.arm.getCurrentAngle();
-//        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
-//        return getY(angle, hypotenuse) + ARM_HEIGHT;
+    public double getTargetY() {
+        return targetY;
     }
 
     /**
@@ -136,20 +125,39 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToPosition(double x, double y) {
         x = Math.min(x, MAX_EXTENDED_ROBOT_LENGTH);
-        // Slight optimization by only recalculating the target shoulder angle if either the new
-        // target X or new target Y values have changed
+
+        // If the target X and/or target Y have changed, then recalculate the arm angle and
+        // linear slide length
         if (targetX != x || targetY != y) {
             targetX = x;
-            targetY = Math.max(y - ARM_HEIGHT, -ARM_HEIGHT);
+            targetY = y;
 
-            // Calculate and set the target arm angle, based on the target X and Y coordinates.
-            robot.arm.setTargetAngle(getAngle(targetX, targetY));
-
-            telemetry.addData("[IAS] X", x);
-            telemetry.addData("[IAS] Y", y);
-            telemetry.addData("[IAS] target X", targetX);
-            telemetry.addData("[IAS] target Y", targetY);
+            // Set the arm angle and slide length to reach the target X and Y coordinates
+            setArmAngle();
+            setSlideLength();
         }
+    }
+
+    /**
+     * Calculate and set the target arm angle, accounting for the fixed height of the post on which
+     * the arm is attached
+     */
+    private void setArmAngle() {
+        double adjustedY = targetY - ARM_HEIGHT;
+        double armAngle = getAngle(targetX, adjustedY);
+        telemetry.addData("[IAS] arm angle", armAngle);
+        robot.arm.setTargetAngle(armAngle);
+    }
+
+    /**
+     * Set the linear slide length, accounting for the fixed length of the arm when the
+     * linear slide is fully retracted
+     */
+    private void setSlideLength() {
+        double adjustedY = targetY - ARM_HEIGHT;
+        double slideLength = Math.hypot(targetX, adjustedY) - ARM_LENGTH;
+        telemetry.addData("[IAS] slide length", slideLength);
+        robot.linearSlide.setLength(slideLength);
     }
 
     /**
@@ -181,33 +189,21 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Uses the claw to grasp a scoring element (sample or specimen). The arm is not moved when
-     * acquiring the scoring element; the <code>moveToIntakePosition</code> method is used for
-     * that purpose.
+     * Moves the arm, slide, wrist, and claw to prepare the robot
+     * to score on the high basket.
      */
-    public void closeClaw() {
-        robot.claw.close();
-        telemetry.addData("[IAS] claw", "close");
+    public void moveToBasketHighScoringPosition() {
+        moveToPosition(HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y);
+        telemetry.addData("[IAS] position", "high basket");
     }
 
     /**
-     * Releases a scoring element (sample or specimen). This will open the claw so that the
-     * scoring element is released by the subsystem. The claw will be opened, but the arm
-     * is not moved; the <code>moveToIntakePosition</code> method is used for moving the arm.
+     * Moves the arm, slide, wrist, and claw to prepare the robot
+     * to score on the low basket.
      */
-    public void openClaw() {
-        robot.claw.open();
-        telemetry.addData("[IAS] claw", "open");
-    }
-
-    /**
-     * Moves the arm to a neutral position. This will close the claw and move the arm to the same
-     * position as when a scoring element has been acquired.
-     */
-    public void reset() {
-        closeClaw();
-        moveToNeutralPosition();
-        telemetry.addLine("[IAS] reset intake");
+    public void moveToBasketLowScoringPosition() {
+        moveToPosition(LOW_BASKET_SCORING_X, LOW_BASKET_SCORING_Y);
+        telemetry.addData("[IAS] position", "low basket");
     }
 
     /**
@@ -233,26 +229,28 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * on either the high or low chamber bar.
      */
     public void scoreSpecimen() {
-        double y = getY(robot.arm.getCurrentAngle(), targetX) - SCORE_SPECIMEN_HEIGHT_DECREMENT;
-        moveToPosition(targetX, y);
+        double newY = targetY - SCORE_SPECIMEN_HEIGHT_DECREMENT;
+        moveToPosition(targetX, newY);
         telemetry.addData("[IAS] position", "score specimen");
     }
 
     /**
-     * Moves the arm, slide, wrist, and claw to prepare the robot
-     * to score on the high basket.
+     * Uses the claw to grasp a scoring element (sample or specimen). The arm is not moved when
+     * acquiring the scoring element; the <code>moveToIntakePosition</code> method is used for
+     * that purpose.
      */
-    public void moveToBasketHighScoringPosition() {
-        moveToPosition(HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y);
-        telemetry.addData("[IAS] position", "high basket");
+    public void closeClaw() {
+        robot.claw.close();
+        telemetry.addData("[IAS] claw", "close");
     }
 
     /**
-     * Moves the arm, slide, wrist, and claw to prepare the robot
-     * to score on the low basket.
+     * Releases a scoring element (sample or specimen). This will open the claw so that the
+     * scoring element is released by the subsystem. The claw will be opened, but the arm
+     * is not moved; the <code>moveToIntakePosition</code> method is used for moving the arm.
      */
-    public void moveToBasketLowScoringPosition() {
-        moveToPosition(LOW_BASKET_SCORING_X, LOW_BASKET_SCORING_Y);
-        telemetry.addData("[IAS] position", "low basket");
+    public void openClaw() {
+        robot.claw.open();
+        telemetry.addData("[IAS] claw", "open");
     }
 }

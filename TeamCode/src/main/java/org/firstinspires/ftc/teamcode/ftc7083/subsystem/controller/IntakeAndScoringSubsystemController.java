@@ -54,8 +54,8 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  */
 @Config
 public class IntakeAndScoringSubsystemController implements SubsystemController {
-    public static double SCALAR_X = 0.25;
-    public static double SCALAR_Y = 0.25;
+    public static double SCALAR_X = 1.0;
+    public static double SCALAR_Y = 1.0;
     public static double MIN_JOYSTICK_VALUE = 0.05;
 
     private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
@@ -105,22 +105,26 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         // Manual override controls for the arm and linear slide. The left joystick will raise and
         // lower the arm; the right joystick will extend and retract the linear slide.
         if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
+            double currentX = intakeAndScoringSubsystem.getTargetX();
+            double currentY = intakeAndScoringSubsystem.getTargetY();
             double adjustY = -gamepad2.left_stick_y * SCALAR_Y;
-            double y = intakeAndScoringSubsystem.getCurrentY() + adjustY;
-            double x = intakeAndScoringSubsystem.getCurrentX();
-            intakeAndScoringSubsystem.moveToPosition(x, y);
-            telemetry.addData("[IAS C] current Y", intakeAndScoringSubsystem.getCurrentY());
+            double newY = currentY + adjustY;
+            intakeAndScoringSubsystem.moveToPosition(currentX, newY);
+
+            telemetry.addData("[IAS C] current Y", currentY);
             telemetry.addData("[IAS C] adjust Y", adjustY);
-            telemetry.addData("[IAS C] new Y", y);
+            telemetry.addData("[IAS C] new Y", newY);
         }
         if (Math.abs(gamepad2.right_stick_y) > MIN_JOYSTICK_VALUE) {
+            double currentX = intakeAndScoringSubsystem.getTargetX();
+            double currentY = intakeAndScoringSubsystem.getTargetY();
             double adjustX = -gamepad2.right_stick_y * SCALAR_X;
-            double y = intakeAndScoringSubsystem.getCurrentY();
-            double x = intakeAndScoringSubsystem.getCurrentX() + adjustX;
-            intakeAndScoringSubsystem.moveToPosition(x, y);
-            telemetry.addData("[IAS C] current X", intakeAndScoringSubsystem.getCurrentX());
+            double newX = currentX + adjustX;
+            intakeAndScoringSubsystem.moveToPosition(newX, currentY);
+
+            telemetry.addData("[IAS C] current X", currentX);
             telemetry.addData("[IAS C] adjust X", adjustX);
-            telemetry.addData("[IAS C] new X", x);
+            telemetry.addData("[IAS C] new X", newX);
         }
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
