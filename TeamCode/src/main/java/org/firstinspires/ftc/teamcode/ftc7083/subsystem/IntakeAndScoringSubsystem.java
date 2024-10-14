@@ -29,7 +29,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double NEUTRAL_X = ARM_LENGTH;
     public static double NEUTRAL_Y = ARM_HEIGHT;
     public static double SUBMERSIBLE_X = 36.0;
-    public static double SUBMERSIBLE_Y = 5.0;
+    public static double SUBMERSIBLE_Y = 4.0;
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
     public static double INTAKE_X = 36.0;
@@ -48,13 +48,13 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     // the arm that the scoring subsystem needs to reach to score in
     // different places.
     public static double HIGH_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 1;
+    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 1.0;
     public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
-    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 1;
+    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 1.0;
     public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 1;
+    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 1.0;
     public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
-    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 1;
+    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 1.0;
 
     // Other scoring constants
     public static double SCORE_SPECIMEN_HEIGHT_DECREMENT = 3.0;
