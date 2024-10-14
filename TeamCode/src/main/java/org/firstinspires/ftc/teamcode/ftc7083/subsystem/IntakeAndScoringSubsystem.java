@@ -92,7 +92,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
         // Update each components of the intake/scoring subsystem.
         robot.arm.execute();
-        robot.linearSlide.execute();
+        // robot.linearSlide.execute();
         robot.wrist.execute();
         robot.claw.execute();
     }
@@ -103,9 +103,11 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * @return the current length along the x-axis
      */
     public double getCurrentX() {
-        double angle = robot.arm.getCurrentAngle();
-        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
-        return getX(angle, hypotenuse);
+        telemetry.addData("[IAS DELETE] X", targetX);
+        return targetX;
+//        double angle = robot.arm.getCurrentAngle();
+//        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
+//        return getX(angle, hypotenuse);
     }
 
     /**
@@ -114,9 +116,11 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * @return the current height along the y-axis
      */
     public double getCurrentY() {
-        double angle = robot.arm.getCurrentAngle();
-        double currentX = getCurrentX();
-        return getY(angle, currentX);
+        telemetry.addData("[IAS DELETE] Y", targetY);
+        return targetY + ARM_HEIGHT;
+//        double angle = robot.arm.getCurrentAngle();
+//        double hypotenuse = robot.linearSlide.getCurrentLength() + ARM_LENGTH;
+//        return getY(angle, hypotenuse) + ARM_HEIGHT;
     }
 
     /**

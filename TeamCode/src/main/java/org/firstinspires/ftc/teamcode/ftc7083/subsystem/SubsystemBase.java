@@ -66,8 +66,7 @@ public abstract class SubsystemBase implements Subsystem {
      * @return double  The height, in inches, of the right triangle.
      */
     protected final double getY(double angle, double hypotenuse) {
-        double y = hypotenuse * Math.sin(Math.toRadians(angle));
-        return y;
+        return hypotenuse * Math.sin(Math.toRadians(angle));
     }
 
     /**
@@ -81,8 +80,6 @@ public abstract class SubsystemBase implements Subsystem {
      * @return double     The length of the base, in inches, of the right triangle.
      */
     protected final double getX(double angle, double hypotenuse) {
-        double x = hypotenuse * Math.cos(Math.toRadians(angle));
-        return x;
+        return hypotenuse * Math.cos(Math.toRadians(angle));
     }
-
 }

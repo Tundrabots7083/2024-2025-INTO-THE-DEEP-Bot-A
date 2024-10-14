@@ -109,14 +109,18 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             double y = intakeAndScoringSubsystem.getCurrentY() + adjustY;
             double x = intakeAndScoringSubsystem.getCurrentX();
             intakeAndScoringSubsystem.moveToPosition(x, y);
+            telemetry.addData("[IAS C] current Y", intakeAndScoringSubsystem.getCurrentY());
             telemetry.addData("[IAS C] adjust Y", adjustY);
+            telemetry.addData("[IAS C] new Y", y);
         }
         if (Math.abs(gamepad2.right_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustX = -gamepad2.right_stick_y * SCALAR_X;
             double y = intakeAndScoringSubsystem.getCurrentY();
             double x = intakeAndScoringSubsystem.getCurrentX() + adjustX;
             intakeAndScoringSubsystem.moveToPosition(x, y);
+            telemetry.addData("[IAS C] current X", intakeAndScoringSubsystem.getCurrentX());
             telemetry.addData("[IAS C] adjust X", adjustX);
+            telemetry.addData("[IAS C] new X", x);
         }
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
