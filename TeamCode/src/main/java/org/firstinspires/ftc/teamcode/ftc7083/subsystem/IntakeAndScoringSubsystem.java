@@ -99,24 +99,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the current length along the x-axis.
-     *
-     * @return the current length along the x-axis
-     */
-    public double getTargetX() {
-        return targetX;
-    }
-
-    /**
-     * Gets the current height along the y-axis.
-     *
-     * @return the current height along the y-axis
-     */
-    public double getTargetY() {
-        return targetY;
-    }
-
-    /**
      * Moves the arm and slide to the position (x,y) on the plane
      * of the robot arm.  The point (0,0) on this plane is the center
      * of the shoulder around which the arm rotates.  The tip of the

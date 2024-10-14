@@ -7,8 +7,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
 /**
- * Manages the intake subsystem within a TeleOp OpMode. The following controls are used to manage
- * the intake subsystem:
+ * Manages the intake and scoring subsystem within a TeleOp OpMode. The following controls are
+ * used to manage the subsystem:
  * <ul>
  *     <li>
  *         <em>gamepad2.dpad_down</em>: move the scoring subsystem to the low chamber position. This will
