@@ -62,14 +62,6 @@ public class PIDController {
         integrate(error, dt);
         previousError = error;
 
-        Telemetry telemetry = FtcDashboard.getInstance().getTelemetry();
-        telemetry.addData("[PID] error", error);
-        telemetry.addData("[PID] integral", integralSum);
-        telemetry.addData("[PID] derivative", derivative);
-        telemetry.addData("[PID] Kp", Kp);
-        telemetry.addData("[PID] Ki", Ki);
-        telemetry.addData("[PID] Kd", Kd);
-
         return error * Kp
                 + integralSum * Ki
                 + derivative * Kd;
