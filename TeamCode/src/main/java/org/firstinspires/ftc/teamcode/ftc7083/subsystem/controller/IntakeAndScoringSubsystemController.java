@@ -77,7 +77,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
     private final Gamepad previousGamepad1 = new Gamepad();
     private final Gamepad previousGamepad2 = new Gamepad();
 
-    private boolean inSubmersble = false;
+    private boolean inSubmersible = false;
 
     /**
      * Instantiate a scoring subsystem controller, which uses gamepad controls to control the
@@ -103,36 +103,36 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
             intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
             intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if ((gamepad2.dpad_left && !previousGamepad2.dpad_left) || (gamepad2.dpad_right && !previousGamepad2.dpad_right)) {
             intakeAndScoringSubsystem.scoreSpecimen();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.cross && !previousGamepad2.cross) {
             intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
             intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.square && !previousGamepad2.square) {
-            if (inSubmersble) {
+            if (inSubmersible) {
                 intakeAndScoringSubsystem.moveOutOfSubmersiblePosition();
-                inSubmersble = false;
+                inSubmersible = false;
             } else {
                 intakeAndScoringSubsystem.moveIntoSubmersiblePosition();
-                inSubmersble = true;
+                inSubmersible = true;
             }
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             intakeAndScoringSubsystem.moveToIntakePosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.share && !previousGamepad2.share) {
             intakeAndScoringSubsystem.moveToNeutralPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         } else if (gamepad2.options) {
             intakeAndScoringSubsystem.moveToStartPosition();
-            inSubmersble = false;
+            inSubmersible = false;
         }
 
         // Manual override controls for the arm and linear slide. The left joystick will raise and

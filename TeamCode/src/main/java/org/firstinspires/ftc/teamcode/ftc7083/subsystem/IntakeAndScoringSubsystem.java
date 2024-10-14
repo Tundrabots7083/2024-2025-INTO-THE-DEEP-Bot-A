@@ -61,8 +61,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     private final Telemetry telemetry;
     private final Robot robot;
-    private double targetX = INTAKE_X;
-    private double targetY = INTAKE_Y;
+    private double targetX = RETRACT_X;
+    private double targetY = RETRACT_Y;
 
     /**
      * Constructor

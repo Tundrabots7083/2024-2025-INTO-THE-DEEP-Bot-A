@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,6 +16,10 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.controller.SubsystemCont
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Main OpMode used by a driver for the OUT_OF_THE_BLUE game.
+ */
+@Config
 @TeleOp(name = "Primary TeleOp", group = "Active")
 public class PrimaryTeleOp extends OpMode {
     private final Gamepad currentGamepad1 = new Gamepad();

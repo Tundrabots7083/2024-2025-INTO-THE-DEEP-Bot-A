@@ -20,7 +20,7 @@ public class Arm extends SubsystemBase {
     public static double START_ANGLE = -50.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
     public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
-    public static double TOLERABLE_ERROR = 0.25; // In degrees
+    public static double TOLERABLE_ERROR = 0.1; // In degrees
     public static double MIN_ANGLE = -50.0;
     public static double MAX_ANGLE = 90.0;
     private final Motor shoulderMotor;
