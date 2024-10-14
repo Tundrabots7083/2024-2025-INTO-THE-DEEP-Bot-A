@@ -28,8 +28,12 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double START_Y = 0.0;
     public static double NEUTRAL_X = ARM_LENGTH;
     public static double NEUTRAL_Y = ARM_HEIGHT;
-    public static double INTAKE_X = 23.0;
-    public static double INTAKE_Y = 1.0;
+    public static double SUBMERSIBLE_X = 36.0;
+    public static double SUBMERSIBLE_Y = 5.0;
+    public static double RETRACT_X = ARM_LENGTH;
+    public static double RETRACT_Y = 5.0;
+    public static double INTAKE_X = 36.0;
+    public static double INTAKE_Y = 0.5;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
@@ -165,8 +169,25 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToStartPosition() {
         moveToPosition(START_X, START_Y);
-        robot.claw.close();
         telemetry.addData("[IAS] position", "start");
+    }
+
+    /**
+     * Moves the subsystem to a position where it may acquire a sample or a specimen.
+     * This will lower and extend the arm so the claw may be used to pickup a sample or specimen.
+     */
+    public void moveIntoSubmersiblePosition() {
+        moveToPosition(SUBMERSIBLE_X, SUBMERSIBLE_Y);
+        telemetry.addData("[IAS] position", "submersible");
+    }
+
+    /**
+     * Moves the subsystem out of the submersible, presumably after picking up a sample.
+     * This will raise and retract.
+     */
+    public void moveOutOfSubmersiblePosition() {
+        moveToPosition(RETRACT_X, RETRACT_Y);
+        telemetry.addData("[IAS] position", "retract");
     }
 
     /**
@@ -175,7 +196,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void moveToIntakePosition() {
         moveToPosition(INTAKE_X, INTAKE_Y);
-        robot.claw.open();
         telemetry.addData("[IAS] position", "intake");
     }
 
@@ -230,8 +250,31 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public void scoreSpecimen() {
         double newY = targetY - SCORE_SPECIMEN_HEIGHT_DECREMENT;
+        newY = Math.max(newY, 0.0);
         moveToPosition(targetX, newY);
         telemetry.addData("[IAS] position", "score specimen");
+    }
+
+    /**
+     * Increases the slide length by the amount provided. A positive value extends the slide;
+     * a negative value retracts the arm.
+     *
+     * @param amount the amount by which to adjust the arm angle.
+     */
+    public void adjustX(double amount) {
+        targetX += amount;
+        setSlideLength();
+    }
+
+    /**
+     * Increases the arm angle by the amount provided. A positive value moves the arm up; a negative
+     * value moves the arm down.
+     *
+     * @param amount the amount by which to adjust the arm angle.
+     */
+    public void adjustY(double amount) {
+        targetY += amount;
+        setArmAngle();
     }
 
     /**
