@@ -2,12 +2,8 @@ package org.firstinspires.ftc.teamcode.ftc7083.feedback;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * A PID controller to calculate the output given the target state and current state.
@@ -25,8 +21,6 @@ public class PIDController {
     private double previousError = 0;
 
     private double integralSum = 0;
-
-    private double derivative = 0;
 
     private double minIntegralBound = -1;
     private double maxIntegralBound = 1;
@@ -126,7 +120,7 @@ public class PIDController {
      * @return the derrivative.
      */
     private double calculateDerivative(double error, double dt) {
-        derivative = (error - previousError) / dt;
+        double derivative = (error - previousError) / dt;
 
         if (Double.isNaN(derivative)) {
             derivative = 0;

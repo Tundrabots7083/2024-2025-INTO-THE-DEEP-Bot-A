@@ -54,7 +54,7 @@ public class FSM<State, Event> {
      * @return this FSM
      */
     public FSM<State, Event> addTransition(State currentState, State targetState, Event event, Action action) {
-        Transition<State, Event> transition = new Transition<State, Event>(currentState, targetState, event, action);
+        Transition<State, Event> transition = new Transition<>(currentState, targetState, event, action);
         Map<Event, Transition<State, Event>> stateTransitions = this.transitions.computeIfAbsent(currentState, k -> new HashMap<>());
         stateTransitions.put(event, transition);
 

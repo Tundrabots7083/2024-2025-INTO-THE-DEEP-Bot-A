@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
 
 /**
- * This OpMode tests the claw using FTC Dashboard (http://192.168.43.1:8080/dash)
+ * This OpMode tests the claw using FTC Dashboard (<a href="http://192.168.43.1:8080/dash">...</a>)
  */
 @Config
 @TeleOp(name = "Claw Test TeleOp", group = "tests")

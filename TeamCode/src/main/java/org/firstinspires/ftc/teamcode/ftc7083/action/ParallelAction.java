@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public class ParallelAction extends ActionExBase {
     private final Action[] actions;
-    private boolean[] actionsFinished;
+    private final boolean[] actionsFinished;
 
     /**
      * Instantiates a ParallelAction that runs a set of actions in parallel.

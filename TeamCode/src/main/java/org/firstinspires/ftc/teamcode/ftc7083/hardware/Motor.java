@@ -188,7 +188,7 @@ public class Motor implements DcMotorEx {
 
     @Override
     public ZeroPowerBehavior getZeroPowerBehavior() {
-        return getZeroPowerBehavior();
+        return motorImpl.getZeroPowerBehavior();
     }
 
     @Override

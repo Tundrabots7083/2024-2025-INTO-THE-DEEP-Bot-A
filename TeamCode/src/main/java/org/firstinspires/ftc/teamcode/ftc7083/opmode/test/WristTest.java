@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 
 /**
- * This OpMode tests the wrist using FTC Dashboard (http://192.168.43.1:8080/dash)
+ * This OpMode tests the wrist using FTC Dashboard (<a href="http://192.168.43.1:8080/dash">...</a>)
  * to change the Pitch and Yaw servo positions.
  */
 @Config
