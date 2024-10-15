@@ -28,12 +28,12 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double START_Y = 0.0;
     public static double NEUTRAL_X = ARM_LENGTH;
     public static double NEUTRAL_Y = ARM_HEIGHT;
-    public static double SUBMERSIBLE_X = 36.0;
-    public static double SUBMERSIBLE_Y = 4.0;
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
-    public static double INTAKE_X = 36.0;
-    public static double INTAKE_Y = 0.5;
+    public static double INTAKE_SHORT_X = 27.0;
+    public static double INTAKE_SHORT_Y = 0.5;
+    public static double INTAKE_LONG_X = 36.0;
+    public static double INTAKE_LONG_Y = 0.5;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
@@ -48,16 +48,16 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     // the arm that the scoring subsystem needs to reach to score in
     // different places.
     public static double HIGH_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 1.0;
-    public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
-    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 1.0;
+    public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 2.5;
     public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 1.0;
+    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 3.5;
+    public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
+    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 5.5;
     public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
-    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 1.0;
+    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 5.5;
 
     // Other scoring constants
-    public static double SCORE_SPECIMEN_HEIGHT_DECREMENT = 3.0;
+    public static double MOVE_ARM_AMOUNT = 3.0;
 
     private final Telemetry telemetry;
     private final Robot robot;
@@ -155,30 +155,32 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem to a position where it may acquire a sample or a specimen.
-     * This will lower and extend the arm so the claw may be used to pickup a sample or specimen.
-     */
-    public void moveIntoSubmersiblePosition() {
-        moveToPosition(SUBMERSIBLE_X, SUBMERSIBLE_Y);
-        telemetry.addData("[IAS] position", "submersible");
-    }
-
-    /**
      * Moves the subsystem out of the submersible, presumably after picking up a sample.
      * This will raise and retract.
      */
-    public void moveOutOfSubmersiblePosition() {
+    public void moveToRetractArmPosition() {
         moveToPosition(RETRACT_X, RETRACT_Y);
         telemetry.addData("[IAS] position", "retract");
     }
 
     /**
-     * Moves the subsystem to a position where it may acquire a sample or a specimen.
-     * This will lower and extend the arm so the claw may be used to pickup a sample or specimen.
+     * Moves the subsystem to a position where it may acquire a sample or a specimen that is
+     * relative close to the front of the robot. This will lower and extend the arm so the claw
+     * may be used to pickup a sample or specimen.
      */
-    public void moveToIntakePosition() {
-        moveToPosition(INTAKE_X, INTAKE_Y);
-        telemetry.addData("[IAS] position", "intake");
+    public void moveToIntakeShortPosition() {
+        moveToPosition(INTAKE_SHORT_X, INTAKE_SHORT_Y);
+        telemetry.addData("[IAS] position", "intake short");
+    }
+
+    /**
+     * Moves the subsystem to a position where it may acquire a sample or a specimen that is
+     * relative far from the front of the robot. This will lower and extend the arm so the claw
+     * may be used to pickup a sample or specimen.
+     */
+    public void moveToIntakeLongPosition() {
+        moveToPosition(INTAKE_LONG_X, INTAKE_LONG_Y);
+        telemetry.addData("[IAS] position", "intake long");
     }
 
     /**
@@ -227,14 +229,23 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the arm, slide, wrist, and claw to score a specimen
-     * on either the high or low chamber bar.
+     * Moves the arm, slide, wrist, and claw to downward.
      */
-    public void scoreSpecimen() {
-        double newY = targetY - SCORE_SPECIMEN_HEIGHT_DECREMENT;
+    public void lowerArm() {
+        double newY = targetY - MOVE_ARM_AMOUNT;
         newY = Math.max(newY, 0.0);
         moveToPosition(targetX, newY);
-        telemetry.addData("[IAS] position", "score specimen");
+        telemetry.addData("[IAS] position", "lower arm");
+    }
+
+    /**
+     * Moves the arm, slide, wrist, and claw to upward.
+     */
+    public void raiseArm() {
+        double newY = targetY + MOVE_ARM_AMOUNT;
+        newY = Math.max(newY, 0.0);
+        moveToPosition(targetX, newY);
+        telemetry.addData("[IAS] position", "raise arm");
     }
 
     /**

@@ -30,23 +30,23 @@ public class CrServo implements CRServo, PwmControl {
     }
 
     @Override
-    public void setDirection(Direction direction) {
-        servoImpl.setDirection(direction);
-    }
-
-    @Override
     public Direction getDirection() {
         return servoImpl.getDirection();
     }
 
     @Override
-    public void setPower(double power) {
-        servoImpl.setPower(power);
+    public void setDirection(Direction direction) {
+        servoImpl.setDirection(direction);
     }
 
     @Override
     public double getPower() {
         return servoImpl.getPower();
+    }
+
+    @Override
+    public void setPower(double power) {
+        servoImpl.setPower(power);
     }
 
     @Override
@@ -80,13 +80,13 @@ public class CrServo implements CRServo, PwmControl {
     }
 
     @Override
-    public void setPwmRange(PwmRange range) {
-        servoImpl.setPwmRange(range);
+    public PwmRange getPwmRange() {
+        return servoImpl.getPwmRange();
     }
 
     @Override
-    public PwmRange getPwmRange() {
-        return servoImpl.getPwmRange();
+    public void setPwmRange(PwmRange range) {
+        servoImpl.setPwmRange(range);
     }
 
     @Override

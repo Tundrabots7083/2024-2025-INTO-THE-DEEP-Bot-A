@@ -49,7 +49,7 @@ public class Wrist extends SubsystemBase {
 
         frontServo.setDegrees(frontServoPitch);
         backServo.setDegrees(backServoPitch);
-      
+
         telemetry.addData("Wrist pitch: ", this.pitch);
         telemetry.update();
     }
@@ -60,8 +60,8 @@ public class Wrist extends SubsystemBase {
      * @param yaw the final yaw target in degrees.
      */
     public void setYaw(double yaw) {
-        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
-        double frontServoYaw = 90 -  yaw;
+        this.yaw = maxAbs(yaw, 80) <= 80 ? yaw : 80;
+        double frontServoYaw = 90 - yaw;
         double backServoYaw = 90 - yaw;
 
         frontServo.setDegrees(frontServoYaw);
@@ -76,16 +76,16 @@ public class Wrist extends SubsystemBase {
      * given the pitch and yaw and sets the servos to their respective values.
      *
      * @param pitch wrist pitch
-     * @param yaw wrist yaw
+     * @param yaw   wrist yaw
      */
     public void setPosition(double pitch, double yaw) {
-        this.yaw = maxAbs(yaw,80) <= 80 ? yaw : 80;
+        this.yaw = maxAbs(yaw, 80) <= 80 ? yaw : 80;
 
         double maxPitch;
         maxPitch = pitch > 0 ? 40 : -50;
         this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
 
-        double frontServoYaw = 90 -  yaw;
+        double frontServoYaw = 90 - yaw;
         double backServoYaw = 90 - yaw;
 
         double frontServoPosition = (frontServoYaw - pitch) <= 180 ? (frontServoYaw - pitch) : 180;
@@ -100,7 +100,7 @@ public class Wrist extends SubsystemBase {
      *
      * @return returns pitch position
      */
-    public double getPitchPosition () {
+    public double getPitchPosition() {
         return this.pitch;
     }
 
@@ -109,19 +109,25 @@ public class Wrist extends SubsystemBase {
      *
      * @return returns yaw position
      */
-    public double getYawPosition () {
+    public double getYawPosition() {
         return this.yaw;
     }
 
     /**
      * Returns the position of the front servo in degrees.
+     *
      * @return frontServo degrees
      */
-    public double getFrontServoDegrees () {return frontServo.getDegrees();}
+    public double getFrontServoDegrees() {
+        return frontServo.getDegrees();
+    }
 
     /**
      * Returns the position of the back servo in degrees.
+     *
      * @return backServo degrees
      */
-    public double getBackServoDegrees () {return backServo.getDegrees();}
+    public double getBackServoDegrees() {
+        return backServo.getDegrees();
+    }
 }

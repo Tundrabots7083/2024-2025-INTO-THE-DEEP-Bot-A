@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 /**
  * A PID controller that uses a feed forward mechanism in its calculations.
  */
-public class PIDControllerEx extends PIDController {
+public class PIDControllerEx extends PIDControllerImpl {
     private final FeedForward ff;
 
     /**

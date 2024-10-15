@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
+import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDControllerImpl;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
@@ -18,20 +19,17 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 public class LinearSlide extends SubsystemBase {
     public static double SPOOL_DIAMETER = 1.4; // in inches
     public static double TICKS_PER_REV = 384;
-    public double GEARING = 1.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
-
     public static double KP = 0.32;
     public static double KI = 0.13;
     public static double KD = 0.02;
     public static double TOLERABLE_ERROR = 0.05; // inches
-
     public static double MIN_EXTENSION_LENGTH = 0.0;
     public static double MAX_EXTENSION_LENGTH = 18;
-
     private final Motor slideMotor;
     private final Telemetry telemetry;
     private final PIDController pidController;
+    public double GEARING = 1.0;
     private double targetLength = 0;
 
     /**
@@ -44,7 +42,7 @@ public class LinearSlide extends SubsystemBase {
         this.telemetry = telemetry;
         slideMotor = new Motor(hardwareMap, telemetry, "armSlideMotor");
         configMotor(slideMotor);
-        pidController = new PIDController(KP, KI, KD);
+        pidController = new PIDControllerImpl(KP, KI, KD);
     }
 
     /**

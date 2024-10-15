@@ -21,17 +21,17 @@ public class WristTest extends OpMode {
     public static int DOWNWARD_PITCH_LIMIT = 50;
     public static double PITCH = 0.0;
     public static double YAW = 0.0;
+    private final Gamepad currentGamepad1 = new Gamepad();
     public double gamepadPitch;
     public double gamepadYaw;
     Wrist wrist;
-    private final Gamepad currentGamepad1 = new Gamepad();
 
     @Override
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        wrist = new Wrist(hardwareMap,telemetry);
+        wrist = new Wrist(hardwareMap, telemetry);
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
@@ -48,8 +48,8 @@ public class WristTest extends OpMode {
 
         wrist.setPosition(gamepadPitch, gamepadYaw);
 
-        telemetry.addData("Front/Right Servo: ",wrist.getFrontServoDegrees());
-        telemetry.addData("Back/Left Servo: ",wrist.getBackServoDegrees());
+        telemetry.addData("Front/Right Servo: ", wrist.getFrontServoDegrees());
+        telemetry.addData("Back/Left Servo: ", wrist.getBackServoDegrees());
         telemetry.update();
     }
 }

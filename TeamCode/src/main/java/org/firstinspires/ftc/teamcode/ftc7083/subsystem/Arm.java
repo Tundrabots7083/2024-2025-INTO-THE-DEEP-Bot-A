@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase {
      * @return the current position in degrees to which the arm has moved
      */
     public double getCurrentAngle() {
-        return shoulderMotor.getCurrentDegrees()  + START_ANGLE;
+        return shoulderMotor.getCurrentDegrees() + START_ANGLE;
     }
 
     /**

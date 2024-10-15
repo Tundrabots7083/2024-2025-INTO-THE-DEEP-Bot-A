@@ -13,7 +13,7 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
     /**
      * Instantiates a new servo for the robot.
      *
-     * @param servoImpl  the servo as retrieved via the hardware map
+     * @param servoImpl the servo as retrieved via the hardware map
      */
     protected Servo(com.qualcomm.robotcore.hardware.Servo servoImpl) {
         this.servoImpl = servoImpl;

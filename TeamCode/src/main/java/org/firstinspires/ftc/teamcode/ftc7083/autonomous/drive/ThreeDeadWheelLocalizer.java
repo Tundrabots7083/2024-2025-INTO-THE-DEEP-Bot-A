@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.ThreeDeadWheelInputsMessage;
-import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
@@ -26,6 +26,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     public final double inPerTick;
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
+
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
         MecanumDrive drive = Robot.getInstance().mecanumDrive;
         par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftFront")));

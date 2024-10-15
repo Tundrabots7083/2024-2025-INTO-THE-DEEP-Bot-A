@@ -29,7 +29,7 @@ public class Claw extends SubsystemBase {
      * Constructor
      *
      * @param hardwareMap Servo configuration information
-     * @param telemetry telemetry used for output of information to the user.
+     * @param telemetry   telemetry used for output of information to the user.
      */
     public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;

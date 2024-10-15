@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
-public class ArmSubsystemController  {
+public class ArmSubsystemController {
     Wrist wrist;
 
-    ArmSubsystemController(Wrist wrist){ this.wrist = wrist; }
+    ArmSubsystemController(Wrist wrist) {
+        this.wrist = wrist;
+    }
 
-    public void liftArm(double angle){
+    public void liftArm(double angle) {
         //shoulder.rotate(angle);
         wrist.setPitch(180 - angle);
     }

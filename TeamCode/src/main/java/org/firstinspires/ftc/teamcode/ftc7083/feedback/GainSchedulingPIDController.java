@@ -7,15 +7,12 @@ import com.arcrobotics.ftclib.util.InterpLUT;
  * add gain scheduling functionality to PIDController primarily
  * for arms.
  */
-public class GainSchedulingPIDController {
+public class GainSchedulingPIDController implements PIDController {
 
     // look up tables for PID coefficients
     private final InterpLUT pCoefficients = new InterpLUT();
     private final InterpLUT iCoefficients = new InterpLUT();
     private final InterpLUT dCoefficients = new InterpLUT();
-    private double Kp = 0.0;
-    private double Ki = 0.0;
-    private double Kd = 0.0;
     public PIDController controller;
 
     /**
@@ -26,8 +23,8 @@ public class GainSchedulingPIDController {
      * @param KdLUTArgs array of objects containing angles and the Kd constants for each angle.
      */
     public GainSchedulingPIDController(LookUpTableArgs[] KpLUTArgs,
-                          LookUpTableArgs[] KiLUTArgs,
-                          LookUpTableArgs[] KdLUTArgs) {
+                                       LookUpTableArgs[] KiLUTArgs,
+                                       LookUpTableArgs[] KdLUTArgs) {
 
 
         for (LookUpTableArgs kpLUTArg : KpLUTArgs) {
@@ -46,26 +43,26 @@ public class GainSchedulingPIDController {
         iCoefficients.createLUT();
         dCoefficients.createLUT();
 
-        controller = new PIDController(Kp, Ki, Kd);
-        //controller.setIntegrationBounds(0.0,1.0);
-
+        controller = new PIDControllerImpl(0, 0, 0);
     }
 
+    @Override
     public double calculate(double target, double state) {
+        double Kp = pCoefficients.get(state);
+        double Ki = iCoefficients.get(state);
+        double Kd = dCoefficients.get(state);
+        controller.setCoefficients(Kp, Ki, Kd);
 
-        Kp = pCoefficients.get(state);
-        Ki = iCoefficients.get(state);
-        Kd = dCoefficients.get(state);
-
-        controller.Kp = Kp;
-        controller.Ki = Ki;
-        controller.Kd = Kd;
-
-        return controller.calculate(target,state);
-
+        return controller.calculate(target, state);
     }
 
-    public void reset(){
+    @Override
+    public void reset() {
         controller.reset();
+    }
+
+    @Override
+    public void setCoefficients(double Kp, double Ki, double Kd) {
+        controller.setCoefficients(Kp, Ki, Kd);
     }
 }

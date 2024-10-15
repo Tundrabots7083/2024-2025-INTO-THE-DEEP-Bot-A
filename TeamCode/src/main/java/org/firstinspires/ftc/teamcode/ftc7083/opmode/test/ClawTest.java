@@ -25,7 +25,7 @@ public class ClawTest extends OpMode {
     // When true causes the claw to be closed to the 0 degrees position
     public static boolean CLOSE = false;
     Claw claw;
-    
+
     @Override
     public void init() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -42,13 +42,11 @@ public class ClawTest extends OpMode {
             telemetry.addData("Open claw to default degrees", DEFAULT_OPEN_DEGREES);
             currentClawPosition = claw.open();
             telemetry.addData("Claw position after open claw to default", currentClawPosition);
-        }
-        else if (OPEN_WITH_DEGREES) {
+        } else if (OPEN_WITH_DEGREES) {
             telemetry.addData("Open claw to specified degrees", CLAW_OPEN_DEGREES);
             currentClawPosition = claw.open(CLAW_OPEN_DEGREES);
             telemetry.addData("Claw position after open claw to specified degrees", currentClawPosition);
-        }
-        else if (CLOSE) {
+        } else if (CLOSE) {
             telemetry.addLine("Close claw");
             currentClawPosition = claw.close();
             telemetry.addData("Current position after close", currentClawPosition);

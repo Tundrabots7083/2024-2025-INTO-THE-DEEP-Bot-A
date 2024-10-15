@@ -12,7 +12,7 @@ public class LookUpTableArgs {
     /**
      * Creates an instance of this class with state and Kx
      *
-     * @param state is the state at which the constant (Kx) value was calculated
+     * @param state         is the state at which the constant (Kx) value was calculated
      * @param constantValue is the PID constant value in question (could be Kp, Ki, Kd)
      */
     public LookUpTableArgs(double state, double constantValue) {
