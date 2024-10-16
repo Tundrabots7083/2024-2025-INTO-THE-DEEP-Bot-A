@@ -73,8 +73,6 @@ public class Wrist extends SubsystemBase {
         double frontServoYaw = 90 - this.yaw;
         double backServoYaw = 90 - this.yaw;
 
-//        double frontServoPosition = (frontServoYaw - this.pitch) <= 180 ? (frontServoYaw - this.pitch) : 180;
-//        double backServoPosition = (backServoYaw + this.pitch) <= 180 ? (backServoYaw + this.pitch) : 180;
         double frontServoPosition = frontServoYaw - this.pitch;
         double backServoPosition = backServoYaw + this.pitch;
 

@@ -12,12 +12,17 @@ import org.firstinspires.ftc.teamcode.ftc7083.Robot;
  */
 @Config
 public class IntakeAndScoringSubsystem extends SubsystemBase {
+    // Robot control values
+    public static boolean USE_WRIST = true;
+    public static double WRIST_ANGLE_SCALAR = 2.0;
 
     // Robot measurements
     // Length of the arm and the wrist with zero extension in inches.
     public static double ARM_LENGTH = 22.0;
     // Height from the field to the center of rotation of the arm in inches.
     public static double ARM_HEIGHT = 16.5;
+    // Height from the field to the wrist control in inches.
+    public static double WRIST_HEIGHT = 3.0;
     // Distance from the front of the robot to the back of the robot in inches.
     public static double ROBOT_LENGTH = 18.0;
     // Distance the arm can reach from the center of rotation of the arm in inches.
@@ -50,11 +55,11 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double HIGH_CHAMBER_SCORING_X = ARM_LENGTH;
     public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 2.5;
     public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
-    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 3.5;
+    public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 6.75;
     public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
-    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 5.5;
+    public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 6.5;
     public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
-    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 5.5;
+    public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 4.0;
 
     // Other scoring constants
     public static double MOVE_ARM_AMOUNT = 3.0;
@@ -131,11 +136,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     private void setArmAngle() {
         double adjustedY = targetY - ARM_HEIGHT;
         double armAngle = getAngle(targetX, adjustedY);
-        telemetry.addData("[IAS] arm angle", armAngle);
         robot.arm.setTargetAngle(armAngle);
-        // Don't use the wrist movement, as the arm can't reach the ground to pickup samples if the
-        // wrist is articulated
-        // robot.wrist.setPitch(-armAngle * 2.0);
+        telemetry.addData("[IAS] arm angle", armAngle);
+
+        if (USE_WRIST) {
+            double wristAngle = (WRIST_ANGLE_SCALAR * -armAngle);
+            robot.wrist.setPitch(wristAngle);
+            telemetry.addData("[IAS] wrist angel", wristAngle);
+        }
     }
 
     /**
@@ -144,9 +152,13 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     private void setSlideLength() {
         double adjustedY = targetY - ARM_HEIGHT;
+        if (USE_WRIST) {
+            adjustedY += (adjustedY < ARM_HEIGHT) ? -WRIST_HEIGHT : WRIST_HEIGHT;
+        }
         double slideLength = Math.hypot(targetX, adjustedY) - ARM_LENGTH;
-        telemetry.addData("[IAS] slide length", slideLength);
+
         robot.linearSlide.setLength(slideLength);
+        telemetry.addData("[IAS] slide length", slideLength);
     }
 
     /**
