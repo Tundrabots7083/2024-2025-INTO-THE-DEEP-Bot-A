@@ -133,6 +133,9 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         double armAngle = getAngle(targetX, adjustedY);
         telemetry.addData("[IAS] arm angle", armAngle);
         robot.arm.setTargetAngle(armAngle);
+        // Don't use the wrist movement, as the arm can't reach the ground to pickup samples if the
+        // wrist is articulated
+        // robot.wrist.setPitch(-armAngle * 2.0);
     }
 
     /**

@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
@@ -11,15 +13,19 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Servo;
 /**
  * Wrist implements the servo operated wrist on the arm.
  */
+@Config
 public class Wrist extends SubsystemBase {
+    public static int MIN_YAW = -90;
+    public static int MAX_YAW = 90;
+    public static int MIN_PITCH = -90;
+    public static int MAX_PITCH = 90;
 
-    Telemetry telemetry;
+    private final Telemetry telemetry;
 
-    double pitch = 0.0;
-    double yaw = 0.0;
-    double scorePosition = 90;
-    Servo frontServo;
-    Servo backServo;
+    private double pitch = 0.0;
+    private double yaw = 0.0;
+    private final Servo frontServo;
+    private final Servo backServo;
 
     /**
      * Wrist initializes a new wrist as well as initializing all servos to be used.
@@ -41,17 +47,7 @@ public class Wrist extends SubsystemBase {
      * @param pitch the final pitch target in degrees.
      */
     public void setPitch(double pitch) {
-        double maxPitch;
-        maxPitch = pitch > 0 ? 40 : -50;
-        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
-        double frontServoPitch = 90 - pitch;
-        double backServoPitch = 90 + pitch;
-
-        frontServo.setDegrees(frontServoPitch);
-        backServo.setDegrees(backServoPitch);
-
-        telemetry.addData("Wrist pitch: ", this.pitch);
-        telemetry.update();
+        setPosition(pitch, this.yaw);
     }
 
     /**
@@ -60,15 +56,7 @@ public class Wrist extends SubsystemBase {
      * @param yaw the final yaw target in degrees.
      */
     public void setYaw(double yaw) {
-        this.yaw = maxAbs(yaw, 80) <= 80 ? yaw : 80;
-        double frontServoYaw = 90 - yaw;
-        double backServoYaw = 90 - yaw;
-
-        frontServo.setDegrees(frontServoYaw);
-        backServo.setDegrees(backServoYaw);
-
-        telemetry.addData("Wrist yaw: ", this.yaw);
-        telemetry.update();
+        setPosition(this.pitch, yaw);
     }
 
     /**
@@ -79,20 +67,24 @@ public class Wrist extends SubsystemBase {
      * @param yaw   wrist yaw
      */
     public void setPosition(double pitch, double yaw) {
-        this.yaw = maxAbs(yaw, 80) <= 80 ? yaw : 80;
+        this.yaw = Range.clip(yaw, MIN_YAW, MAX_YAW);
+        this.pitch = Range.clip(pitch, MIN_PITCH, MAX_PITCH);
 
-        double maxPitch;
-        maxPitch = pitch > 0 ? 40 : -50;
-        this.pitch = pitch <= 40 && pitch >= -50 ? pitch : maxPitch;
+        double frontServoYaw = 90 - this.yaw;
+        double backServoYaw = 90 - this.yaw;
 
-        double frontServoYaw = 90 - yaw;
-        double backServoYaw = 90 - yaw;
-
-        double frontServoPosition = (frontServoYaw - pitch) <= 180 ? (frontServoYaw - pitch) : 180;
-        double backServoPosition = (backServoYaw + pitch) <= 180 ? (backServoYaw + pitch) : 180;
+//        double frontServoPosition = (frontServoYaw - this.pitch) <= 180 ? (frontServoYaw - this.pitch) : 180;
+//        double backServoPosition = (backServoYaw + this.pitch) <= 180 ? (backServoYaw + this.pitch) : 180;
+        double frontServoPosition = frontServoYaw - this.pitch;
+        double backServoPosition = backServoYaw + this.pitch;
 
         frontServo.setDegrees(frontServoPosition);
         backServo.setDegrees(backServoPosition);
+
+        telemetry.addData("[Wrist] yaw", this.yaw);
+        telemetry.addData("[Wrist] pitch", this.pitch);
+        telemetry.addData("[Wrist] front servo", frontServoPosition);
+        telemetry.addData("[Wrist] back servo", backServoPosition);
     }
 
     /**

@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 @TeleOp(name = "Wrist Test TeleOp", group = "tests")
 public class WristTest extends OpMode {
 
-    public static int UPWARD_PITCH_LIMIT = 50;
-    public static int DOWNWARD_PITCH_LIMIT = 50;
+    public static int UPWARD_PITCH_LIMIT = 90;
+    public static int DOWNWARD_PITCH_LIMIT = 90;
     public static double PITCH = 0.0;
     public static double YAW = 0.0;
     private final Gamepad currentGamepad1 = new Gamepad();
