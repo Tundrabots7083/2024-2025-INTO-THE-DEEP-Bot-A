@@ -31,9 +31,9 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
     public static double INTAKE_SHORT_X = 27.0;
-    public static double INTAKE_SHORT_Y = 1.1;
+    public static double INTAKE_SHORT_Y = 1.6;
     public static double INTAKE_LONG_X = 36.0;
-    public static double INTAKE_LONG_Y = 1;
+    public static double INTAKE_LONG_Y = 1.6;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
