@@ -31,9 +31,9 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
     public static double INTAKE_SHORT_X = 27.0;
-    public static double INTAKE_SHORT_Y = 1.1;
+    public static double INTAKE_SHORT_Y = 1.6;
     public static double INTAKE_LONG_X = 36.0;
-    public static double INTAKE_LONG_Y = 1;
+    public static double INTAKE_LONG_Y = 1.6;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
@@ -158,19 +158,20 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem out of the submersible, presumably after picking up a sample.
-     * This will raise and retract.
-     */
-    public void moveToRetractArmPosition() {
-        moveToPosition(RETRACT_X, RETRACT_Y);
-        telemetry.addData("[IAS] position", "retract");
-    }
-
-    /**
-     * Retracts the linear slide without changing the height.
+     * Fully retract the linear slide while not changing the arm angle.
      */
     public void retractLinearSlide() {
-        moveToPosition(ARM_LENGTH,targetY);
+        // Get angle on the triangle. This is not going to change as the arm is retracted, as the
+        // new triangle will be complementary to the current triangle.
+        double theta = getAngle(targetX, targetY);
+
+        // Fully retract the slide by setting the hypotenuse to the arm length, which will effectively
+        // set the slide length to zero. Use the hypotenuse to calculate the new X and Y coordinates
+        // for the right triangle.
+        double hypotenuse = ARM_LENGTH;
+        double x = hypotenuse * Math.cos(theta);
+        double y = hypotenuse * Math.sin(theta);
+        moveToPosition(x, y);
         telemetry.addData("[IAS] position","retract slide");
     }
 

@@ -121,7 +121,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             }
         } else if (gamepad2.square && !previousGamepad2.square) {
             if (inSubmersibleClose) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
+                intakeAndScoringSubsystem.retractLinearSlide();
                 inSubmersibleClose = false;
             } else {
                 intakeAndScoringSubsystem.moveToIntakeShortPosition();
@@ -130,7 +130,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             inSubmersibleFar = false;
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             if (inSubmersibleFar) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
+                intakeAndScoringSubsystem.retractLinearSlide();
                 inSubmersibleFar = false;
             } else {
                 intakeAndScoringSubsystem.moveToIntakeLongPosition();
