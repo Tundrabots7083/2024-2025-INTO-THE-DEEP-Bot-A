@@ -130,7 +130,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             inSubmersibleFar = false;
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             if (inSubmersibleFar) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
+                intakeAndScoringSubsystem.retractLinearSlide();
                 inSubmersibleFar = false;
             } else {
                 intakeAndScoringSubsystem.moveToIntakeLongPosition();
