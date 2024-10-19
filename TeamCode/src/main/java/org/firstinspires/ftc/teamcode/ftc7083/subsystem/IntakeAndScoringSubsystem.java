@@ -169,8 +169,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         // set the slide length to zero. Use the hypotenuse to calculate the new X and Y coordinates
         // for the right triangle.
         double hypotenuse = ARM_LENGTH;
-        double x = hypotenuse * Math.cos(theta);
-        double y = hypotenuse * Math.sin(theta);
+        double x = getX(theta, hypotenuse);
+        double y = getY(theta,hypotenuse);
         moveToPosition(x, y);
         telemetry.addData("[IAS] position","retract slide");
     }
