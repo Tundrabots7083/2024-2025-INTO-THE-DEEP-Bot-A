@@ -145,7 +145,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
 
         // Manual override controls for the arm and linear slide. The left joystick will raise and
         // lower the arm; the right joystick will extend and retract the linear slide.
-        if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
+       /* if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustY = MANUAL_Y_ADJUSTMENT;
             if (gamepad2.left_stick_y > 0.0) {
                 adjustY *= -1;
@@ -160,7 +160,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             }
             intakeAndScoringSubsystem.adjustX(adjustX);
             telemetry.addData("[IAS C] adj slide length", adjustX);
-        }
+        }*/
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
         // or depositing them

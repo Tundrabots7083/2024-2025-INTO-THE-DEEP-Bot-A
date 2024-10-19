@@ -300,7 +300,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
     }
-    
+
    /* public void scoreHighBasket() {
         openClaw();
         robot.claw.execute();
