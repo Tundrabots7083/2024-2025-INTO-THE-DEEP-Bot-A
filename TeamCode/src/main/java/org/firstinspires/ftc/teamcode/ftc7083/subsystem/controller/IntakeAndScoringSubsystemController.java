@@ -77,6 +77,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
     private boolean inSubmersibleClose = false;
     private boolean inSubmersibleFar = false;
     private boolean clawOpen = false;
+    private boolean atHighBasket = false;
 
     /**
      * Instantiate a scoring subsystem controller, which uses gamepad controls to control the
@@ -105,13 +106,19 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
             intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
         } else if (gamepad2.dpad_left && !previousGamepad2.dpad_left) {
-            intakeAndScoringSubsystem.lowerArm();
-        } else if (gamepad2.dpad_right && !previousGamepad2.dpad_right) {
             intakeAndScoringSubsystem.raiseArm();
+        } else if (gamepad2.dpad_right && !previousGamepad2.dpad_right) {
+            intakeAndScoringSubsystem.lowerArm();
         } else if (gamepad2.cross && !previousGamepad2.cross) {
             intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
-            intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+            if(atHighBasket) {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                atHighBasket = false;
+            } else {
+                intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+                atHighBasket = true;
+            }
         } else if (gamepad2.square && !previousGamepad2.square) {
             if (inSubmersibleClose) {
                 intakeAndScoringSubsystem.moveToRetractArmPosition();
@@ -124,11 +131,9 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
         } else if (gamepad2.circle && !previousGamepad2.circle) {
             if (inSubmersibleFar) {
                 intakeAndScoringSubsystem.moveToRetractArmPosition();
-                intakeAndScoringSubsystem.closeClaw();
                 inSubmersibleFar = false;
             } else {
                 intakeAndScoringSubsystem.moveToIntakeLongPosition();
-                intakeAndScoringSubsystem.closeClaw();
                 inSubmersibleFar = true;
             }
             inSubmersibleClose = false;

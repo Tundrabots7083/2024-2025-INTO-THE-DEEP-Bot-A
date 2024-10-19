@@ -31,14 +31,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
     public static double INTAKE_SHORT_X = 27.0;
-    public static double INTAKE_SHORT_Y = 0.5;
+    public static double INTAKE_SHORT_Y = 1.1;
     public static double INTAKE_LONG_X = 36.0;
-    public static double INTAKE_LONG_Y = 0.5;
+    public static double INTAKE_LONG_Y = 1;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
     public static double LOW_CHAMBER_HEIGHT = 13.0;
-    public static double HIGH_BASKET_HEIGHT = 43.0;
+    public static double HIGH_BASKET_HEIGHT = 48.6;
     public static double LOW_BASKET_HEIGHT = 25.75;
 
     // Maximum horizontal length of robot when extended
@@ -167,6 +167,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Retracts the linear slide without changing the height.
+     */
+    public void retractLinearSlide() {
+        moveToPosition(ARM_LENGTH,targetY);
+        telemetry.addData("[IAS] position","retract slide");
+    }
+
+    /**
      * Moves the subsystem to a position where it may acquire a sample or a specimen that is
      * relative close to the front of the robot. This will lower and extend the arm so the claw
      * may be used to pickup a sample or specimen.
@@ -292,4 +300,12 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
     }
+    
+   /* public void scoreHighBasket() {
+        openClaw();
+        robot.claw.execute();
+        wait(1);
+        retractLinearSlide();
+        robot.arm.execute();
+    }*/
 }
