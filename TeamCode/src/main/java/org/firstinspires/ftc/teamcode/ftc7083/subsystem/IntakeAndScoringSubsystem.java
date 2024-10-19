@@ -158,23 +158,20 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem out of the submersible, presumably after picking up a sample.
-     * This will raise and retract.
-     */
-    public void moveToRetractArmPosition() {
-        moveToPosition(RETRACT_X, RETRACT_Y);
-        telemetry.addData("[IAS] position", "retract");
-    }
-
-    /**
-     * Retracts the linear slide without changing the height.
+     * Fully retract the linear slide while not changing the arm angle.
      */
     public void retractLinearSlide() {
-        targetX = Math.sqrt(Math.abs(Math.pow(ARM_LENGTH, 2) - Math.pow(targetY, 2)));
-        double slideLength = targetX - ARM_LENGTH;
-        robot.linearSlide.setLength(slideLength);
-        robot.linearSlide.execute();
-        telemetry.addData("[IAS] slide length", slideLength);
+        // Get angle on the triangle. This is not going to change as the arm is retracted, as the
+        // new triangle will be complementary to the current triangle.
+        double theta = getAngle(targetX, targetY);
+
+        // Fully retract the slide by setting the hypotenuse to the arm length, which will effectively
+        // set the slide length to zero. Use the hypotenuse to calculate the new X and Y coordinates
+        // for the right triangle.
+        double hypotenuse = ARM_LENGTH;
+        double x = hypotenuse * Math.cos(theta);
+        double y = hypotenuse * Math.sin(theta);
+        moveToPosition(x, y);
         telemetry.addData("[IAS] position","retract slide");
     }
 
