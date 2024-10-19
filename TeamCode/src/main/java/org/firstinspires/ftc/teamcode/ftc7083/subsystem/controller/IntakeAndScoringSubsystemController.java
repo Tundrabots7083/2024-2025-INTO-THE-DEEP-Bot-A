@@ -64,20 +64,14 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  */
 @Config
 public class IntakeAndScoringSubsystemController implements SubsystemController {
-    public static double MIN_JOYSTICK_VALUE = 0.5;
-    public static double MANUAL_X_ADJUSTMENT = 0.5;
-    public static double MANUAL_Y_ADJUSTMENT = 0.5;
-
     private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     private final Telemetry telemetry;
 
     private final Gamepad previousGamepad1 = new Gamepad();
     private final Gamepad previousGamepad2 = new Gamepad();
 
-    private boolean inSubmersibleClose = false;
-    private boolean inSubmersibleFar = false;
+    private State state = State.NEUTRAL_POSITION;
     private boolean clawOpen = false;
-    private boolean atHighBasket = false;
 
     /**
      * Instantiate a scoring subsystem controller, which uses gamepad controls to control the
@@ -102,45 +96,63 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
     public void execute(Gamepad gamepad1, Gamepad gamepad2) {
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
-            intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
+            if (state != State.LOW_CHAMBER_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
+                state = State.LOW_CHAMBER_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
+            if (state != State.HIGH_CHAMBER_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
+                state = State.HIGH_CHAMBER_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
+        } else if (gamepad2.cross && !previousGamepad2.cross) {
+            if (state != State.LOW_BASKET_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
+                state = State.LOW_BASKET_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
+        } else if (gamepad2.triangle && !previousGamepad2.triangle) {
+            if (state != State.HIGH_BASKET_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+                state = State.HIGH_BASKET_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
+        } else if (gamepad2.square && !previousGamepad2.square) {
+            if (state != State.INTAKE_CLOSE_POSITION) {
+                intakeAndScoringSubsystem.moveToIntakeShortPosition();
+                state = State.INTAKE_CLOSE_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
+        } else if (gamepad2.circle && !previousGamepad2.circle) {
+            if (state != State.INTAKE_FAR_POSITION) {
+                intakeAndScoringSubsystem.moveToIntakeLongPosition();
+                state = State.INTAKE_FAR_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
+        } else if (gamepad2.share && !previousGamepad2.share) {
+            intakeAndScoringSubsystem.moveToNeutralPosition();
+            state = State.NEUTRAL_POSITION;
+        } else if (gamepad2.options) {
+            intakeAndScoringSubsystem.moveToStartPosition();
+            state = State.START_POSITION;
         } else if (gamepad2.dpad_left && !previousGamepad2.dpad_left) {
             intakeAndScoringSubsystem.raiseArm();
         } else if (gamepad2.dpad_right && !previousGamepad2.dpad_right) {
             intakeAndScoringSubsystem.lowerArm();
-        } else if (gamepad2.cross && !previousGamepad2.cross) {
-            intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
-        } else if (gamepad2.triangle && !previousGamepad2.triangle) {
-            if(atHighBasket) {
-                intakeAndScoringSubsystem.retractLinearSlide();
-                atHighBasket = false;
-            } else {
-                intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
-                atHighBasket = true;
-            }
-        } else if (gamepad2.square && !previousGamepad2.square) {
-            if (inSubmersibleClose) {
-                intakeAndScoringSubsystem.retractLinearSlide();
-                inSubmersibleClose = false;
-            } else {
-                intakeAndScoringSubsystem.moveToIntakeShortPosition();
-                inSubmersibleClose = true;
-            }
-            inSubmersibleFar = false;
-        } else if (gamepad2.circle && !previousGamepad2.circle) {
-            if (inSubmersibleFar) {
-                intakeAndScoringSubsystem.retractLinearSlide();
-                inSubmersibleFar = false;
-            } else {
-                intakeAndScoringSubsystem.moveToIntakeLongPosition();
-                inSubmersibleFar = true;
-            }
-            inSubmersibleClose = false;
-        } else if (gamepad2.share && !previousGamepad2.share) {
-            intakeAndScoringSubsystem.moveToNeutralPosition();
-        } else if (gamepad2.options) {
-            intakeAndScoringSubsystem.moveToStartPosition();
         }
 
         // Manual override controls for the arm and linear slide. The left joystick will raise and
@@ -180,5 +192,20 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
 
         previousGamepad1.copy(gamepad1);
         previousGamepad2.copy(gamepad2);
+    }
+
+    /**
+     * State of the intake and scoring subsystem
+     */
+    enum State {
+        START_POSITION,
+        NEUTRAL_POSITION,
+        RETRACTED_POSITION,
+        LOW_BASKET_SCORING_POSITION,
+        HIGH_BASKET_SCORING_POSITION,
+        LOW_CHAMBER_SCORING_POSITION,
+        HIGH_CHAMBER_SCORING_POSITION,
+        INTAKE_CLOSE_POSITION,
+        INTAKE_FAR_POSITION
     }
 }
