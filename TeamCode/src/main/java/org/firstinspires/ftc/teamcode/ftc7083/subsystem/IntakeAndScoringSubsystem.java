@@ -170,7 +170,10 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * Retracts the linear slide without changing the height.
      */
     public void retractLinearSlide() {
-        moveToPosition(ARM_LENGTH,targetY);
+        targetX = Math.sqrt(Math.pow(ARM_LENGTH, 2) - Math.pow(targetY, 2));
+        double slideLength = targetX - ARM_LENGTH;
+        robot.linearSlide.setLength(slideLength);
+        telemetry.addData("[IAS] slide length", slideLength);
         telemetry.addData("[IAS] position","retract slide");
     }
 

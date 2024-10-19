@@ -121,7 +121,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             }
         } else if (gamepad2.square && !previousGamepad2.square) {
             if (inSubmersibleClose) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
+                intakeAndScoringSubsystem.retractLinearSlide();
                 inSubmersibleClose = false;
             } else {
                 intakeAndScoringSubsystem.moveToIntakeShortPosition();
