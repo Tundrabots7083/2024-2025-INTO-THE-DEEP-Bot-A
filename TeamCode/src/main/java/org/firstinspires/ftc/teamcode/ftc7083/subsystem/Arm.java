@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.GainSchedulingPIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.LookUpTableArgs;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
@@ -77,6 +82,22 @@ public class Arm extends SubsystemBase {
     }
 
     /**
+     * Configures the shoulder motor.
+     *
+     * @param motor the shoulder motor for the arm
+     */
+    private void configMotor(Motor motor) {
+        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
+        motorConfigurationType.setGearing(GEARING);
+        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
+        motor.setMotorType(motorConfigurationType);
+        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    /**
      * Gets the arm current in degrees to which the arm has moved.
      *
      * @return the current position in degrees to which the arm has moved
@@ -106,22 +127,6 @@ public class Arm extends SubsystemBase {
     }
 
     /**
-     * Configures the shoulder motor.
-     *
-     * @param motor the shoulder motor for the arm
-     */
-    private void configMotor(Motor motor) {
-        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
-        motorConfigurationType.setGearing(GEARING);
-        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
-        motor.setMotorType(motorConfigurationType);
-        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
-
-    /**
      * Sends power to the shoulder motor.
      */
     public void execute() {
@@ -142,5 +147,61 @@ public class Arm extends SubsystemBase {
         double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double error = Math.abs(targetAngle - degrees);
         return error <= TOLERABLE_ERROR;
+    }
+
+    /**
+     * Gets an action to set the target angle for the arm to the requested number of degrees.
+     *
+     * @param angle the target angle for the arm.
+     * @return an action to set the target angle for the arm to the requested number of degrees
+     */
+    public ActionEx setAngle(double angle) {
+        return new AdjustArm(this, angle);
+    }
+
+    /**
+     * An Action that sets the arm to the requested angle.
+     */
+    private static class AdjustArm extends ActionExBase {
+        private final Arm arm;
+        private final double angle;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an Action to set the arm to the requested angle.
+         *
+         * @param arm   the arm to be adjusted.
+         * @param angle the angle, in degrees, to which to  move the arm.
+         */
+        public AdjustArm(Arm arm, double angle) {
+            this.arm = arm;
+            this.angle = angle;
+        }
+
+        /**
+         * Runs the Action to adjust the arm angle. This action returns <code>false</code> once the
+         * arm has reached the target angle, and <code>true</code> while it is moving to the target
+         * angle.
+         *
+         * @param telemetryPacket telemetry that may be used to output information on the action
+         * @return <code>true</code> while the arm is moving to the target angle, <code>false</code>
+         *         once it reaches the target angle.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            arm.execute();
+            return !arm.isAtTarget();
+        }
+
+        /**
+         * Initializes the action to move the arm to the requested angle.
+         */
+        private void initialize() {
+            arm.setTargetAngle(angle);
+            initialized = true;
+        }
     }
 }

@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDControllerImpl;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
@@ -120,5 +125,59 @@ public class LinearSlide extends SubsystemBase {
         telemetry.addData("[Slide] target", targetLength);
         telemetry.addData("[Slide] current", getCurrentLength());
         return error <= TOLERABLE_ERROR;
+    }
+
+    /**
+     * Gets an action to set the length of the linear slide.
+     *
+     * @param length the target length for the linear slide.
+     * @return an action to set the length of the linear slide
+     */
+    public ActionEx setLinearSlideLength(double length) {
+        return new AdjustLinearSlide(this, length);
+    }
+
+    /**
+     * An Action to set the length of the linear slide.
+     */
+    private static class AdjustLinearSlide extends ActionExBase {
+        private final LinearSlide linearSlide;
+        private final double length;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an Action to set the length of the linear slide
+         *
+         * @param linearSlide   the linear slide to be adjusted
+         * @param length the length, in inches, to which to set the linear slide.
+         */
+        public AdjustLinearSlide(LinearSlide linearSlide, double length) {
+            this.linearSlide = linearSlide;
+            this.length = length;
+        }
+
+        /**
+         * Runs the Action to adjust the length of the linear slide.
+         *
+         * @param telemetryPacket telemetry that may be used to output information on the action
+         * @return <code>true</code> while the linear slide is moving to the target length,
+         *         <code>false</code> once it reaches the target length.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            linearSlide.execute();
+            return !linearSlide.isAtTarget();
+        }
+
+        /**
+         * Initializes the action to move the linear slide to the requested length.
+         */
+        private void initialize() {
+            linearSlide.setLength(length);
+            initialized = true;
+        }
     }
 }

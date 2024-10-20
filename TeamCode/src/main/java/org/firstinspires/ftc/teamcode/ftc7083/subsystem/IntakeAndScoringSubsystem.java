@@ -1,10 +1,17 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ParallelAction;
+import org.firstinspires.ftc.teamcode.ftc7083.action.SequentialAction;
 
 /**
  * This class uses the Arm, LinearSlide, Wrist, and Claw subsystems to pick up, control,
@@ -92,10 +99,18 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * position.
      *
      * @return <code>true</code> if the intake and scoring subsystem is at the target position;
-     * <code>false</code> otherwise
+     *         <code>false</code> otherwise
      */
     public boolean isAtTarget() {
         return robot.arm.isAtTarget() && robot.linearSlide.isAtTarget();
+    }
+
+    /**
+     * Moves the subsystem to the starting position, with the claw closed.
+     */
+    public void moveToStartPosition() {
+        moveToPosition(START_X, START_Y);
+        telemetry.addData("[IAS] position", "start");
     }
 
     /**
@@ -147,14 +162,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         double slideLength = Math.hypot(targetX, adjustedY) - ARM_LENGTH;
         telemetry.addData("[IAS] slide length", slideLength);
         robot.linearSlide.setLength(slideLength);
-    }
-
-    /**
-     * Moves the subsystem to the starting position, with the claw closed.
-     */
-    public void moveToStartPosition() {
-        moveToPosition(START_X, START_Y);
-        telemetry.addData("[IAS] position", "start");
     }
 
     /**
@@ -291,5 +298,77 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void openClaw() {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
+    }
+
+    /**
+     * Returns an action that scores a specimen in the top basket. The arm will be raised and
+     * extended to the top basket, the claw opened. Once the sample is scored, the arm will
+     * be retracted and the claw closed.
+     *
+     * @return n action that scores a specimen in the top basket
+     */
+    public ActionEx scoreSpecimenInTopBasket() {
+        return new SequentialAction(
+                new MoveTo(this, HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y),
+                robot.claw.openClaw(),
+                new ParallelAction(
+                        new MoveTo(this, RETRACT_X, RETRACT_Y),
+                        robot.claw.closeClaw()
+                )
+        );
+    }
+
+    /**
+     * Moves the intake and scoring subsystem to the target position, based on target X and Y
+     * coordinates.
+     */
+    private static class MoveTo extends ActionExBase {
+        private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+        private final double targetX;
+        private final double targetY;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an action to move the intake and scoring subsystem to the target X and Y
+         * coordinates.
+         *
+         * @param intakeAndScoringSubsystem the intake and scoring subsystem to be adjusted.
+         * @param targetX                   the target X coordinate, in inches, from the back of the robot
+         * @param targetY                   the target Y coordinate, in inches, from the field.
+         */
+        public MoveTo(IntakeAndScoringSubsystem intakeAndScoringSubsystem, double targetX, double targetY) {
+            this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
+            this.targetX = targetX;
+            this.targetY = targetY;
+        }
+
+        /**
+         * Moves the intake and scoring subsystem to the target X and Y coordinates. This returns
+         * <code>true</code> while the subsystem is moving to the target coordinates, and
+         * <code>false</code> once the target coordinates have been reached.
+         *
+         * @param telemetryPacket telemetry that may be used for output of data
+         * @return <code>true</code> while the intake and scoring subsystem are moving to the
+         *         target X and Y coordinates; <code>false</code> once the target coordinates have
+         *         been reached.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+
+            intakeAndScoringSubsystem.execute();
+            return !intakeAndScoringSubsystem.isAtTarget();
+        }
+
+        /**
+         * Initializes the action by requesting the intake and scoring subsystem m ove to the target
+         * X and Y coordinates.
+         */
+        private void initialize() {
+            intakeAndScoringSubsystem.moveToPosition(targetX, targetY);
+            initialized = true;
+        }
     }
 }
