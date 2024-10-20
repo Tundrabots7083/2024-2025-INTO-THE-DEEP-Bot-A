@@ -132,7 +132,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
                 intakeAndScoringSubsystem.moveToIntakeShortPosition();
                 state = State.INTAKE_CLOSE_POSITION;
             } else {
-                intakeAndScoringSubsystem.retractLinearSlide();
+                intakeAndScoringSubsystem.retractFromSubmersible();
                 state = State.RETRACTED_POSITION;
             }
         } else if (gamepad2.circle && !previousGamepad2.circle) {
@@ -140,7 +140,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
                 intakeAndScoringSubsystem.moveToIntakeLongPosition();
                 state = State.INTAKE_FAR_POSITION;
             } else {
-                intakeAndScoringSubsystem.retractLinearSlide();
+                intakeAndScoringSubsystem.retractFromSubmersible();
                 state = State.RETRACTED_POSITION;
             }
         } else if (gamepad2.share && !previousGamepad2.share) {

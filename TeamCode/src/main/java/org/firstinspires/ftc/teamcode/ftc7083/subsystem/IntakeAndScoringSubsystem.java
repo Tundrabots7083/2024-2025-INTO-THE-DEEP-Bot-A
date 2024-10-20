@@ -176,6 +176,15 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Retracts the linear slide from the submersible, slightly raising the arm so the slide does
+     * not hit the 2" lip around the submersible.
+     */
+    public void retractFromSubmersible() {
+        moveToPosition(RETRACT_X, RETRACT_Y);
+        telemetry.addData("[IAS] position", "retract submersible");
+    }
+
+    /**
      * Moves the subsystem to a position where it may acquire a sample or a specimen that is
      * relative close to the front of the robot. This will lower and extend the arm so the claw
      * may be used to pickup a sample or specimen.
