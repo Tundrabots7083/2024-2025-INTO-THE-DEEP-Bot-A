@@ -1,49 +1,54 @@
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 import java.util.List;
 
-/*
- * This OpMode illustrates how to use the Limelight3A Vision Sensor.
- *
- * @see <a href="https://limelightvision.io/">Limelight</a>
- *
- * Notes on configuration:
- *
- *   The device presents itself, when plugged into a USB port on a Control Hub as an ethernet
- *   interface.  A DHCP server running on the Limelight automatically assigns the Control Hub an
- *   ip address for the new ethernet interface.
- *
- *   Since the Limelight is plugged into a USB port, it will be listed on the top level configuration
- *   activity along with the Control Hub Portal and other USB devices such as webcams.  Typically
- *   serial numbers are displayed below the device's names.  In the case of the Limelight device, the
- *   Control Hub's assigned ip address for that ethernet interface is used as the "serial number".
- *
- *   Tapping the Limelight's name, transitions to a new screen where the user can rename the Limelight
- *   and specify the Limelight's ip address.  Users should take care not to confuse the ip address of
- *   the Limelight itself, which can be configured through the Limelight settings page via a web browser,
- *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
- *   below the name of the Limelight on the top level configuration screen.
- */
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
-//@Disabled
+
+@TeleOp(name = "Sensor: Limelight3A", group = "test")
+@Config
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
+    Motor leftFront;
+    Motor rightFront;
+    Motor leftBack;
+    Motor rightBack;
+    private double filteredDistance = 0.0;
+
+    public static double llHeight = 9.2;
+    public static double llAngleWithVertical = 15;
+    public static double Ks = 1;
 
     @Override
     public void runOpMode() throws InterruptedException
     {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+        leftFront = new Motor(hardwareMap,telemetry,"leftFront");
+        rightFront = new Motor(hardwareMap,telemetry,"rightFront");
+        leftBack = new Motor(hardwareMap,telemetry,"leftRear");
+        rightBack = new Motor(hardwareMap,telemetry,"rightRear");
+
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry.setMsTransmissionInterval(11);
 
@@ -70,28 +75,29 @@ public class SensorLimelight3A extends LinearOpMode {
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
-                Pose3D botpose = result.getBotpose();
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
                 telemetry.addData("LL Latency", captureLatency + targetingLatency);
                 telemetry.addData("Parse Latency", parseLatency);
-                telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
-                
+
                 if (result.isValid()) {
                     telemetry.addData("tx", result.getTx());
-                    telemetry.addData("txnc", result.getTxNC());
                     telemetry.addData("ty", result.getTy());
-                    telemetry.addData("tync", result.getTyNC());
-
-                    telemetry.addData("Botpose", botpose.toString());
 
 
-                    // Access color results
+                  /*  // Access color results
                     List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
                     for (LLResultTypes.ColorResult cr : colorResults) {
                         telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
-                    }
+                        }*/
+
+
+                    telemetry.addData("Distance to target:",calculateDistance(result));
+                    telemetry.update();
+
+                    rotateBot(result);
+
                 }
             } else {
                 telemetry.addData("Limelight", "No data available");
@@ -100,5 +106,54 @@ public class SensorLimelight3A extends LinearOpMode {
             telemetry.update();
         }
         limelight.stop();
+    }
+
+    private double calculateDistance(LLResult result)  {
+
+        double lastDistance = filteredDistance;
+
+        double targetOffsetAngle_Vertical = result.getTy();
+
+        // how many degrees back is your limelight rotated from perfectly vertical?
+        double limelightMountAngleDegrees = llAngleWithVertical;
+
+        // distance from the center of the Limelight lens to the floor
+        double limelightLensHeightInches = llHeight;
+
+        // distance from the target to the floor
+        double goalHeightInches = 1.1;
+
+        double angleToGoalDegrees = 90 - limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+        //calculate distance
+        double rawDistance = (limelightLensHeightInches - goalHeightInches) * Math.tan(angleToGoalRadians);
+
+        filteredDistance += (rawDistance - lastDistance) / Ks;
+
+        return filteredDistance;
+
+    }
+
+    private void rotateBot(LLResult result) {
+        double Tx = result.getTx();
+        double power = 0.0;
+        if(Tx > 0.5) {
+            power = 0.1;
+        } else if (Tx < -0.5) {
+            power = -0.1;
+        } else {
+            power = 0.0;
+            telemetry.addLine("Rotated Until Target");
+            telemetry.update();
+        }
+
+        telemetry.addData("Motor power:",power);
+        telemetry.update();
+
+        leftFront.setPower(power);
+        rightFront.setPower(power);
+        leftBack.setPower(power);
+        rightBack.setPower(power);
     }
 }
