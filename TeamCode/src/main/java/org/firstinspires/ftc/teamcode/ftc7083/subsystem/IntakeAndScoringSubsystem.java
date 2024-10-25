@@ -163,14 +163,16 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void retractLinearSlide() {
         // Get angle on the triangle. This is not going to change as the arm is retracted, as the
         // new triangle will be complementary to the current triangle.
-        double theta = getAngle(targetX, targetY);
+        double angle = robot.arm.getCurrentAngle();
 
         // Fully retract the slide by setting the hypotenuse to the arm length, which will effectively
         // set the slide length to zero. Use the hypotenuse to calculate the new X and Y coordinates
-        // for the right triangle.
+        // for the right triangle. ARM_HEIGHT is added to the Y value, as the ARM_HEIGHT is
+        // subtracted from the Y value by the moveToPosition() method.
         double hypotenuse = ARM_LENGTH;
-        double x = getX(theta, hypotenuse);
-        double y = getY(theta,hypotenuse);
+        double x = getX(angle, hypotenuse);
+        double y = getY(angle,hypotenuse) + ARM_HEIGHT;
+
         moveToPosition(x, y);
         telemetry.addData("[IAS] position","retract slide");
     }

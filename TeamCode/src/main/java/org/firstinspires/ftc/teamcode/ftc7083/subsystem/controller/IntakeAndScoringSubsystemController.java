@@ -11,37 +11,29 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  * used to manage the subsystem:
  * <ul>
  *     <li>
- *         <em>gamepad2.dpad_down</em>: move the scoring subsystem to the low chamber position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.dpad_down</em>: a toggle that moves the scoring subsystem to the low chamber
+ *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
- *           <em>gamepad2.dpad_up</em>: move the scoring subsystem to the high chamber position. This will
- *           raise the arm and extend the linear slide.
- *     </li>
- *     <li>
- *          <em>gamepad2.dpad_left</em>: lowers the arm on the scoring subsystem.
+ *           <em>gamepad2.dpad_up</em>: a toggle that moves the scoring subsystem to the high chamber
+ *  *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *          <em>gamepad2.dpad_right</em>: raises the arm on the scoring subsystem.
+ *         <em>gamepad2.cross</em>: a toggle that moves the scoring subsystem to the low basket
+ *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.cross</em>: move the scoring subsystem to the low bucket position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.triangle</em>: a toggle that moves the scoring subsystem to the high basket
+ *  *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.triangle</em>: move the scoring subsystem to the high bucket position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.square</em>: a toggle that moves the scoring subsystem into the submersible
+ *         at a position relatively close to the robot when first pressed and retracts the linear
+ *         slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.square</em>: move the scoring subsystem into or out of the submersible. When
- *         moving into the submersible, this will lower the arm and extend the linear slide to a
- *         position relatively close to the front of the robot. When moving out of the submersible,
- *         this will slightly raise the arm and retract the linear slide.
- *     </li>
- *     <li>
- *         <em>gamepad2.circle</em>: move the scoring subsystem into or out of the submersible. When
- *         moving into the submersible, this will lower the arm and extend the linear slide to a
- *         position relatively far from the front of the robot. When moving out of the submersible,
- *         this will slightly raise the arm and retract the linear slide.
+ *         <em>gamepad2.circle</em>: a toggle that moves the scoring subsystem into the submersible
+ *  *         at a position relatively far from the robot when first pressed and retracts the linear
+ *  *         slide if pressed a second time.
  *     </li>
  *     <li>
  *         <em>gamepad2.share</em>: move the scoring subsystem to a neutral position, where the arm is
@@ -50,6 +42,12 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  *     <li>
  *         <em>gamepad2.option</em>: move the scoring subsystem to a starting position, where the arm is
  *         all the way down and the linear slide is fully retracted.
+ *     </li>
+ *     <li>
+ *         <em>gamepad2.dpad_left</em>: lowers the arm on the scoring subsystem.
+ *     </li>
+ *     <li>
+ *         <em>gamepad2.dpad_right</em>: raises the arm on the scoring subsystem.
  *     </li>
  *     <li>
  *         <em>gamepad2.left_stick_y</em>: manually extend and retract the linear slide.
