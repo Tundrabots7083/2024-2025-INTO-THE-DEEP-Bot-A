@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 public class MecanumDriveController implements SubsystemController {
     public static double TURN_MULTIPLIER = 0.75; // Max turning speed multiplier
     public static double DRIVE_GAIN_MAX = 1; // Fast drive speed gain
-    public static double DRIVE_GAIN_MIN = 0.6; // Slow drive speed gain
+    public static double DRIVE_GAIN_MIN = 0.4; // Slow drive speed gain
 
     private final MecanumDrive mecanumDrive;
     private final Telemetry telemetry;

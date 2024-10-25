@@ -31,14 +31,14 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double RETRACT_X = ARM_LENGTH;
     public static double RETRACT_Y = 5.0;
     public static double INTAKE_SHORT_X = 27.0;
-    public static double INTAKE_SHORT_Y = 0.5;
+    public static double INTAKE_SHORT_Y = 1.6;
     public static double INTAKE_LONG_X = 36.0;
-    public static double INTAKE_LONG_Y = 0.5;
+    public static double INTAKE_LONG_Y = 1.6;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
     public static double LOW_CHAMBER_HEIGHT = 13.0;
-    public static double HIGH_BASKET_HEIGHT = 43.0;
+    public static double HIGH_BASKET_HEIGHT = 48.6;
     public static double LOW_BASKET_HEIGHT = 25.75;
 
     // Maximum horizontal length of robot when extended
@@ -158,12 +158,32 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem out of the submersible, presumably after picking up a sample.
-     * This will raise and retract.
+     * Fully retract the linear slide while not changing the arm angle.
      */
-    public void moveToRetractArmPosition() {
+    public void retractLinearSlide() {
+        // Get angle on the triangle. This is not going to change as the arm is retracted, as the
+        // new triangle will be complementary to the current triangle.
+        double angle = robot.arm.getCurrentAngle();
+
+        // Fully retract the slide by setting the hypotenuse to the arm length, which will effectively
+        // set the slide length to zero. Use the hypotenuse to calculate the new X and Y coordinates
+        // for the right triangle. ARM_HEIGHT is added to the Y value, as the ARM_HEIGHT is
+        // subtracted from the Y value by the moveToPosition() method.
+        double hypotenuse = ARM_LENGTH;
+        double x = getX(angle, hypotenuse);
+        double y = getY(angle,hypotenuse) + ARM_HEIGHT;
+
+        moveToPosition(x, y);
+        telemetry.addData("[IAS] position","retract slide");
+    }
+
+    /**
+     * Retracts the linear slide from the submersible, slightly raising the arm so the slide does
+     * not hit the 2" lip around the submersible.
+     */
+    public void retractFromSubmersible() {
         moveToPosition(RETRACT_X, RETRACT_Y);
-        telemetry.addData("[IAS] position", "retract");
+        telemetry.addData("[IAS] position", "retract submersible");
     }
 
     /**
@@ -292,4 +312,12 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
     }
+
+   /* public void scoreHighBasket() {
+        openClaw();
+        robot.claw.execute();
+        wait(1);
+        retractLinearSlide();
+        robot.arm.execute();
+    }*/
 }

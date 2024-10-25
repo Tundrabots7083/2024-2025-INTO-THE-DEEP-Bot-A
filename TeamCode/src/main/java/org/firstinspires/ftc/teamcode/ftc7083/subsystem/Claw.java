@@ -18,7 +18,7 @@ public class Claw extends SubsystemBase {
     public static String CLAW_SERVO = "clawServo";
     // Make default open/close degrees settable by FTC dashboard
     public static double DEFAULT_OPEN_DEGREES = 180.0;
-    public static double DEFAULT_CLOSE_DEGREES = 21.0;
+    public static double DEFAULT_CLOSE_DEGREES = 20.0;
     // Make max claw degrees settable by FTC dashboard
     public static double MAX_CLAW_DEGREES = 180.0;
     // Implement the claw using a Servo class
