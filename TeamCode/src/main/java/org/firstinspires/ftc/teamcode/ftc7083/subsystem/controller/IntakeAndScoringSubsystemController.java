@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  *          <em>gamepad2.dpad_left</em>: lowers the arm on the scoring subsystem.
  *     </li>
  *     <li>
- *          <em>gamepad2.dpad_right</em>: raisess the arm on the scoring subsystem.
+ *          <em>gamepad2.dpad_right</em>: raises the arm on the scoring subsystem.
  *     </li>
  *     <li>
  *         <em>gamepad2.cross</em>: move the scoring subsystem to the low bucket position. This will

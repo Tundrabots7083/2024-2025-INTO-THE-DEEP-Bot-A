@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Limelight;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.LinearSlide;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
@@ -32,6 +33,7 @@ public class Robot {
     public final LinearSlide linearSlide;
     public final Wrist wrist;
     public final Claw claw;
+    public final Limelight limelight;
 
     // All lynx module huba
     public final List<LynxModule> allHubs;
@@ -67,6 +69,7 @@ public class Robot {
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
+        limelight = new Limelight(hardwareMap,telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap, telemetry);
 
         this.telemetry.addLine("[Robot] initialized");

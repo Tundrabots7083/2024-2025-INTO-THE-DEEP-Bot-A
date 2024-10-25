@@ -292,4 +292,11 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
     }
+
+    public void moveToSampleIntakePosition() {
+        double xDistanceToSample = robot.limelight.getDistance();
+        double heightOfSample = 1.1;
+
+        moveToPosition(xDistanceToSample,heightOfSample);
+    }
 }
