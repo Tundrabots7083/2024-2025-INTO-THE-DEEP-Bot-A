@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -13,7 +12,6 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
 
 
 @TeleOp(name = "Limelight Arm Extension Test", group = "test")
-@Config
 public class LimelightIntakeTest extends OpMode {
     private final Gamepad currentGamepad1 = new Gamepad();
     private org.firstinspires.ftc.teamcode.ftc7083.Robot robot;
