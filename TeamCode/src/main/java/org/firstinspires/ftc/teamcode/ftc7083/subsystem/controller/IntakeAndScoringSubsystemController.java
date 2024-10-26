@@ -11,37 +11,29 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  * used to manage the subsystem:
  * <ul>
  *     <li>
- *         <em>gamepad2.dpad_down</em>: move the scoring subsystem to the low chamber position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.dpad_down</em>: a toggle that moves the scoring subsystem to the low chamber
+ *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
- *           <em>gamepad2.dpad_up</em>: move the scoring subsystem to the high chamber position. This will
- *           raise the arm and extend the linear slide.
- *     </li>
- *     <li>
- *          <em>gamepad2.dpad_left</em>: lowers the arm on the scoring subsystem.
+ *           <em>gamepad2.dpad_up</em>: a toggle that moves the scoring subsystem to the high chamber
+ *  *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *          <em>gamepad2.dpad_right</em>: raises the arm on the scoring subsystem.
+ *         <em>gamepad2.cross</em>: a toggle that moves the scoring subsystem to the low basket
+ *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.cross</em>: move the scoring subsystem to the low bucket position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.triangle</em>: a toggle that moves the scoring subsystem to the high basket
+ *  *          position when first pressed and retracts the linear slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.triangle</em>: move the scoring subsystem to the high bucket position. This will
- *         raise the arm and extend the linear slide.
+ *         <em>gamepad2.square</em>: a toggle that moves the scoring subsystem into the submersible
+ *         at a position relatively close to the robot when first pressed and retracts the linear
+ *         slide if pressed a second time.
  *     </li>
  *     <li>
- *         <em>gamepad2.square</em>: move the scoring subsystem into or out of the submersible. When
- *         moving into the submersible, this will lower the arm and extend the linear slide to a
- *         position relatively close to the front of the robot. When moving out of the submersible,
- *         this will slightly raise the arm and retract the linear slide.
- *     </li>
- *     <li>
- *         <em>gamepad2.circle</em>: move the scoring subsystem into or out of the submersible. When
- *         moving into the submersible, this will lower the arm and extend the linear slide to a
- *         position relatively far from the front of the robot. When moving out of the submersible,
- *         this will slightly raise the arm and retract the linear slide.
+ *         <em>gamepad2.circle</em>: a toggle that moves the scoring subsystem into the submersible
+ *  *         at a position relatively far from the robot when first pressed and retracts the linear
+ *  *         slide if pressed a second time.
  *     </li>
  *     <li>
  *         <em>gamepad2.share</em>: move the scoring subsystem to a neutral position, where the arm is
@@ -50,6 +42,12 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  *     <li>
  *         <em>gamepad2.option</em>: move the scoring subsystem to a starting position, where the arm is
  *         all the way down and the linear slide is fully retracted.
+ *     </li>
+ *     <li>
+ *         <em>gamepad2.dpad_left</em>: lowers the arm on the scoring subsystem.
+ *     </li>
+ *     <li>
+ *         <em>gamepad2.dpad_right</em>: raises the arm on the scoring subsystem.
  *     </li>
  *     <li>
  *         <em>gamepad2.left_stick_y</em>: manually extend and retract the linear slide.
@@ -64,18 +62,13 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  */
 @Config
 public class IntakeAndScoringSubsystemController implements SubsystemController {
-    public static double MIN_JOYSTICK_VALUE = 0.5;
-    public static double MANUAL_X_ADJUSTMENT = 0.5;
-    public static double MANUAL_Y_ADJUSTMENT = 0.5;
-
     private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     private final Telemetry telemetry;
 
     private final Gamepad previousGamepad1 = new Gamepad();
     private final Gamepad previousGamepad2 = new Gamepad();
 
-    private boolean inSubmersibleClose = false;
-    private boolean inSubmersibleFar = false;
+    private State state = State.NEUTRAL_POSITION;
     private boolean clawOpen = false;
 
     /**
@@ -101,46 +94,68 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
     public void execute(Gamepad gamepad1, Gamepad gamepad2) {
         // Preset positions for the arm and linear slide
         if (gamepad2.dpad_down && !previousGamepad2.dpad_down) {
-            intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
+            if (state != State.LOW_CHAMBER_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToChamberLowScoringPosition();
+                state = State.LOW_CHAMBER_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
-        } else if (gamepad2.dpad_left && !previousGamepad2.dpad_left) {
-            intakeAndScoringSubsystem.lowerArm();
-        } else if (gamepad2.dpad_right && !previousGamepad2.dpad_right) {
-            intakeAndScoringSubsystem.raiseArm();
+            if (state != State.HIGH_CHAMBER_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToChamberHighScoringPosition();
+                state = State.HIGH_CHAMBER_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.cross && !previousGamepad2.cross) {
-            intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
+            if (state != State.LOW_BASKET_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToBasketLowScoringPosition();
+                state = State.LOW_BASKET_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.triangle && !previousGamepad2.triangle) {
-            intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+            if (state != State.HIGH_BASKET_SCORING_POSITION) {
+                intakeAndScoringSubsystem.moveToBasketHighScoringPosition();
+                state = State.HIGH_BASKET_SCORING_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractLinearSlide();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.square && !previousGamepad2.square) {
-            if (inSubmersibleClose) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
-                inSubmersibleClose = false;
-            } else {
+            if (state != State.INTAKE_CLOSE_POSITION) {
                 intakeAndScoringSubsystem.moveToIntakeShortPosition();
-                inSubmersibleClose = true;
-            }
-            inSubmersibleFar = false;
-        } else if (gamepad2.circle && !previousGamepad2.circle) {
-            if (inSubmersibleFar) {
-                intakeAndScoringSubsystem.moveToRetractArmPosition();
-                intakeAndScoringSubsystem.closeClaw();
-                inSubmersibleFar = false;
+                state = State.INTAKE_CLOSE_POSITION;
             } else {
-                intakeAndScoringSubsystem.moveToIntakeLongPosition();
-                intakeAndScoringSubsystem.closeClaw();
-                inSubmersibleFar = true;
+                intakeAndScoringSubsystem.retractFromSubmersible();
+                state = State.RETRACTED_POSITION;
             }
-            inSubmersibleClose = false;
+        } else if (gamepad2.circle && !previousGamepad2.circle) {
+            if (state != State.INTAKE_FAR_POSITION) {
+                intakeAndScoringSubsystem.moveToIntakeLongPosition();
+                state = State.INTAKE_FAR_POSITION;
+            } else {
+                intakeAndScoringSubsystem.retractFromSubmersible();
+                state = State.RETRACTED_POSITION;
+            }
         } else if (gamepad2.share && !previousGamepad2.share) {
             intakeAndScoringSubsystem.moveToNeutralPosition();
+            state = State.NEUTRAL_POSITION;
         } else if (gamepad2.options) {
             intakeAndScoringSubsystem.moveToStartPosition();
+            state = State.START_POSITION;
+        } else if (gamepad2.dpad_left && !previousGamepad2.dpad_left) {
+            intakeAndScoringSubsystem.raiseArm();
+        } else if (gamepad2.dpad_right && !previousGamepad2.dpad_right) {
+            intakeAndScoringSubsystem.lowerArm();
         }
 
         // Manual override controls for the arm and linear slide. The left joystick will raise and
         // lower the arm; the right joystick will extend and retract the linear slide.
-        if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
+       /* if (Math.abs(gamepad2.left_stick_y) > MIN_JOYSTICK_VALUE) {
             double adjustY = MANUAL_Y_ADJUSTMENT;
             if (gamepad2.left_stick_y > 0.0) {
                 adjustY *= -1;
@@ -155,7 +170,7 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
             }
             intakeAndScoringSubsystem.adjustX(adjustX);
             telemetry.addData("[IAS C] adj slide length", adjustX);
-        }
+        }*/
 
         // Open and close the claw; used for acquiring samples/specimens and scoring
         // or depositing them
@@ -175,5 +190,20 @@ public class IntakeAndScoringSubsystemController implements SubsystemController 
 
         previousGamepad1.copy(gamepad1);
         previousGamepad2.copy(gamepad2);
+    }
+
+    /**
+     * State of the intake and scoring subsystem
+     */
+    enum State {
+        START_POSITION,
+        NEUTRAL_POSITION,
+        RETRACTED_POSITION,
+        LOW_BASKET_SCORING_POSITION,
+        HIGH_BASKET_SCORING_POSITION,
+        LOW_CHAMBER_SCORING_POSITION,
+        HIGH_CHAMBER_SCORING_POSITION,
+        INTAKE_CLOSE_POSITION,
+        INTAKE_FAR_POSITION
     }
 }
