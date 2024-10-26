@@ -59,7 +59,7 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
         public double angularScalar = 1.0;
     }
 
-    public static SparkFunOTOSDrive.Params PARAMS = new SparkFunOTOSDrive.Params();
+    public static Params PARAMS = new Params();
     public SparkFunOTOSCorrected otos;
     private Pose2d lastOtosPose = pose;
 
