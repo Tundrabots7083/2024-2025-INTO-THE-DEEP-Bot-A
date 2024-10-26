@@ -101,6 +101,7 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
         System.out.println(otos.calibrateImu(255, true));
         System.out.println("OTOS calibration complete!");
     }
+    
     @Override
     public PoseVelocity2d updatePoseEstimate() {
         if (lastOtosPose != pose) {
@@ -140,6 +141,4 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
         // OTOS velocity units happen to be identical to Roadrunners, so we don't need any conversion!
         return new PoseVelocity2d(new Vector2d(otosVel.x, otosVel.y),otosVel.h);
     }
-
-
 }
