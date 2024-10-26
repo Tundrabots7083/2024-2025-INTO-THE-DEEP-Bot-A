@@ -33,7 +33,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     public final Encoder par, perp;
     public final IMU imu;
 
-    private int lastParPos, lastPerpPos;
+    private double lastParPos, lastPerpPos;
     private Rotation2d lastHeading;
 
     private final double inPerTick;
@@ -90,8 +90,8 @@ public final class TwoDeadWheelLocalizer implements Localizer {
             );
         }
 
-        int parPosDelta = parPosVel.position - lastParPos;
-        int perpPosDelta = perpPosVel.position - lastPerpPos;
+        double parPosDelta = parPosVel.position - lastParPos;
+        double perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
 
         Twist2dDual<Time> twist = new Twist2dDual<>(
