@@ -101,7 +101,7 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
         System.out.println(otos.calibrateImu(255, true));
         System.out.println("OTOS calibration complete!");
     }
-    
+
     @Override
     public PoseVelocity2d updatePoseEstimate() {
         if (lastOtosPose != pose) {
