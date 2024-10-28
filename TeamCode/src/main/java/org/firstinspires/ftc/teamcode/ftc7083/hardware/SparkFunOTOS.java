@@ -16,11 +16,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.Robot;
  */
 @Config
 @I2cDeviceType
-@DeviceProperties(
-        name = "SparkFun OTOS v2",
-        xmlTag = "SparkFunOTOSv2",
-        description = "SparkFun Qwiic Optical Tracking Odometry Sensor v2"
-)
+@DeviceProperties(name = "SparkFun OTOS v2", xmlTag = "SparkFunOTOSv2", description = "SparkFun Qwiic Optical Tracking Odometry Sensor v2")
 public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
     // Assuming you've mounted your sensor to a robot and it's not centered,
     // you can specify the offset for the sensor relative to the center of the
@@ -70,16 +66,17 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
 
         Telemetry telemetry = Robot.getInstance().telemetry;
 
+        telemetry.addLine("[OTOS] initialization beginning!");
+
         // Don't change the units, it will stop FTCDashboard field view from working properly
         // and might cause various other issues
         setLinearUnit(DistanceUnit.INCH);
         setAngularUnit(AngleUnit.RADIANS);
 
-        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D offset = new com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D(SPARKFUN_OTOS_OFFSET_X, SPARKFUN_OTOS_OFFSET_Y, Math.toRadians(SPARKFUN_OTOS_HEADING_IN_DEGREES));
+        Pose2D offset = new Pose2D(SPARKFUN_OTOS_OFFSET_X, SPARKFUN_OTOS_OFFSET_Y, Math.toRadians(SPARKFUN_OTOS_HEADING_IN_DEGREES));
         setOffset(offset);
-        telemetry.addLine("[OTOS] calibration beginning!");
-        telemetry.addData("[OTOS] linear scalar", setLinearScalar(SPARKFUN_LINEAR_SCALAR));
-        telemetry.addData("[OTOS] angular scalar", setAngularScalar(SPARKFUN_ANGULAR_SCALAR));
+        telemetry.addData("[OTOS] linear scalar set", setLinearScalar(SPARKFUN_LINEAR_SCALAR));
+        telemetry.addData("[OTOS] angular scalar set", setAngularScalar(SPARKFUN_ANGULAR_SCALAR));
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -98,7 +95,8 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
         // this would allow your OpMode code to run while the calibration occurs.
         // However, that may cause other issues.
         // In the future I hope to do that by default and just add a check in updatePoseEstimate for it
-        telemetry.addData("[OTOS] calibrate IMU", (calibrateImu(255, true)));
-        telemetry.addLine("OTOS calibration complete!");
+        telemetry.addData("[OTOS] IBM calibrated", calibrateImu(255, true));
+
+        telemetry.addLine("[OTOS] initialization complete!");
     }
 }
