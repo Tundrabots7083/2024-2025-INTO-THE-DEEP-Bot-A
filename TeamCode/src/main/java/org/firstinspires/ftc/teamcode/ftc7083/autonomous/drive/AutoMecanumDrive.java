@@ -85,7 +85,7 @@ public class AutoMecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(Params.minProfileAccel, Params.maxProfileAccel);
 
-    public final MecanumDrive drive;
+    public final MecanumDrive mecanumDrive;
 
     public final VoltageSensor voltageSensor;
 
@@ -99,7 +99,7 @@ public class AutoMecanumDrive {
 
     public AutoMecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
-        this.drive = Robot.getInstance().mecanumDrive;
+        this.mecanumDrive = Robot.getInstance().mecanumDrive;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
@@ -126,7 +126,7 @@ public class AutoMecanumDrive {
         double rightRearPower = wheelVels.rightBack.get(0) / maxPowerMag;
         double rightFrontPower = wheelVels.rightFront.get(0) / maxPowerMag;
 
-        drive.setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
+        mecanumDrive.setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
     }
 
     public PoseVelocity2d updatePoseEstimate() {
@@ -207,7 +207,7 @@ public class AutoMecanumDrive {
             }
 
             if (t >= timeTrajectory.duration) {
-                drive.setMotorPowers(0, 0, 0, 0);
+                mecanumDrive.setMotorPowers(0, 0, 0, 0);
                 return false;
             }
 
@@ -236,7 +236,7 @@ public class AutoMecanumDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
+            mecanumDrive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
 
             p.put("x", pose.position.x);
             p.put("y", pose.position.y);
@@ -292,7 +292,7 @@ public class AutoMecanumDrive {
             }
 
             if (t >= turn.duration) {
-                drive.setMotorPowers(0, 0, 0, 0);
+                mecanumDrive.setMotorPowers(0, 0, 0, 0);
 
                 return false;
             }
@@ -326,7 +326,7 @@ public class AutoMecanumDrive {
             rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
 
-            drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
+            mecanumDrive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
 
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
