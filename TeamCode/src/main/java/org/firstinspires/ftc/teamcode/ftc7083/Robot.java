@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,16 +33,12 @@ public class Robot {
     // Subsystems
     public final MecanumDrive mecanumDrive;
     public final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
-    public final Webcam webcamLeft;
-    public final Webcam webcamRight;
+    public final Webcam webcam;
     public final Arm arm;
     public final LinearSlide linearSlide;
     public final Wrist wrist;
     public final Claw claw;
     public final SparkFunOTOS otos;
-
-    // All webcams
-    public final List<Webcam> webcams;
 
     // All lynx module huba
     public final List<LynxModule> allHubs;
@@ -69,11 +64,12 @@ public class Robot {
 
         // Instantiate all the hardware on the robot
         mecanumDrive = new MecanumDrive(hardwareMap, telemetry);
-
-        webcamLeft = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT);
-        webcamRight = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT);
-        webcams = Arrays.asList(webcamLeft, webcamRight);
-
+        if (opModeType == OpModeType.AUTO) {
+            // Create the vision sensor
+            webcam = new Webcam("Webcam Front", hardwareMap, telemetry);
+        } else {
+            webcam = null;
+        }
         arm = new Arm(hardwareMap, telemetry);
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
@@ -129,7 +125,7 @@ public class Robot {
     public String toString() {
         return "Robot{" +
                 "mecanumDrive=" + mecanumDrive +
-                ", webcam=" + webcamLeft +
+                ", webcam=" + webcam +
                 '}';
     }
 
