@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 
 /**
- * Instance of the SparkFun OTOS that initializes the SparkFun OTOS configuration for the
- * robot used by TundraBots for INTO_THE_DEEP.
+ * Instance of the SparkFun OTOS that initializes the configuration for the robot used by TundraBots
+ * for INTO_THE_DEEP.
  */
 @Config
 @I2cDeviceType
