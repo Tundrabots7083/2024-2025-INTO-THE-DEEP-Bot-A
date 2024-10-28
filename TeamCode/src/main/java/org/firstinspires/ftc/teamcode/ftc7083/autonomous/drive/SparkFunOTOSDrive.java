@@ -7,13 +7,11 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 
 /**
@@ -26,44 +24,14 @@ import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 public class SparkFunOTOSDrive extends AutoMecanumDrive {
     public static Params PARAMS = new Params();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
-    public SparkFunOTOSCorrected otos;
     private Pose2d lastOtosPose = pose;
+    private final Robot robot;
 
     public SparkFunOTOSDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
-        FlightRecorder.write("OTOS_PARAMS", PARAMS);
-        otos = hardwareMap.get(SparkFunOTOSCorrected.class, "sensor_otos");
-        // RR localizer note:
-        // don't change the units, it will stop Dashboard field view from working properly
-        // and might cause various other issues
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.RADIANS);
 
-        otos.setOffset(PARAMS.offset);
-        System.out.println("OTOS calibration beginning!");
-        System.out.println(otos.setLinearScalar(PARAMS.linearScalar));
-        System.out.println(otos.setAngularScalar(PARAMS.angularScalar));
-
-        otos.setPosition(RRPoseToOTOSPose(pose));
-        // The IMU on the OTOS includes a gyroscope and accelerometer, which could
-        // have an offset. Note that as of firmware version 1.0, the calibration
-        // will be lost after a power cycle; the OTOS performs a quick calibration
-        // when it powers up, but it is recommended to perform a more thorough
-        // calibration at the start of all your programs. Note that the sensor must
-        // be completely stationary and flat during calibration! When calling
-        // calibrateImu(), you can specify the number of samples to take and whether
-        // to wait until the calibration is complete. If no parameters are provided,
-        // it will take 255 samples and wait until done; each sample takes about
-        // 2.4ms, so about 612ms total
-
-        // RR localizer note: It is technically possible to change the number of samples to slightly reduce init times,
-        // however, I found that it caused pretty severe heading drift.
-        // Also, if you're careful to always wait more than 612ms in init, you could technically disable waitUntilDone;
-        // this would allow your OpMode code to run while the calibration occurs.
-        // However, that may cause other issues.
-        // In the future I hope to do that by default and just add a check in updatePoseEstimate for it
-        System.out.println(otos.calibrateImu(255, true));
-        System.out.println("OTOS calibration complete!");
+        robot = Robot.getInstance();
+        robot.otos.setPosition(RRPoseToOTOSPose(pose));
     }
 
     @Override
@@ -76,7 +44,7 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
             // I don't like this solution at all, but it preserves compatibility.
             // The only alternative is to add getter and setters, but that breaks compat.
             // Potential alternate solution: timestamp the pose set and backtrack it based on speed?
-            otos.setPosition(RRPoseToOTOSPose(pose));
+            robot.otos.setPosition(RRPoseToOTOSPose(pose));
         }
         // RR localizer note:
         // The values are passed by reference, so we create variables first,
@@ -89,7 +57,7 @@ public class SparkFunOTOSDrive extends AutoMecanumDrive {
         SparkFunOTOS.Pose2D otosPose = new SparkFunOTOS.Pose2D();
         SparkFunOTOS.Pose2D otosVel = new SparkFunOTOS.Pose2D();
         SparkFunOTOS.Pose2D otosAcc = new SparkFunOTOS.Pose2D();
-        otos.getPosVelAcc(otosPose, otosVel, otosAcc);
+        robot.otos.getPosVelAcc(otosPose, otosVel, otosAcc);
         pose = OTOSPoseToRRPose(otosPose);
         lastOtosPose = pose;
 
