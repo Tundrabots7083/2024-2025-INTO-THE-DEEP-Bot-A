@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Limelight;
         @Override
         public void loop() {
 
-            double xDistance = limelight.getDistance() - 4.5;
+            double xDistance = limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE) - 4.5;
 
             telemetry.addData("Distance to Target:",xDistance);
             telemetry.update();

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -8,13 +10,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.util.Arrays;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 @Config
-public class Limelight {
+public class Limelight extends SubsystemBase {
 
-    public static double llAngleWithVertical = 19;
-    public static double llHeight = 9;
+    public static double LL_ANGLE_WITH_VERTICAL = 25;
+    public static double LL_HEIGHT = 16;
     public static double Kp = 0.02;
     public static double Kpx = 0.05;
 
@@ -23,10 +26,17 @@ public class Limelight {
     private LLResult result;
     private LLStatus status;
 
-    private final int yellowSampleColorPipeline = 0;
-    private final int redSampleColorPipeline = 1;
-    private final int blueSampleColorPipeline = 2;
-    private final int aprilTagPipeline = 3;
+    private final int YELLOW_SAMPLE_COLOR_PIPELINE = 0;
+    private final int RED_SAMPLE_COLOR_PIPELINE = 1;
+    private final int BLUE_SAMPLE_COLOR_PIPELINE = 2;
+    private final int APRIL_TAG_PIPELINE = 3;
+    public static int MAX_COLOR_PIPELINE = 2;
+    private static int NUM_SAMPLES_TO_AVERAGE = 16;
+    private static final double SAMPLE_HEIGHT_INCHES = 1.1;
+    private static final double WALL_HEIGHT_INCHES = 6.5;
+    private static double LL_DISTANCE_FROM_ARM_AXEL = 4.5;
+
+    private final Queue<Double> TySamples = new ArrayDeque<>();
 
 
     /**
@@ -41,11 +51,22 @@ public class Limelight {
         configureLimelight();
     }
 
+    @Override
+    public void execute() {
+        double Ty = getTy();
+        if (result != null) {
+            TySamples.add(Ty);
+            if (TySamples.size() > NUM_SAMPLES_TO_AVERAGE) {
+                TySamples.remove();
+            }
+        }
+    }
+
     /**
      * Configures the limelight
      */
     private void configureLimelight() {
-        limelight.pipelineSwitch(yellowSampleColorPipeline);
+        detectYellow();
         limelight.setPollRateHz(250);
         limelight.start();
     }
@@ -70,7 +91,7 @@ public class Limelight {
         getStatus();
         getResult();
 
-        if (result != null && (status.getPipelineIndex() <= 2)) {
+        if (result != null && (status.getPipelineIndex() <= MAX_COLOR_PIPELINE)) {
             return result.getTx();
         } else {
             return 0.0;
@@ -78,7 +99,7 @@ public class Limelight {
     }
 
     /**
-     * Gets the Ty angle if the current pipeline is color
+     * Gets the Ty angle from the principle pixel if the current pipeline is color
      *
      * @return the Ty angle
      */
@@ -86,8 +107,8 @@ public class Limelight {
         getStatus();
         getResult();
 
-        if (result != null && (status.getPipelineIndex() <= 2)) {
-            return result.getTy();
+        if (result != null && (status.getPipelineIndex() <= MAX_COLOR_PIPELINE)) {
+            return result.getTyNC();
         } else {
             return 0.0;
         }
@@ -99,119 +120,80 @@ public class Limelight {
      *
      * @return the distance to the target
      */
-    public double getDistance() {
-        getResult();
-        getStatus();
+    public double getDistance(TargetPosition position) {
         double xDistance;
-        double[] Ty = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         double retryCount = 0;
         double filteredTy;
         final double MAX_RETRIES = 20;
+        double goalHeightInches;
 
-        // how many degrees is your limelight rotated from perfectly vertical?
-        double limelightMountAngleDegrees = llAngleWithVertical;
-
-        // distance from the center of the Limelight lens to the floor
-        double limelightLensHeightInches = llHeight;
-
-        // distance from the target to the floor
-        //1.1 for a sample
-        double goalHeightInches = 1.1;
-
-
-        if (result != null && (status.getPipelineIndex() <= 2)) {
-            for (int i = 0; i < 16; ) {
-                if (result != null) {
-                    Ty[i] = getTy();
-                    i++;
-                } else {
-                    // Retry limit reached; break out of the loop to prevent infinite loop
-                    if (++retryCount >= MAX_RETRIES) {
-                        telemetry.addLine("Failed to get result after 12 retries");
-                        telemetry.update();
-                        break;
-                    }
-
-                }
-            }
-
-            filteredTy = Arrays.stream(Ty).average().orElse(0.0);
-
-            double angleToGoalDegrees = 90 - limelightMountAngleDegrees + filteredTy;
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-            xDistance = (limelightLensHeightInches - goalHeightInches) * Math.tan(angleToGoalRadians);
-            return xDistance + 4.5;
+        if (position == TargetPosition.WALL) {
+            goalHeightInches = WALL_HEIGHT_INCHES;
         } else {
-            return 0.0;
+            goalHeightInches = SAMPLE_HEIGHT_INCHES;
         }
 
 
-    }
-
-    /**
-     * Returns the power for the motors to rotate
-     * towards the target. Returns a non-zero power
-     * until the angle Tx is close to zero.
-     *
-     * @return the power to assign to the motors
-     */
-    public double rotateBot() {
-        getStatus();
-        double Tx = getTx();
-        double power;
-        if (Tx > 0.8 || Tx < -0.8) {
-            power = -Kpx * Tx;
-        } else {
-            power = 0.0;
-           /* telemetry.addLine("Rotated Until Target");
-            telemetry.update();*/
+        while (TySamples.size() < NUM_SAMPLES_TO_AVERAGE && retryCount < MAX_RETRIES) {
+            execute();
+            retryCount++;
         }
 
-        return power;
+        filteredTy = TySamples.stream().mapToDouble(a -> a).average().orElse(0.0);
 
-        /*telemetry.addData("Motor power:",power);
-        telemetry.update();*/
+        double angleToGoalDegrees = 90 - LL_ANGLE_WITH_VERTICAL + filteredTy;
+        double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
+
+        xDistance = (LL_HEIGHT - goalHeightInches) * Math.tan(angleToGoalRadians);
+        return xDistance + LL_DISTANCE_FROM_ARM_AXEL;
+
     }
 
-    public double positionBot() {
-        double distance = getDistance() - 4.5;
-        double error = distance - 15;
-        if (error > 0.5) {
-            return error * Kp + 0.2;
-        } else if (error < 0.5) {
-            return error * Kp - 0.2;
-        } else {
-            return 0.0;
-        }
-    }
 
     /**
      * Sets the pipeline to detect yellow samples.
      */
     public void detectYellow() {
-        limelight.pipelineSwitch(yellowSampleColorPipeline);
+        limelight.pipelineSwitch(YELLOW_SAMPLE_COLOR_PIPELINE);
+        TySamples.clear();
     }
 
     /**
      * Sets the pipeline to detect red samples.
      */
     public void detectRed() {
-        limelight.pipelineSwitch(redSampleColorPipeline);
+        limelight.pipelineSwitch(RED_SAMPLE_COLOR_PIPELINE);
+        TySamples.clear();
     }
 
     /**
      * Sets the pipeline to detect blue samples.
      */
     public void detectBlue() {
-        limelight.pipelineSwitch(blueSampleColorPipeline);
+        limelight.pipelineSwitch(BLUE_SAMPLE_COLOR_PIPELINE);
+        TySamples.clear();
     }
 
     /**
      * Setts the pipeline to detect aprilTags.
      */
     public void detectAprilTags() {
-        limelight.pipelineSwitch(aprilTagPipeline);
+        limelight.pipelineSwitch(APRIL_TAG_PIPELINE);
+        TySamples.clear();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Limelight{" +
+                "status=" + status +
+                ", result=" + result +
+                '}';
+    }
+
+    public enum TargetPosition {
+        SUBMERSIBLE,
+        WALL;
     }
 
 }

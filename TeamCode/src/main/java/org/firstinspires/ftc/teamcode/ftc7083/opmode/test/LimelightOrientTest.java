@@ -31,15 +31,11 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
         @Override
         public void loop() {
 
-            double xDistance = limelight.getDistance() - 4.5;
-            double turnPower = limelight.rotateBot();
-            double drivePower = limelight.positionBot();
-
-            mecanumDrive.drive(0,drivePower,turnPower);
+            double xDistance = limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE) - 4.5;
+            //double drivePower = limelight.positionBot();
 
             telemetry.addData("Distance to Target:",xDistance);
-            telemetry.addData("Turn Power:",turnPower);
-            telemetry.addData("Drive Power:",drivePower);
+            telemetry.addData("Drive Power:",0);
             telemetry.update();
         }
 

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 
 
 @TeleOp(name = "Limelight Arm Extension Test", group = "test")
@@ -16,6 +17,8 @@ public class LimelightIntakeTest extends OpMode {
     private final Gamepad currentGamepad1 = new Gamepad();
     private org.firstinspires.ftc.teamcode.ftc7083.Robot robot;
     private IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+    private MecanumDrive mecanumDrive;
+
 
     @Override
     public void init() {
@@ -24,6 +27,7 @@ public class LimelightIntakeTest extends OpMode {
 
         robot = Robot.init(hardwareMap, telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap,telemetry);
+        mecanumDrive = new MecanumDrive(hardwareMap,telemetry);
 
         telemetry.setMsTransmissionInterval(11);
         telemetry.addLine("Initialization Complete");
@@ -52,6 +56,9 @@ public class LimelightIntakeTest extends OpMode {
             intakeAndScoringSubsystem.moveToSampleIntakePosition();
         }
 
+        robot.arm.execute();
+        robot.linearSlide.execute();
+        robot.limelight.execute();
         telemetry.update();
     }
 
