@@ -74,8 +74,9 @@ public class Limelight extends SubsystemBase {
     /**
      * Gets the latest result from the set pipeline
      */
-    private void getResult() {
+    public LLResult getResult() {
         result = limelight.getLatestResult();
+        return result;
     }
 
     private void getStatus() {
@@ -87,7 +88,7 @@ public class Limelight extends SubsystemBase {
      *
      * @return the Tx angle
      */
-    private double getTx() {
+    public double getTx() {
         getStatus();
         getResult();
 
@@ -120,14 +121,14 @@ public class Limelight extends SubsystemBase {
      *
      * @return the distance to the target
      */
-    public double getDistance(TargetPosition position) {
+    public double getDistance(TargetHeight position) {
         double xDistance;
         double retryCount = 0;
         double filteredTy;
         final double MAX_RETRIES = 20;
         double goalHeightInches;
 
-        if (position == TargetPosition.WALL) {
+        if (position == TargetHeight.WALL) {
             goalHeightInches = WALL_HEIGHT_INCHES;
         } else {
             goalHeightInches = SAMPLE_HEIGHT_INCHES;
@@ -191,7 +192,7 @@ public class Limelight extends SubsystemBase {
                 '}';
     }
 
-    public enum TargetPosition {
+    public enum TargetHeight {
         SUBMERSIBLE,
         WALL;
     }

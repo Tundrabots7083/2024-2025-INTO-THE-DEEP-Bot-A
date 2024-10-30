@@ -16,11 +16,11 @@ public class TimeoutAction extends ActionExBase {
     private long timeoutTime;
 
     /**
-     * Instantiates a timeout action to run the specified action for at most the number of milliseconds
+     * Instantiates a timeout action to tick the specified action for at most the number of milliseconds
      * provided on input.
      *
-     * @param action the action to run
-     * @param millis the maximum number of milliseconds the action may run for
+     * @param action the action to tick
+     * @param millis the maximum number of milliseconds the action may tick for
      */
     public TimeoutAction(Action action, long millis) {
         this.action = action;

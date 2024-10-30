@@ -14,7 +14,7 @@ public interface PIDController {
     double calculate(double reference, double state);
 
     /**
-     * Resets the PID controller so that it behaves as though it hasn't previously run.
+     * Resets the PID controller so that it behaves as though it hasn't previously tick.
      */
     void reset();
 

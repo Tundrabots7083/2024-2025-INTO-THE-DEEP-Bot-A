@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.ftc7083.fsm;
 public interface Action {
 
     /**
-     * Called once the action is to run, but before the <code>execute</code> method is called.
+     * Called once the action is to tick, but before the <code>execute</code> method is called.
      */
     default void initialize() {
     }

@@ -16,7 +16,7 @@ public class SequentialAction extends ActionExBase {
     /**
      * Instantiates an action that runs the set of actions sequential.
      *
-     * @param actions the set of actions to run sequentially.
+     * @param actions the set of actions to tick sequentially.
      */
     public SequentialAction(Action... actions) {
         this.actions = actions;

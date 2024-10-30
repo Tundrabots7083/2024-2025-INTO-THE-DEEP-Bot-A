@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
         @Override
         public void loop() {
 
-            double xDistance = limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE) - 4.5;
+            double xDistance = limelight.getDistance(Limelight.TargetHeight.SUBMERSIBLE) - 4.5;
             //double drivePower = limelight.positionBot();
 
             telemetry.addData("Distance to Target:",xDistance);

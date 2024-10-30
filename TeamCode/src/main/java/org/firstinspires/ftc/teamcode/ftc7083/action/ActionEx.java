@@ -8,18 +8,18 @@ import com.acmerobotics.roadrunner.Action;
 public interface ActionEx extends Action {
 
     /**
-     * Decorates this action with a set of actions to run parallel to it, ending when the last action ends.
+     * Decorates this action with a set of actions to tick parallel to it, ending when the last action ends.
      *
-     * @param actions the set of actions to run in parallel with this action
+     * @param actions the set of actions to tick in parallel with this action
      * @return an action that runs this action and the set of actions provided in parallel.
      */
     ActionEx alongWith(Action... actions);
 
     /**
-     * Decorates this action with a set of actions to run after it in sequence. Often more
+     * Decorates this action with a set of actions to tick after it in sequence. Often more
      * convenient/less-verbose than constructing a new SequentialAction explicitly.
      *
-     * @param actions the actions to run next
+     * @param actions the actions to tick next
      * @return an action that runs this action and then the set of actions sequentially.
      */
     ActionEx andThen(Action... actions);
@@ -36,7 +36,7 @@ public interface ActionEx extends Action {
     /**
      * Returns an Action that runs this action for a maximum of <code>millis</code> milliseconds.
      *
-     * @param millis the maximum amount of time this action may run.
+     * @param millis the maximum amount of time this action may tick.
      * @return an Action that runs this action for a maximum of <code>millis</code> milliseconds
      */
     ActionEx withTimeout(long millis);

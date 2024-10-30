@@ -256,7 +256,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * to intake a sample.
      */
     public void moveToSampleIntakePosition() {
-        double xDistance = robot.limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE);
+        double xDistance = robot.limelight.getDistance(Limelight.TargetHeight.SUBMERSIBLE);
         double sampleHeight = 1.1;
         moveToPosition(xDistance,sampleHeight);
     }

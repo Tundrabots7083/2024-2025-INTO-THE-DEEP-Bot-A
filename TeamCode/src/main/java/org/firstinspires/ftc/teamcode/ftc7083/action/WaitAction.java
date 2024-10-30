@@ -16,7 +16,7 @@ public class WaitAction extends ActionExBase {
      * Instantiates an action to wait for the specified number of milliseconds before it finishes
      * running.
      *
-     * @param millis the number of milliseconds to run for
+     * @param millis the number of milliseconds to tick for
      */
     public WaitAction(long millis) {
         this.millis = millis;
@@ -26,7 +26,7 @@ public class WaitAction extends ActionExBase {
      * Runs the action for the requested number of milliseconds.
      *
      * @param telemetryPacket the telemetry to use for output
-     * @return <code>false</code> once the action has run for the specified number of milliseconds;
+     * @return <code>false</code> once the action has tick for the specified number of milliseconds;
      * <code>true</code> if the action has not been running for the specified number of milliseconds
      */
     @Override

@@ -18,7 +18,7 @@ public class ParallelAction extends ActionExBase {
     /**
      * Instantiates a ParallelAction that runs a set of actions in parallel.
      *
-     * @param actions the actions to run in parallel
+     * @param actions the actions to tick in parallel
      */
     public ParallelAction(Action... actions) {
         this.actions = actions;
