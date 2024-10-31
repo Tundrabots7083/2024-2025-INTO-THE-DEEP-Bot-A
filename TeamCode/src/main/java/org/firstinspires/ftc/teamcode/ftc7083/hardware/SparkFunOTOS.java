@@ -39,8 +39,6 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
     // clockwise (negative rotation) from the robot's orientation, the offset
     // would be {-5, 10, -90}. These can be any value, even the angle can be
     // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-
-    // RR localizer note: These units are inches and radians.
     public static double MOUNTING_OFFSET_X = 0.0;
     public static double MOUNTING_OFFSET_Y = 0.0;
     public static double MOUNTING_HEADING_IN_DEGREES = 0.0;
