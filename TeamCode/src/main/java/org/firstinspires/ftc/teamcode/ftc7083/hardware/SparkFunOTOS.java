@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.hardware;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
@@ -69,6 +71,7 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
      * @param deviceClient the hardware client for SparkFun. This is passed in when retrieving
      *                     the hardware device from the hardware map.
      */
+    @SuppressLint("DefaultLocale")
     public SparkFunOTOS(I2cDeviceSynch deviceClient) {
         super(deviceClient);
 
@@ -105,6 +108,17 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
         // In the future I hope to do that by default and just add a check in updatePoseEstimate for it
         telemetry.addData("[OTOS] IBM calibrated", calibrateImu(NUM_IMU_CALIBRATION_SAMPLES, true));
 
+        // Get the hardware and firmware version
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Version hwVersion = new com.qualcomm.hardware.sparkfun.SparkFunOTOS.Version();
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Version fwVersion = new com.qualcomm.hardware.sparkfun.SparkFunOTOS.Version();
+        getVersionInfo(hwVersion, fwVersion);
+
+        telemetry.addLine();
+        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+
         telemetry.addLine("[OTOS] initialization complete!");
+
+        telemetry.update();
     }
 }
