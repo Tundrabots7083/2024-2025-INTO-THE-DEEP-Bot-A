@@ -64,7 +64,7 @@ public class SparkFunOTOS extends com.qualcomm.hardware.sparkfun.SparkFunOTOS {
 
     /**
      * Instantiates the SparkFun OTOS and configures it for use by TundraBots for the INTO_THE_DEEP
-     * season.
+     * season. The SparkFun OTOS will be initialized and calibrated as part of the instantiation.
      *
      * @param deviceClient the hardware client for SparkFun. This is passed in when retrieving
      *                     the hardware device from the hardware map.
