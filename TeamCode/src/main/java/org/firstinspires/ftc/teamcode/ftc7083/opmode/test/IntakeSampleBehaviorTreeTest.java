@@ -21,19 +21,13 @@ public class IntakeSampleBehaviorTreeTest extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        telemetry.addData("RedAudienceAutonomousBoadScoringOpMode", "runOpMode started");
-        telemetry.update();
-        initialize(this);
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("[IntakeSampleBT]", "runOpMode while started");
-            telemetry.update();
 
             Status result = this.behaviorTree.tick();
 
             telemetry.addData("[IntakeSampleBT]", "Behavior tree result: %s", result);
-            telemetry.update();
 
             telemetry.addData("[IntakeSampleBT]", "loop count: %d", this.loopCount);
             telemetry.update();
@@ -49,7 +43,7 @@ public class IntakeSampleBehaviorTreeTest extends LinearOpMode {
         }
     }
 
-    private void initialize(LinearOpMode opMode){
+    private void initialize(){
         this.behaviorTree = new IntakeSampleBehaviorTree(hardwareMap,telemetry);
     }
 

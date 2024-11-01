@@ -45,7 +45,7 @@ public class Robot {
      * @param telemetry   telemetry class for displaying data.
      * @param opModeType  the type of opmode the robot is being used for
      */
-    private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
+    private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType, double armFeedForward) {
         robot = this;
         this.telemetry = telemetry;
 
@@ -65,7 +65,7 @@ public class Robot {
         } else {
             webcam = null;
         }
-        arm = new Arm(hardwareMap, telemetry);
+        arm = new Arm(hardwareMap, telemetry,armFeedForward);
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
@@ -85,7 +85,7 @@ public class Robot {
      * @return the robot instance
      */
     public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry) {
-        return init(hardwareMap, telemetry, OpModeType.TELEOP);
+        return init(hardwareMap, telemetry, OpModeType.TELEOP,0.0);
     }
 
     /**
@@ -97,8 +97,8 @@ public class Robot {
      * @param opModeType  the type of opmode the robot is being used for
      * @return the robot instance
      */
-    public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
-        robot = new Robot(hardwareMap, telemetry, opModeType);
+    public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType,double armFeedForward) {
+        robot = new Robot(hardwareMap, telemetry, opModeType, armFeedForward);
         return robot;
     }
 

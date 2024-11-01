@@ -8,8 +8,8 @@ public class Conditional extends Node {
     }
 
     @Override
-    public Status execute(BlackBoardSingleton globalStore) {
-        boolean result = condition.check();
+    public Status execute(BlackBoardSingleton blackBoard) {
+        boolean result = condition.check(blackBoard);
         System.out.println("Conditional check result: " + result);
         if (result == true) {
             return Status.SUCCESS;

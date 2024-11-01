@@ -58,6 +58,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Other scoring constants
     public static double MOVE_ARM_AMOUNT = 3.0;
+    public static double Ka = 0.02;
 
     private final Telemetry telemetry;
     private final Robot robot;
@@ -256,7 +257,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * to intake a sample.
      */
     public void moveToSampleIntakePosition() {
-        double xDistance = robot.limelight.getDistance(Limelight.TargetHeight.SUBMERSIBLE);
+        double xDistance = (double)robot.limelight.getDistance(Limelight.TargetHeight.SUBMERSIBLE);
         double sampleHeight = 1.1;
         moveToPosition(xDistance,sampleHeight);
     }
@@ -321,6 +322,11 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void openClaw() {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
+    }
+
+    public double getFeedForward() {
+        double slideLength = robot.linearSlide.getCurrentLength();
+        return slideLength * Ka;
     }
 
    /* public void scoreHighBasket() {

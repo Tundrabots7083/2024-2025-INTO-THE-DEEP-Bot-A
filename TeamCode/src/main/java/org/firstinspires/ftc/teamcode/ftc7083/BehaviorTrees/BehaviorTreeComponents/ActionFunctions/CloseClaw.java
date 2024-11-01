@@ -16,8 +16,8 @@ public class CloseClaw implements ActionFunction {
     protected Status lastStatus = Status.FAILURE;
     protected int runCount = 0;
 
-    public CloseClaw (HardwareMap hardwareMap, Telemetry telemetry) {
-        this.intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap,telemetry);
+    public CloseClaw (Telemetry telemetry,IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
+        this.intakeAndScoringSubsystem =intakeAndScoringSubsystem;
         this.telemetry = telemetry;
     }
 
@@ -31,7 +31,7 @@ public class CloseClaw implements ActionFunction {
         intakeAndScoringSubsystem.closeClaw();
         intakeAndScoringSubsystem.execute();
 
-        if(runCount > 100) {
+        if(runCount > 70) {
             status = Status.SUCCESS;
         }
 

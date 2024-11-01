@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponen
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Status;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
-public class OpenClaw implements ActionFunction {
+public class ExtendArmToSubmersibleSample implements ActionFunction {
 
     IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     Telemetry telemetry;
@@ -16,22 +16,32 @@ public class OpenClaw implements ActionFunction {
     protected Status lastStatus = Status.FAILURE;
     protected int runCount = 0;
 
-    public OpenClaw(Telemetry telemetry, IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
+    public ExtendArmToSubmersibleSample (Telemetry telemetry, IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
         this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
         this.telemetry = telemetry;
     }
 
     public Status perform(BlackBoardSingleton blackBoard) {
         Status status = Status.RUNNING;
+        double xDistance;
 
         if(lastStatus == Status.SUCCESS){
             return lastStatus;
         }
 
-        intakeAndScoringSubsystem.openClaw();
+
+
+        if(blackBoard.getValue("xDistanceToSample") != null) {
+            xDistance = (double)blackBoard.getValue("xDistanceToSample");
+        } else {
+            status = Status.FAILURE;
+            return status;
+        }
+
+        intakeAndScoringSubsystem.moveToPosition(xDistance,1);
         intakeAndScoringSubsystem.execute();
 
-        if(runCount > 70) {
+        if(intakeAndScoringSubsystem.isAtTarget()) {
             status = Status.SUCCESS;
         }
 

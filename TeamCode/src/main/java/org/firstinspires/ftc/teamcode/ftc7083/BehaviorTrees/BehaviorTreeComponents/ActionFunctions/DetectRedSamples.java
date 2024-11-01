@@ -24,7 +24,7 @@ public class DetectRedSamples implements ActionFunction {
 
     public Status perform(BlackBoardSingleton blackBoard) {
 
-        telemetry.addData("DetectAprilTags "," perform count: %d", count);
+        telemetry.addData("[DetectRedSamples] "," perform count: %d", count);
         telemetry.update();
         count++;
 
@@ -34,18 +34,30 @@ public class DetectRedSamples implements ActionFunction {
         LLResult result = limelight.getResult();
 
         if(result != null){
-            xDistance = limelight.getDistance(targetHeight);
-            Tx = limelight.getTx();
+            xDistance = (double)limelight.getDistance(targetHeight);
+            Tx = (double)limelight.getTx();
 
             blackBoard.setValue("xDistanceToSample", xDistance);
             blackBoard.setValue("Tx",Tx);
 
             telemetry.addData("[DetectSamples]","X-Distance to Sample: %f",xDistance);
+            telemetry.addData("[DetectRedSamples]","Tx-Angle from Sample: %f",Tx);
             telemetry.update();
+
+            return Status.SUCCESS;
         } else {
-            blackBoard.setValue("xDistanceToSample", "No detected samples");
+            blackBoard.setValue("xDistanceToSample", null);
+            blackBoard.setValue("Tx",null);
+
+            telemetry.addData("[DetectYellowSamples]","Didn't detect anything");
+            telemetry.update();
+
+            if(count >= 20) {
+                return Status.FAILURE;
+            } else {
+                return Status.RUNNING;
+            }
         }
-        return Status.SUCCESS;
     }
 
 

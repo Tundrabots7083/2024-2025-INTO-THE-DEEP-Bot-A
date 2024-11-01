@@ -20,7 +20,7 @@ public class Arm extends SubsystemBase {
     public static double START_ANGLE = -50.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
     public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
-    public static double TOLERABLE_ERROR = 0.1; // In degrees
+    public static double TOLERABLE_ERROR = 1.7; // In degrees
     public static double MIN_ANGLE = -55.0;
     public static double MAX_ANGLE = 90.0;
     private final Motor shoulderMotor;
@@ -54,14 +54,14 @@ public class Arm extends SubsystemBase {
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.01),
+                new LookUpTableArgs(-59, 0.02),
                 new LookUpTableArgs(0, 0.04),
                 new LookUpTableArgs(90, 0.019),
                 new LookUpTableArgs(120, 0.025),
                 new LookUpTableArgs(180, 0.032),
                 new LookUpTableArgs(230, 0.01)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.1),
+                new LookUpTableArgs(-59, 0.2),
                 new LookUpTableArgs(0, 0.1),
                 new LookUpTableArgs(90, 0.07),
                 new LookUpTableArgs(150, 0.09),
@@ -125,7 +125,7 @@ public class Arm extends SubsystemBase {
      * Sends power to the shoulder motor.
      */
     public void execute() {
-        double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
+        double degrees = getCurrentAngle();
         double power = gainSchedulingPIDController.calculate(targetAngle, degrees) + this.feedforward;
 
         shoulderMotor.setPower(power);

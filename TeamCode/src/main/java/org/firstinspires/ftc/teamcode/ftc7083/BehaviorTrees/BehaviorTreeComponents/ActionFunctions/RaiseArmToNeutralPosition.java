@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.ActionFunction;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.BlackBoardSingleton;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Status;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
-public class OpenClaw implements ActionFunction {
+public class RaiseArmToNeutralPosition implements ActionFunction {
 
     IntakeAndScoringSubsystem intakeAndScoringSubsystem;
     Telemetry telemetry;
@@ -16,7 +14,7 @@ public class OpenClaw implements ActionFunction {
     protected Status lastStatus = Status.FAILURE;
     protected int runCount = 0;
 
-    public OpenClaw(Telemetry telemetry, IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
+    public RaiseArmToNeutralPosition (Telemetry telemetry, IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
         this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
         this.telemetry = telemetry;
     }
@@ -28,10 +26,10 @@ public class OpenClaw implements ActionFunction {
             return lastStatus;
         }
 
-        intakeAndScoringSubsystem.openClaw();
+        intakeAndScoringSubsystem.moveToNeutralPosition();
         intakeAndScoringSubsystem.execute();
 
-        if(runCount > 70) {
+        if(intakeAndScoringSubsystem.isAtTarget()) {
             status = Status.SUCCESS;
         }
 

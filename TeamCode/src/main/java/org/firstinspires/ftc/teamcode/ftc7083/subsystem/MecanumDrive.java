@@ -106,13 +106,32 @@ public class MecanumDrive extends SubsystemBase {
 
     public void turn(double turnPower) {
 
-        double leftFrontPower = turnPower;
+        double leftFrontPower = -turnPower;
         double rightFrontPower = turnPower;
-        double leftRearPower = turnPower;
+        double leftRearPower = -turnPower;
         double rightRearPower = turnPower;
 
         // Normalize motor powers to ensure none exceeds 1.0
         double maxMotorPower = Math.abs(turnPower);
+        if (maxMotorPower > 1) {
+            leftFrontPower /= maxMotorPower;
+            rightFrontPower /= maxMotorPower;
+            leftRearPower /= maxMotorPower;
+            rightRearPower /= maxMotorPower;
+        }
+
+        setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
+
+    }
+    public void driveStraight(double drivePower) {
+
+        double leftFrontPower = drivePower;
+        double rightFrontPower = drivePower;
+        double leftRearPower = drivePower;
+        double rightRearPower = drivePower;
+
+        // Normalize motor powers to ensure none exceeds 1.0
+        double maxMotorPower = Math.abs(drivePower);
         if (maxMotorPower > 1) {
             leftFrontPower /= maxMotorPower;
             rightFrontPower /= maxMotorPower;
