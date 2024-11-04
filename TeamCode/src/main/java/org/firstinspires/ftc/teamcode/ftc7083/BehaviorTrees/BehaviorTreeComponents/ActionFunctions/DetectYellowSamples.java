@@ -13,6 +13,7 @@ public class DetectYellowSamples implements ActionFunction {
     private Telemetry telemetry;
     private Limelight.TargetHeight targetHeight;
     private int count=0;
+    private int retryCount = 0;
     private double xDistance;
     private double Tx;
 
@@ -33,16 +34,18 @@ public class DetectYellowSamples implements ActionFunction {
 
         LLResult result = limelight.getResult();
 
-        if(result != null && limelight.getTx() != null && limelight.getDistance(targetHeight) != null){
+        if((result != null) && (limelight.getTx() != null) && (limelight.getDistance(targetHeight) != null)){
             xDistance = (double)limelight.getDistance(targetHeight);
-            Tx = (double)limelight.getTx();
+            Tx = result.getTx();
 
             blackBoard.setValue("xDistanceToSample", xDistance);
             blackBoard.setValue("Tx",Tx);
 
-            telemetry.addData("[DetectYellowSamples]","X-Distance to Sample: %f",xDistance);
+            telemetry.addData("[DetectYellowSamples] X-Distance to Sample:",xDistance);
             telemetry.addData("[DetectYellowSamples]","Tx-Angle from Sample: %f",Tx);
             telemetry.update();
+
+            retryCount = 0;
 
             return Status.SUCCESS;
         } else {
@@ -52,9 +55,10 @@ public class DetectYellowSamples implements ActionFunction {
             telemetry.addData("[DetectYellowSamples]","Didn't detect anything");
             telemetry.update();
 
-            if(count >= 25) {
+            if(retryCount >= 20) {
                 return Status.FAILURE;
             } else {
+                retryCount++;
                 return Status.RUNNING;
             }
         }

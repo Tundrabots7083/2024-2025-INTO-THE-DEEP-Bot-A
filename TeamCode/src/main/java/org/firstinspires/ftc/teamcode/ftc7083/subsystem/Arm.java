@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
     public static double MAX_ANGLE = 90.0;
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
-    private final double feedforward;
+    private double feedforward;
     private final GainSchedulingPIDController gainSchedulingPIDController;
     public double GEARING = 120.0 / 24.0;
     private double targetAngle = START_ANGLE;
@@ -37,31 +37,19 @@ public class Arm extends SubsystemBase {
      * @param telemetry   Telemetry
      */
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
-        this(hardwareMap, telemetry, 0);
-    }
-
-    /**
-     * Makes an arm that can raise and lower.
-     *
-     * @param hardwareMap Hardware Map
-     * @param telemetry   Telemetry
-     * @param feedforward feedforward
-     */
-    public Arm(HardwareMap hardwareMap, Telemetry telemetry, double feedforward) {
         this.telemetry = telemetry;
-        this.feedforward = feedforward;
         shoulderMotor = new Motor(hardwareMap, telemetry, "armShoulderMotor");
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.02),
+                new LookUpTableArgs(-59, 0.03),
                 new LookUpTableArgs(0, 0.04),
                 new LookUpTableArgs(90, 0.019),
                 new LookUpTableArgs(120, 0.025),
                 new LookUpTableArgs(180, 0.032),
                 new LookUpTableArgs(230, 0.01)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.2),
+                new LookUpTableArgs(-59, 0.4),
                 new LookUpTableArgs(0, 0.1),
                 new LookUpTableArgs(90, 0.07),
                 new LookUpTableArgs(150, 0.09),
@@ -103,6 +91,10 @@ public class Arm extends SubsystemBase {
             this.targetAngle = targetAngle;
             gainSchedulingPIDController.reset();
         }
+    }
+
+    public void setFeedforward(double feedforward) {
+        this.feedforward = feedforward;
     }
 
     /**

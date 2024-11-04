@@ -16,10 +16,10 @@ public class NavigateWithinRangeOfSample implements ActionFunction {
     Telemetry telemetry;
 
     public static double KP = 0.01;
-    public static double KI = 0;
+    public static double KI = 0.007;
     public static double KD = 0;
     public static double TOLERABLE_ERROR = 0.5; // inches
-    public static double MAXIMUM_INTAKE_DISTANCE = 40; //inches
+    public static double MAXIMUM_INTAKE_DISTANCE = 35; //inches
 
     private final PIDControllerImpl pidController;
 
@@ -65,7 +65,7 @@ public class NavigateWithinRangeOfSample implements ActionFunction {
             return status;
         }
 
-        double drivePower = pidController.calculate(MAXIMUM_INTAKE_DISTANCE, distanceError);
+        double drivePower = Math.abs(pidController.calculate(MAXIMUM_INTAKE_DISTANCE, distanceError));
 
         mecanumDrive.driveStraight(drivePower);
 

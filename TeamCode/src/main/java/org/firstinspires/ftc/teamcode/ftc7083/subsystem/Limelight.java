@@ -16,7 +16,7 @@ import java.util.Queue;
 @Config
 public class Limelight extends SubsystemBase {
 
-    public static double LL_ANGLE_WITH_VERTICAL = 20.7;
+    public static double LL_ANGLE_WITH_VERTICAL = 21.6;
     public static double LL_HEIGHT = 15.5;
 
     private final Limelight3A limelight;
@@ -32,7 +32,7 @@ public class Limelight extends SubsystemBase {
     private static int NUM_SAMPLES_TO_AVERAGE = 3;
     private static final double SAMPLE_HEIGHT_INCHES = 1.1;
     private static final double WALL_HEIGHT_INCHES = 6.5;
-    private static double LL_DISTANCE_FROM_ARM_AXEL = 2;
+    private static double LL_DISTANCE_FROM_ARM_AXEL = 3;
 
     private final Queue<Double> TySamples = new ArrayDeque<>();
 
@@ -53,7 +53,7 @@ public class Limelight extends SubsystemBase {
     public void execute() {
 
         if (getTy() != null) {
-            double Ty = (double)getTy();
+            double Ty = result.getTyNC();
             TySamples.add(Ty);
 
             telemetry.addData("[Limelight]","Added a Ty");

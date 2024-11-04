@@ -15,7 +15,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Robot measurements
     // Length of the arm and the wrist with zero extension in inches.
-    public static double ARM_LENGTH = 22.0;
+    public static double ARM_LENGTH = 21.5;
     // Height from the field to the center of rotation of the arm in inches.
     public static double ARM_HEIGHT = 16.5;
     // Distance from the front of the robot to the back of the robot in inches.
@@ -327,6 +327,16 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public double getFeedForward() {
         double slideLength = robot.linearSlide.getCurrentLength();
         return slideLength * Ka;
+    }
+
+    public void setArmFeedForward() {
+        double armFeedForward = getArmFeedForward();
+        robot.arm.setFeedforward(armFeedForward);
+    }
+
+    private double getArmFeedForward() {
+        double currentSlideLength = robot.linearSlide.getCurrentLength();
+        return Ka * currentSlideLength;
     }
 
    /* public void scoreHighBasket() {

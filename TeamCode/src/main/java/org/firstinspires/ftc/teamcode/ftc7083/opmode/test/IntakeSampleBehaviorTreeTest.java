@@ -21,6 +21,8 @@ public class IntakeSampleBehaviorTreeTest extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
+        initialize();
+
         waitForStart();
 
         while (opModeIsActive()) {
