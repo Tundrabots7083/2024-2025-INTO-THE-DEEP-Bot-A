@@ -65,6 +65,9 @@ public class PrimaryTeleOp extends OpMode {
             controller.execute(currentGamepad1, currentGamepad2);
         }
 
+        // Update the location of the robot on the field using April Tag localization
+        robot.localizer.update();
+
         telemetry.update();
     }
 

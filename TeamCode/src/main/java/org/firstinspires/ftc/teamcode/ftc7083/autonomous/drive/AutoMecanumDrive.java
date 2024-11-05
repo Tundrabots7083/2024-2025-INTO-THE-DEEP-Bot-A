@@ -30,15 +30,12 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
-import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
-import org.firstinspires.ftc.teamcode.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
@@ -71,6 +68,7 @@ import java.util.List;
  */
 @Config
 public class AutoMecanumDrive {
+    public static int POSE_HISTORY_SIZE = 100;
 
     public final MecanumKinematics kinematics = new MecanumKinematics(
             Params.inPerTick * Params.trackWidthTicks, Params.inPerTick / Params.lateralInPerTick);
@@ -103,13 +101,9 @@ public class AutoMecanumDrive {
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, Params.inPerTick);
+        localizer = Robot.getInstance().localizer;
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
@@ -130,17 +124,18 @@ public class AutoMecanumDrive {
     }
 
     public PoseVelocity2d updatePoseEstimate() {
-        Twist2dDual<Time> twist = localizer.update();
-        pose = pose.plus(twist.value());
+        Localizer localizer = Robot.getInstance().localizer;
 
+        pose = localizer.getPose2d();
+        // RR standard
         poseHistory.add(pose);
-        while (poseHistory.size() > 100) {
+        while (poseHistory.size() > POSE_HISTORY_SIZE) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(pose));
 
-        return twist.velocity().value();
+        return localizer.getVelocity();
     }
 
     private void drawPoseHistory(Canvas c) {
