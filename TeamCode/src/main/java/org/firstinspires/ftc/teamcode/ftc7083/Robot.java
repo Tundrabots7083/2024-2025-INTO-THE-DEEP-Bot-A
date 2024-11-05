@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.ftc7083;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AprilTagLocalizer;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.Localizer;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
@@ -19,6 +17,8 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,14 +33,18 @@ public class Robot {
     // Subsystems
     public final MecanumDrive mecanumDrive;
     public final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
-    public final Webcam webcam;
+    public final Webcam leftWebcam;
+    public final Webcam rightWebcam;
     public final Arm arm;
     public final LinearSlide linearSlide;
     public final Wrist wrist;
     public final Claw claw;
     public final SparkFunOTOS otos;
 
-    // All lynx module huba
+    // Road Runner localization
+    public final Localizer localizer;
+
+    // All lynx module hubs
     public final List<LynxModule> allHubs;
 
     /**
@@ -64,19 +68,16 @@ public class Robot {
 
         // Instantiate all the hardware on the robot
         mecanumDrive = new MecanumDrive(hardwareMap, telemetry);
-        if (opModeType == OpModeType.AUTO) {
-            // Create the vision sensor
-            webcam = new Webcam("Webcam Front", hardwareMap, telemetry);
-        } else {
-            webcam = null;
-        }
         arm = new Arm(hardwareMap, telemetry);
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap, telemetry);
-
+        leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT);
+        rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT);
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+
+        localizer = new AprilTagLocalizer(Arrays.asList(leftWebcam, rightWebcam));
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
@@ -125,7 +126,7 @@ public class Robot {
     public String toString() {
         return "Robot{" +
                 "mecanumDrive=" + mecanumDrive +
-                ", webcam=" + webcam +
+                ", webcam=" + leftWebcam +
                 '}';
     }
 
