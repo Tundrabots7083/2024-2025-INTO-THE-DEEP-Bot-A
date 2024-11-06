@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
 
 /**
  * This class uses the Arm, LinearSlide, Wrist, and Claw subsystems to pick up, control,
@@ -92,10 +97,18 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * position.
      *
      * @return <code>true</code> if the intake and scoring subsystem is at the target position;
-     * <code>false</code> otherwise
+     *         <code>false</code> otherwise
      */
     public boolean isAtTarget() {
         return robot.arm.isAtTarget() && robot.linearSlide.isAtTarget();
+    }
+
+    /**
+     * Moves the subsystem to the starting position, with the claw closed.
+     */
+    public void moveToStartPosition() {
+        moveToPosition(START_X, START_Y);
+        telemetry.addData("[IAS] position", "start");
     }
 
     /**
@@ -150,14 +163,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem to the starting position, with the claw closed.
-     */
-    public void moveToStartPosition() {
-        moveToPosition(START_X, START_Y);
-        telemetry.addData("[IAS] position", "start");
-    }
-
-    /**
      * Fully retract the linear slide while not changing the arm angle.
      */
     public void retractLinearSlide() {
@@ -171,10 +176,10 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         // subtracted from the Y value by the moveToPosition() method.
         double hypotenuse = ARM_LENGTH;
         double x = getX(angle, hypotenuse);
-        double y = getY(angle,hypotenuse) + ARM_HEIGHT;
+        double y = getY(angle, hypotenuse) + ARM_HEIGHT;
 
         moveToPosition(x, y);
-        telemetry.addData("[IAS] position","retract slide");
+        telemetry.addData("[IAS] position", "retract slide");
     }
 
     /**
@@ -311,6 +316,115 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void openClaw() {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
+    }
+
+    /**
+     * Gets an action to move the arm and linear slide so the intake and scoring subsystem are at
+     * the desired position.
+     *
+     * @param x the distance the arm needs to reach along the <code>X</code> axis
+     * @param y the height the arm needs to reach along the <code>Y</code> axis
+     * @return an action to move the arm and linear slide to the desired position
+     */
+    public ActionEx actionMoveTo(double x, double y) {
+        return new MoveTo(this, x, y);
+    }
+
+    /**
+     * Gets an action that retracts the linear slide while maintaining the current angle of the arm.
+     * @return an action that retracts the linear slide while maintaining the current angle of the arm
+     */
+    public ActionEx actionRetractLinearSlide() {
+        return new RetractLinearSlide(this);
+    }
+
+    /**
+     * An action to move the intake and scoring subsystem's arm and linear slide to the desired
+     * position.
+     */
+    public static class MoveTo extends ActionExBase {
+        private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+        private final double x;
+        private final double y;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an action to move the intake and scoring subsystem to the desired position.
+         *
+         * @param intakeAndScoringSubsystem the intake and scoring subsystem
+         * @param x                         the distance the arm needs to reach along the <code>X</code> axis
+         * @param y                         the height the arm needs to reach along the <code>Y</code> axis
+         */
+        public MoveTo(IntakeAndScoringSubsystem intakeAndScoringSubsystem, double x, double y) {
+            this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
+            this.x = x;
+            this.y = y;
+        }
+
+        /**
+         * Moves the intake and scoring subsystem to the desired position.
+         *
+         * @param telemetryPacket the telemetry used to output data to the user.
+         * @return <code>true</code> if the intake and scoring subsystem are still moving to the
+         *         target position; <code>false</code> if it is at the target position.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            intakeAndScoringSubsystem.execute();
+            return !intakeAndScoringSubsystem.isAtTarget();
+        }
+
+        /**
+         * Sets the position to which to move the intake and scoring subsystem.
+         */
+        private void initialize() {
+            intakeAndScoringSubsystem.moveToPosition(x, y);
+            initialized = true;
+        }
+    }
+
+    /**
+     * An action that retracts the linear slide while maintaining the current angle of the arm.
+     */
+    public static class RetractLinearSlide extends ActionExBase {
+        private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an action that retracts the linear slide while maintaining the current angle of the arm.
+         *
+         * @param intakeAndScoringSubsystem the intake and scoring subsystem
+         */
+        public RetractLinearSlide(IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
+            this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
+        }
+
+        /**
+         * Retracts the linear slide while maintaining the current angle of the arm.
+         *
+         * @param telemetryPacket the telemetry used to output data to the user.
+         * @return <code>true</code> if the intake and scoring subsystem are still moving to the
+         *         target position; <code>false</code> if it is at the target position.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            intakeAndScoringSubsystem.execute();
+            return !intakeAndScoringSubsystem.isAtTarget();
+        }
+
+        /**
+         * Sets the position to which to move the intake and scoring subsystem.
+         */
+        private void initialize() {
+            intakeAndScoringSubsystem.retractLinearSlide();
+            initialized = true;
+        }
     }
 
    /* public void scoreHighBasket() {
