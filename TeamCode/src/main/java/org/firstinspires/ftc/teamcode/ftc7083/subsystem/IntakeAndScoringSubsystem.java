@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
 import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
+import org.firstinspires.ftc.teamcode.ftc7083.action.SequentialAction;
+import org.firstinspires.ftc.teamcode.ftc7083.action.WaitAction;
 
 /**
  * This class uses the Arm, LinearSlide, Wrist, and Claw subsystems to pick up, control,
@@ -316,6 +318,43 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void openClaw() {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
+    }
+
+    /**
+     * Gets an action to open the claw. This action waits for the claw to be successfully opened.
+     *
+     * @return an action to open the claw
+     */
+    public ActionEx actionOpenClaw() {
+        return robot.claw.actionOpenClaw();
+    }
+
+    /**
+     * Gets an action to open the claw. This action waits for the claw to be successfully opened.
+     *
+     * @return an action to open the claw
+     */
+    public ActionEx actionOpenClawWithWait() {
+        return robot.claw.actionOpenClawWithWait();
+    }
+
+    /**
+     * Gets an action to close the claw. This action does not wait for the claw to be successfully
+     * closed.
+     *
+     * @return an action to close the claw
+     */
+    public ActionEx actionCloseClaw() {
+        return robot.claw.actionCloseClaw();
+    }
+
+    /**
+     * Gets an action to close the claw. This action waits for the claw to be successfully closed.
+     *
+     * @return an action to close the claw
+     */
+    public ActionEx actionCloseClawWithWait() {
+        return robot.claw.actionCloseClawWithWait();
     }
 
     /**
