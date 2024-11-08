@@ -39,7 +39,7 @@ public class IntakeAndScoringSubsystemTest extends LinearOpMode {
         // Create an action that acquire a sample using the intake and scoring subsystem
         ActionEx setIntakeAndScoringSubsystemPosition = new SequentialAction(
                 robot.intakeAndScoringSubsystem.actionMoveTo(TARGET_X, TARGET_Y),
-                robot.claw.actionCloseClawWithWait(),
+                robot.intakeAndScoringSubsystem.actionCloseClawWithWait(),
                 robot.intakeAndScoringSubsystem.actionRetractLinearSlide()
         );
         boolean finished = false;
