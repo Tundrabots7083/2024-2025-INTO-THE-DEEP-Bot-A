@@ -28,8 +28,12 @@ public class CloseClaw implements ActionFunction {
             return lastStatus;
         }
 
-        intakeAndScoringSubsystem.closeClaw();
-        intakeAndScoringSubsystem.execute();
+        if(intakeAndScoringSubsystem.isAtTarget()) {
+            intakeAndScoringSubsystem.closeClaw();
+            intakeAndScoringSubsystem.execute();
+        } else {
+            return Status.RUNNING;
+        }
 
         if(runCount > 70) {
             status = Status.SUCCESS;

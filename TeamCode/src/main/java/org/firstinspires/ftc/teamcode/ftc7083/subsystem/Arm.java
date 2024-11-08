@@ -55,7 +55,7 @@ public class Arm extends SubsystemBase {
                 new LookUpTableArgs(150, 0.09),
                 new LookUpTableArgs(230, 0.1)};
         LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.006),
+                new LookUpTableArgs(-59, 0.0075),
                 new LookUpTableArgs(0, 0.0075),
                 new LookUpTableArgs(90, 0.003),
                 new LookUpTableArgs(150, 0.008),

@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions;
 
-
-import com.acmerobotics.dashboard.config.Config;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.ActionFunction;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.BlackBoardSingleton;
@@ -10,8 +7,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponen
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDControllerImpl;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 
-@Config
-public class SquareBotWithSample implements ActionFunction {
+public class SearchForSample implements ActionFunction {
     MecanumDrive mecanumDrive;
     Telemetry telemetry;
 
@@ -26,7 +22,7 @@ public class SquareBotWithSample implements ActionFunction {
     protected Status lastStatus = Status.FAILURE;
     protected int runCount = 0;
 
-    public SquareBotWithSample(Telemetry telemetry, MecanumDrive mecanumDrive) {
+    public SearchForSample(Telemetry telemetry, MecanumDrive mecanumDrive) {
         this.mecanumDrive = mecanumDrive;
         this.telemetry = telemetry;
         pidController = new PIDControllerImpl(KP, KI, KD);
@@ -35,44 +31,17 @@ public class SquareBotWithSample implements ActionFunction {
 
     public Status perform(BlackBoardSingleton blackBoard) {
         Status status = Status.RUNNING;
-        double turnError;
+        double turnPower;
 
-        if (lastStatus == Status.SUCCESS) {
-            telemetry.addData("[SearchForSample] status:", lastStatus);
-            telemetry.update();
-            return lastStatus;
-        }
-
-
-        if (blackBoard.getValue("Tx") != null) {
-            turnError = (double) blackBoard.getValue("Tx");
+        if (blackBoard.getValue("Tx") == null) {
+            turnPower = 0.2;
         } else {
-            status = Status.FAILURE;
-            blackBoard.setValue("BotIsSquaredWithSample",false);
-            return status;
+            turnPower = 0.0;
         }
-
-        if (Math.abs(turnError) <= TOLERABLE_ERROR) {
-            mecanumDrive.turn(0.0);
-            status = Status.SUCCESS;
-            lastStatus = status;
-            telemetry.addData("[SearchForSample] status:", status);
-            telemetry.update();
-            if (blackBoard.getValue("BotIsInIntakeRange") != null) {
-                blackBoard.setValue("BotIsSquaredWithSample", true);
-            } else {
-                blackBoard.setValue("BotIsSquaredWithSample", false);
-            }
-            return status;
-        }
-
-        double turnPower = pidController.calculate(INTAKE_ANGLE,turnError);
 
         mecanumDrive.turn(turnPower);
 
         runCount++;
-        lastStatus = status;
-
         telemetry.addData("[SearchForSample] status:", status);
         telemetry.update();
 

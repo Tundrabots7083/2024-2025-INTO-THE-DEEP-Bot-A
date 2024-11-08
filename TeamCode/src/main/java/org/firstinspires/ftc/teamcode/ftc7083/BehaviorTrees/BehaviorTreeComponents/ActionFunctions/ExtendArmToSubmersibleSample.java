@@ -15,6 +15,7 @@ public class ExtendArmToSubmersibleSample implements ActionFunction {
 
     protected Status lastStatus = Status.FAILURE;
     protected int runCount = 0;
+    protected int atTargetCount = 0;
 
     public ExtendArmToSubmersibleSample (Telemetry telemetry, IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
         this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
@@ -42,9 +43,15 @@ public class ExtendArmToSubmersibleSample implements ActionFunction {
         intakeAndScoringSubsystem.execute();
 
         if(intakeAndScoringSubsystem.isAtTarget()) {
-            status = Status.SUCCESS;
+            atTargetCount++;
+        } else {
+            atTargetCount = 0;
         }
 
+        if(atTargetCount >= 10) {
+            status = Status.SUCCESS;
+        }
+        
         runCount++;
         lastStatus = status;
 

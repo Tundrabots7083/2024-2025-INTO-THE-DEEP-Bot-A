@@ -5,17 +5,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.CloseClaw;
+import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.DetectRedSamples;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.DetectYellowSamples;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.ExtendArmToSubmersibleSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.IsBotOriented;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.NavigateWithinRangeOfSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.OpenClaw;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.RaiseArmToNeutralPosition;
+import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.SearchForSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.SquareBotWithSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Action;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.BehaviorTree;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.BlackBoardSingleton;
-import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Condition;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Conditional;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Node;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Selector;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 
 import java.util.Arrays;
 
-public class IntakeSampleBehaviorTree {
+public class IntakeYellowAndRedSamplesBehaviorTree {
 
     private BehaviorTree tree;
     private Node root;
@@ -40,7 +41,7 @@ public class IntakeSampleBehaviorTree {
     protected MecanumDrive mecanumDrive;
     private Robot robot;
 
-    public IntakeSampleBehaviorTree(HardwareMap hardwareMap, Telemetry telemetry) {
+    public IntakeYellowAndRedSamplesBehaviorTree(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
@@ -60,8 +61,10 @@ public class IntakeSampleBehaviorTree {
                         new Selector(
                                 Arrays.asList(
                                         new Conditional(new IsBotOriented()),
-                                        new Action(new DetectYellowSamples(telemetry,limelight, Limelight.TargetHeight.SUBMERSIBLE),telemetry)),telemetry
-                        ),
+                                        new Action(new DetectYellowSamples(telemetry,limelight, Limelight.TargetHeight.SUBMERSIBLE),telemetry),
+                                        new Action(new DetectRedSamples(telemetry,limelight, Limelight.TargetHeight.SUBMERSIBLE),telemetry),
+                                        new Action(new SearchForSample(telemetry,mecanumDrive),telemetry)
+                                ),telemetry),
                         new Action(new RaiseArmToNeutralPosition(telemetry,intakeAndScoringSubsystem),telemetry),
                         new Action(new SquareBotWithSample(telemetry,mecanumDrive),telemetry),
                         new Action(new NavigateWithinRangeOfSample(telemetry,mecanumDrive),telemetry),

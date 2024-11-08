@@ -55,7 +55,7 @@ public class DetectYellowSamples implements ActionFunction {
             telemetry.addData("[DetectYellowSamples]","Didn't detect anything");
             telemetry.update();
 
-            if(retryCount >= 20) {
+            if(retryCount >= 5) {
                 return Status.FAILURE;
             } else {
                 retryCount++;

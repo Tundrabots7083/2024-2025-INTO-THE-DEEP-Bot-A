@@ -5,13 +5,13 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTree.IntakeSampleBehaviorTree;
+import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTree.IntakeYellowAndRedSamplesBehaviorTree;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.general.Status;
 
 @Autonomous (name = "Intake Sample BT", group = "Test")
 public class IntakeSampleBehaviorTreeTest extends LinearOpMode {
 
-    IntakeSampleBehaviorTree behaviorTree = null;
+    IntakeYellowAndRedSamplesBehaviorTree behaviorTree = null;
 
     int loopCount = 0;
 
@@ -46,7 +46,7 @@ public class IntakeSampleBehaviorTreeTest extends LinearOpMode {
     }
 
     private void initialize(){
-        this.behaviorTree = new IntakeSampleBehaviorTree(hardwareMap,telemetry);
+        this.behaviorTree = new IntakeYellowAndRedSamplesBehaviorTree(hardwareMap,telemetry);
     }
 
 }

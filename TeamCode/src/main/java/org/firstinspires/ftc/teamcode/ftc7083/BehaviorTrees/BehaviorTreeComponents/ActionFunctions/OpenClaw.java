@@ -28,8 +28,8 @@ public class OpenClaw implements ActionFunction {
             return lastStatus;
         }
 
-        intakeAndScoringSubsystem.openClaw();
-        intakeAndScoringSubsystem.execute();
+            intakeAndScoringSubsystem.openClaw();
+            intakeAndScoringSubsystem.execute();
 
         if(runCount > 70) {
             status = Status.SUCCESS;
