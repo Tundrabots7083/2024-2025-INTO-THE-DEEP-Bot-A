@@ -32,6 +32,7 @@ public class Claw extends SubsystemBase {
     // Implement the claw using a Servo class
     private final Servo servo;
     private final Telemetry telemetry;
+    private Position clawPosition = Position.CLOSE;
 
     /**
      * Constructor
@@ -68,6 +69,7 @@ public class Claw extends SubsystemBase {
      */
     public double open(double degrees) {
         servo.setDegrees(degrees);
+        clawPosition = Position.OPEN;
         return servo.getDegrees();
     }
 
@@ -89,7 +91,17 @@ public class Claw extends SubsystemBase {
      */
     public double close() {
         servo.setDegrees(DEFAULT_CLOSE_DEGREES);
+        clawPosition = Position.CLOSE;
         return servo.getDegrees();
+    }
+
+    /**
+     * Gets the position the claw was last set to.
+     *
+     * @return the position the claw was last set to.
+     */
+    public Position getPosition() {
+        return clawPosition;
     }
 
     /**
@@ -171,6 +183,7 @@ public class Claw extends SubsystemBase {
          */
         private void initialize() {
             claw.open();
+            claw.clawPosition = Position.OPEN;
             initialized = true;
         }
     }
@@ -205,7 +218,16 @@ public class Claw extends SubsystemBase {
          */
         private void initialize() {
             claw.close();
+            claw.clawPosition = Position.CLOSE;
             initialized = true;
         }
+    }
+
+    /**
+     * Position of the claw
+     */
+    public enum Position {
+        OPEN,
+        CLOSE
     }
 }
