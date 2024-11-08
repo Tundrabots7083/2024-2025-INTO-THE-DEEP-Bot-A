@@ -116,7 +116,7 @@ public class Robot {
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         webcams = Arrays.asList(leftWebcam, rightWebcam);
-        localizer = new AprilTagLocalizer(webcams));
+        localizer = new AprilTagLocalizer(webcams);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
