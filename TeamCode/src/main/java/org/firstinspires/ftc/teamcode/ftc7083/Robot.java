@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
