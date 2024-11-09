@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -41,11 +39,11 @@ public class MecanumDrive extends SubsystemBase {
         rightFront = new Motor(hardwareMap, telemetry, "rightFront");
         rightRear = new Motor(hardwareMap, telemetry, "rightRear");
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(Motor.Direction.REVERSE);
+        rightRear.setDirection(Motor.Direction.REVERSE);
 
-        Collection<DcMotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
-        for (DcMotorEx motor : motors) {
+        Collection<Motor> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        for (Motor motor : motors) {
             initMotor(motor);
         }
     }
@@ -55,11 +53,12 @@ public class MecanumDrive extends SubsystemBase {
      *
      * @param motor the motor to be initialized.
      */
-    private void initMotor(@NonNull DcMotorEx motor) {
+    private void initMotor(@NonNull Motor motor) {
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
         motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
         motor.setMotorType(motorConfigurationType);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
