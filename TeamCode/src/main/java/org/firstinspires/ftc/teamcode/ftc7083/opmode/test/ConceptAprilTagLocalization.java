@@ -174,7 +174,8 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
             telemetry.update();
 
             // Share the CPU.
-            sleep(20);
+            //sleep(20);
+            idle();
         }
 
         // Save more CPU resources when camera is no longer needed.
