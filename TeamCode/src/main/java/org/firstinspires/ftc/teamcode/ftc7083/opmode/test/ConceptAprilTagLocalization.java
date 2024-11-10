@@ -159,6 +159,7 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
             }
 
             telemetryAprilTag();
+            telemetry.addData("FPS", visionPortal.getFps());
 
             // Save CPU resources; can resume streaming when needed.
             if (gamepad1.dpad_down) {
@@ -169,6 +170,7 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
 
             long elapsedTime = System.currentTimeMillis() - startLoopTime;
             telemetry.addData("loop time (millis)",  elapsedTime);
+
             telemetry.update();
 
             // Share the CPU.
@@ -282,6 +284,15 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
+
+        // Temporarily stop the LiveView on the RC screen. This DOES NOT affect the ability to get
+        // a camera frame on the Driver Station's "Camera Stream" feature.
+        //
+        // This has no effect if you didn't set up a LiveView.
+        //
+        // Stopping the LiveView is recommended during competition to save CPU resources when
+        // a LiveView is not required for debugging purposes.
+        //visionPortal.stopLiveView();
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
