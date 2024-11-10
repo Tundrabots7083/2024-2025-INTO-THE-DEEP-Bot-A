@@ -130,8 +130,6 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        FtcDashboard.getInstance().startCameraStream(visionPortal, 0);
-
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -139,6 +137,7 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
 
         cameraResolution = getCameraResolution();
         initAprilTag();
+        //FtcDashboard.getInstance().startCameraStream(visionPortal, 0);
 
         long startLoopTime = System.currentTimeMillis();
 
@@ -194,8 +193,9 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
         // Choose a camera resolution. Not all cameras support all resolutions.
         int sizeNum = 0;
         Size size = supportedCameraResolutions.get(sizeNum);
-        while (!isStarted()) {
+        while (!gamepad1.cross && !isStarted()) {
             telemetry.addLine("Select camera resolution. Use Up and Down on D-pad to cycle through choices");
+            telemetry.addLine("Press `X` to choose the camera resolution");
 
             if (gamepad1.dpad_down && !wasDown) {
                 sizeNum++;
@@ -293,7 +293,7 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
         //
         // Stopping the LiveView is recommended during competition to save CPU resources when
         // a LiveView is not required for debugging purposes.
-        //visionPortal.stopLiveView();
+        visionPortal.stopLiveView();
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
