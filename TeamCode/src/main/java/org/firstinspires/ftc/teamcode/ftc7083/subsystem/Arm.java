@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.GainSchedulingPIDController;
 import org.firstinspires.ftc.teamcode.ftc7083.feedback.LookUpTableArgs;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
@@ -17,15 +22,23 @@ import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
  */
 @Config
 public class Arm extends SubsystemBase {
-    public static double START_ANGLE = -50.0;
+    public static double START_ANGLE = -47.0;
     public static double ACHIEVABLE_MAX_RPM_FRACTION = 1.0;
-    public static double TICKS_PER_REV = 1120.0; // AndyMark NeverRest ticks per rev
-    public static double TOLERABLE_ERROR = 1.7; // In degrees
-    public static double MIN_ANGLE = -55.0;
+    public static double TICKS_PER_REV = 537.6; // gobuilda ticks per rev
+    public static double TOLERABLE_ERROR = 0.1; // In degrees
+    public static double MIN_ANGLE = -47.0;
     public static double MAX_ANGLE = 90.0;
+    public static double Kpn45 = 0.0;
+    public static double Kpn20 = 0.0;
+    public static double Kp0 = 0.0;
+    public static double Kp20 = 0.0;
+    public static double Kp50 = 0.0;
+    public static double Kp75 = 0.0;
+    public static double Kp90 = 0.0;
+    public static double Kp120 = 0.0;
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
-    private double feedforward;
+    private final double feedforward;
     private final GainSchedulingPIDController gainSchedulingPIDController;
     public double GEARING = 120.0 / 24.0;
     private double targetAngle = START_ANGLE;
@@ -37,31 +50,91 @@ public class Arm extends SubsystemBase {
      * @param telemetry   Telemetry
      */
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
+        this(hardwareMap, telemetry, 0);
+    }
+
+    /**
+     * Makes an arm that can raise and lower.
+     *
+     * @param hardwareMap Hardware Map
+     * @param telemetry   Telemetry
+     * @param feedforward feedforward
+     */
+    public Arm(HardwareMap hardwareMap, Telemetry telemetry, double feedforward) {
         this.telemetry = telemetry;
+        this.feedforward = feedforward;
         shoulderMotor = new Motor(hardwareMap, telemetry, "armShoulderMotor");
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.03),
-                new LookUpTableArgs(0, 0.04),
-                new LookUpTableArgs(90, 0.019),
-                new LookUpTableArgs(120, 0.025),
-                new LookUpTableArgs(180, 0.032),
-                new LookUpTableArgs(230, 0.01)};
+                new LookUpTableArgs(-59, Kpn45),
+                new LookUpTableArgs(-45, Kpn45),
+                new LookUpTableArgs(-20, Kpn20),
+                new LookUpTableArgs(0, Kp0),
+                new LookUpTableArgs(20, Kp20),
+                new LookUpTableArgs(50, Kp50),
+                new LookUpTableArgs(75, Kp75),
+                new LookUpTableArgs(90, Kp90),
+                new LookUpTableArgs(120, Kp120)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.4),
-                new LookUpTableArgs(0, 0.1),
-                new LookUpTableArgs(90, 0.07),
-                new LookUpTableArgs(150, 0.09),
-                new LookUpTableArgs(230, 0.1)};
+                new LookUpTableArgs(-59, 0),
+                new LookUpTableArgs(-45, 0),
+                new LookUpTableArgs(-20, 0),
+                new LookUpTableArgs(0, 0),
+                new LookUpTableArgs(20, 0),
+                new LookUpTableArgs(50, 0),
+                new LookUpTableArgs(75, 0),
+                new LookUpTableArgs(90, 0),
+                new LookUpTableArgs(120, 0)};
         LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.0075),
-                new LookUpTableArgs(0, 0.0075),
-                new LookUpTableArgs(90, 0.003),
-                new LookUpTableArgs(150, 0.008),
-                new LookUpTableArgs(230, 0.006)};
+                new LookUpTableArgs(-59, 0),
+                new LookUpTableArgs(-45, 0),
+                new LookUpTableArgs(-20, 0),
+                new LookUpTableArgs(0, 0),
+                new LookUpTableArgs(20, 0),
+                new LookUpTableArgs(50, 0),
+                new LookUpTableArgs(75, 0),
+                new LookUpTableArgs(90, 0),
+                new LookUpTableArgs(120, 0)};
+
+        /* LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
+                new LookUpTableArgs(-59, 0.03),
+                new LookUpTableArgs(-45, 0.03),
+                new LookUpTableArgs(-20, 0.04),
+                new LookUpTableArgs(0, 0.05),
+                new LookUpTableArgs(20, 0.025),
+                new LookUpTableArgs(50, 0.02),
+                new LookUpTableArgs(75, 0.025),
+                new LookUpTableArgs(90, 0.018),
+                new LookUpTableArgs(120, 0.02)};
+        LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
+                new LookUpTableArgs(-59, Kin45),
+                new LookUpTableArgs(-45, Kin45),
+                new LookUpTableArgs(-20, Kin20),
+                new LookUpTableArgs(0, Ki0),
+                new LookUpTableArgs(20, Ki20),
+                new LookUpTableArgs(50, Ki50),
+                new LookUpTableArgs(75, Ki75),
+                new LookUpTableArgs(90, Ki90),
+                new LookUpTableArgs(120, Ki120)};*/
 
         gainSchedulingPIDController = new GainSchedulingPIDController(kpLUTArgs, kiLUTArgs, kdLUTArgs);
+    }
+
+    /**
+     * Configures the shoulder motor.
+     *
+     * @param motor the shoulder motor for the arm
+     */
+    private void configMotor(Motor motor) {
+        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
+        motorConfigurationType.setGearing(GEARING);
+        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
+        motor.setMotorType(motorConfigurationType);
+        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -93,31 +166,11 @@ public class Arm extends SubsystemBase {
         }
     }
 
-    public void setFeedforward(double feedforward) {
-        this.feedforward = feedforward;
-    }
-
-    /**
-     * Configures the shoulder motor.
-     *
-     * @param motor the shoulder motor for the arm
-     */
-    private void configMotor(Motor motor) {
-        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
-        motorConfigurationType.setGearing(GEARING);
-        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
-        motor.setMotorType(motorConfigurationType);
-        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
-
     /**
      * Sends power to the shoulder motor.
      */
     public void execute() {
-        double degrees = getCurrentAngle();
+        double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double power = gainSchedulingPIDController.calculate(targetAngle, degrees) + this.feedforward;
 
         shoulderMotor.setPower(power);
@@ -134,5 +187,60 @@ public class Arm extends SubsystemBase {
         double degrees = shoulderMotor.getCurrentDegrees() + START_ANGLE;
         double error = Math.abs(targetAngle - degrees);
         return error <= TOLERABLE_ERROR;
+    }
+
+    /**
+     * Gets an action that sets the angle of the arm.
+     *
+     * @param angle the target angle to which to set the arm
+     * @return an action that sets the angle of the arm
+     */
+    public ActionEx actionSetTargetAngle(double angle) {
+        return new SetTargetAngle(this, angle);
+    }
+
+    /**
+     * An action that sets the angle of the arm.
+     */
+    public static class SetTargetAngle extends ActionExBase {
+        private final Arm arm;
+        private final double angle;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates a new action to set the angle of the arm.
+         *
+         * @param arm   the arm to set the angle
+         * @param angle the target angle for the arm
+         */
+        public SetTargetAngle(Arm arm, double angle) {
+            this.arm = arm;
+            this.angle = angle;
+        }
+
+        /**
+         * Moves the arm to the desired target angle.
+         *
+         * @param telemetryPacket telemetry that may be used to output data to the user
+         * @return <code>true</code> if the arm is moving to the desired angle;
+         *         <code>false</code> if the arm is at the desired angle
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+
+            arm.execute();
+            return !arm.isAtTarget();
+        }
+
+        /**
+         * Sets the target angle for the arm to the desired angle.
+         */
+        private void initialize() {
+            arm.setTargetAngle(angle);
+            initialized = true;
+        }
     }
 }

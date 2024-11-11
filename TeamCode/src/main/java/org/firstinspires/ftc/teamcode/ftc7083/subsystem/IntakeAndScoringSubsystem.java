@@ -329,11 +329,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         return slideLength * Ka;
     }
 
-    public void setArmFeedForward() {
-        double armFeedForward = getArmFeedForward();
-        robot.arm.setFeedforward(armFeedForward);
-    }
-
     private double getArmFeedForward() {
         double currentSlideLength = robot.linearSlide.getCurrentLength();
         return Ka * currentSlideLength;
