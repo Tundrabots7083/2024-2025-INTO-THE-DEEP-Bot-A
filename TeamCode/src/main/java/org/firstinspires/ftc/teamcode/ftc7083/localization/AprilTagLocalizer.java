@@ -108,7 +108,9 @@ public class AprilTagLocalizer implements Localizer {
             return 0.0;
         }
 
-        return Math.abs(currentPose.heading.toDouble() - lastPose.heading.toDouble()) / elapsedTime;
+        double lastHeading = Math.toRadians((lastPose.heading.toDouble()));
+        double currentHeading = Math.toRadians(currentPose.heading.toDouble());
+        return Math.abs(currentHeading - lastHeading) / elapsedTime;
     }
 
     /**
