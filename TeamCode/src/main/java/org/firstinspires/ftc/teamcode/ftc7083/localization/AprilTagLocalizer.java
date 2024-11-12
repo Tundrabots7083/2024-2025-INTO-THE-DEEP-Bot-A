@@ -31,7 +31,7 @@ public class AprilTagLocalizer implements Localizer {
     private Pose2d lastPose;
     private Pose2d currentPose;
     private double elapsedTime = 0.0;
-    private int numDetections = 0;
+    private boolean aprilTagsDetected = false;
 
     /**
      * Instantiates a new April Tag localizer. The localizer uses the webcams on the robot to
@@ -44,12 +44,13 @@ public class AprilTagLocalizer implements Localizer {
     }
 
     /**
-     * Gets the number of April Tags that were detected in the last update.
+     * Gets an indicator as to whether any April Tags were detected.
      *
-     * @return the number of April Tags that were detected in the last update
+     * @return <code>true</code> if at least one April Tag was detected;
+     *         <code>false</code> if no April Tags were detected
      */
-    public int getNumDetections() {
-        return numDetections;
+    public boolean aprilTagsDetected() {
+        return aprilTagsDetected;
     }
 
     @Override
@@ -63,6 +64,14 @@ public class AprilTagLocalizer implements Localizer {
     @Override
     public Pose2d getPose2d() {
         return currentPose;
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void setPose2d(Pose2d pose) {
+        Telemetry telemetry = Robot.getInstance().telemetry;
+        lastPose = currentPose;
+        currentPose = pose;
     }
 
     @Override
@@ -116,7 +125,7 @@ public class AprilTagLocalizer implements Localizer {
 
         // Get the total number of April Tag detections and the X, Y and heading for the robot as
         // determined by that detection.
-        numDetections = 0;
+        int numDetections = 0;
         for (Webcam webcam : webcams) {
             telemetry.addLine(String.format("\nWebcam %s", webcam));
 
@@ -149,8 +158,10 @@ public class AprilTagLocalizer implements Localizer {
             }
         }
 
+        aprilTagsDetected = numDetections > 0;
+
         // Take the average of all April tag detections and save as the current pose for the robot
-        if (numDetections > 0) {
+        if (aprilTagsDetected) {
             Pose2d pose = new Pose2d(
                     new Vector2d(totalX / numDetections, totalY / numDetections)
                     , new Rotation2d(totalHeading / numDetections, 0.0)

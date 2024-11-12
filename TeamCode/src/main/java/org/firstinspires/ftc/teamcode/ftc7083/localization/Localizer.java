@@ -22,6 +22,15 @@ public interface Localizer {
     Pose2d getPose2d();
 
     /**
+     * Sets the current pose for the localizer. This is used when something outside of the
+     * localizer determines the current pose and this localizer needs to be updated with that
+     * value.
+     *
+     * @param pose the current pose for the robot
+     */
+    void setPose2d(Pose2d pose);
+
+    /**
      * Gets the current velocity of the robot along the X and Y axis.
      *
      * @return the current velocity of the robot along the X and Y axis

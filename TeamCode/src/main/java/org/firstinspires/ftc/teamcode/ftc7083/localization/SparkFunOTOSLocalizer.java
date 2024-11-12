@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.localization;
 
 import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
+import static com.acmerobotics.roadrunner.ftc.OTOSKt.RRPoseToOTOSPose;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -39,6 +40,11 @@ public class SparkFunOTOSLocalizer implements Localizer {
     @Override
     public Pose2d getPose2d() {
         return pose;
+    }
+
+    @Override
+    public void setPose2d(Pose2d pose) {
+        otos.setPosition(RRPoseToOTOSPose(pose));
     }
 
     @Override

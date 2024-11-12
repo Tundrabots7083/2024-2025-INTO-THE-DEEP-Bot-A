@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc7083.localization;
 
-import static com.acmerobotics.roadrunner.ftc.OTOSKt.RRPoseToOTOSPose;
-
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 
@@ -23,7 +21,6 @@ import java.util.List;
 public class AprilTagAndOTOSLocalizer implements Localizer {
     private final AprilTagLocalizer aprilTagLocalizer;
     private final SparkFunOTOSLocalizer otosLocalizer;
-    private final SparkFunOTOS otos;
 
     /**
      * Instantiates a new localizer that uses the list of webcams and the SparkFun OTOS to
@@ -33,7 +30,6 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
      * @param otos    the SparkFun OTOS used for localization
      */
     public AprilTagAndOTOSLocalizer(List<Webcam> webcams, SparkFunOTOS otos) {
-        this.otos = otos;
         aprilTagLocalizer = new AprilTagLocalizer(webcams);
         otosLocalizer = new SparkFunOTOSLocalizer(otos);
     }
@@ -47,22 +43,29 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
     @Override
     public Pose2d getPose2d() {
         Pose2d pose;
-        if (aprilTagLocalizer.getNumDetections() == 0) {
-            pose = otosLocalizer.getPose2d();
-        } else {
+        if (aprilTagLocalizer.aprilTagsDetected()) {
             pose = aprilTagLocalizer.getPose2d();
-            otos.setPosition(RRPoseToOTOSPose(pose));
+            otosLocalizer.setPose2d(pose);
+        } else {
+            pose = otosLocalizer.getPose2d();
+            aprilTagLocalizer.setPose2d(pose);
         }
         return pose;
     }
 
     @Override
+    public void setPose2d(Pose2d pose) {
+        aprilTagLocalizer.setPose2d(pose);
+        otosLocalizer.setPose2d(pose);
+    }
+
+    @Override
     public PoseVelocity2d getVelocity() {
         PoseVelocity2d velocity;
-        if (aprilTagLocalizer.getNumDetections() == 0) {
-            velocity = otosLocalizer.getVelocity();
-        } else {
+        if (aprilTagLocalizer.aprilTagsDetected()) {
             velocity = aprilTagLocalizer.getVelocity();
+        } else {
+            velocity = otosLocalizer.getVelocity();
         }
         return velocity;
     }
