@@ -26,6 +26,8 @@ import java.util.List;
  * vision processor.
  */
 public class AprilTagLocalizer implements Localizer {
+    public static final int MILLIS_TO_SECS = 1000;
+    
     private final ElapsedTime timer = new ElapsedTime();
     private final List<Webcam> webcams;
     private Pose2d lastPose = null;
@@ -91,8 +93,8 @@ public class AprilTagLocalizer implements Localizer {
             return new Vector2d(0.0, 0.0);
         }
 
-        double xVel = Math.abs(currentPose.position.x - lastPose.position.x) / elapsedTime;
-        double yVel = Math.abs(currentPose.position.y - lastPose.position.y) / elapsedTime;
+        double xVel = MILLIS_TO_SECS * Math.abs(currentPose.position.x - lastPose.position.x) / elapsedTime;
+        double yVel = MILLIS_TO_SECS * Math.abs(currentPose.position.y - lastPose.position.y) / elapsedTime;
         return new Vector2d(xVel, yVel);
     }
 
@@ -110,7 +112,7 @@ public class AprilTagLocalizer implements Localizer {
 
         double lastHeading = Math.toRadians((lastPose.heading.toDouble()));
         double currentHeading = Math.toRadians(currentPose.heading.toDouble());
-        return Math.abs(currentHeading - lastHeading) / elapsedTime;
+        return MILLIS_TO_SECS * Math.abs(currentHeading - lastHeading) / elapsedTime;
     }
 
     /**
