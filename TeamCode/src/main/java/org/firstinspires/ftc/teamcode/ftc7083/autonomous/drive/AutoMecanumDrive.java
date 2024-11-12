@@ -59,7 +59,7 @@ import java.util.List;
  *     </li>
  *     <li>
  *         The default localizer, which uses drive motor encoders, has been removed as it is never used.
- *         This class now instantiates <code>ThreeDeadWheelLocalizer</code> and uses that instead.
+ *         This class now uses the localizer from the <code>Robot</code> class.
  *     </li>
  *     <li>
  *         References to the IMU have been removed, as it is not used when using <code>ThreeDeadWheelLocalizer</code>.
@@ -104,6 +104,7 @@ public class AutoMecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = Robot.getInstance().localizer;
+        localizer.setPose2d(pose);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
