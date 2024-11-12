@@ -26,8 +26,6 @@ import java.util.List;
  * vision processor.
  */
 public class AprilTagLocalizer implements Localizer {
-    public static final double MILLIS_PER_SECS = 1000.0;
-
     private final ElapsedTime timer = new ElapsedTime();
     private final List<Webcam> webcams;
     private Pose2d lastPose = null;
@@ -59,7 +57,7 @@ public class AprilTagLocalizer implements Localizer {
     public void update() {
         updatePose();
 
-        elapsedTime = timer.time() / MILLIS_PER_SECS;
+        elapsedTime = timer.time();
         timer.reset();
     }
 
