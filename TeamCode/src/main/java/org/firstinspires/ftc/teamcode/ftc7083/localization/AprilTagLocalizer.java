@@ -28,8 +28,8 @@ import java.util.List;
 public class AprilTagLocalizer implements Localizer {
     private final ElapsedTime timer = new ElapsedTime();
     private final List<Webcam> webcams;
-    private Pose2d lastPose;
-    private Pose2d currentPose;
+    private Pose2d lastPose = null;
+    private Pose2d currentPose = null;
     private double elapsedTime = 0.0;
     private boolean aprilTagsDetected = false;
 
@@ -86,7 +86,8 @@ public class AprilTagLocalizer implements Localizer {
      * @return the linear velocity of the robot
      */
     private Vector2d getLinearVelocity() {
-        if (elapsedTime == 0.0) {
+        // We require at least two poses to calculate velocity
+        if (lastPose == null) {
             return new Vector2d(0.0, 0.0);
         }
 
@@ -102,11 +103,12 @@ public class AprilTagLocalizer implements Localizer {
      * @return the angular velocity of the robot
      */
     private double getAngularVelocity() {
-        if (elapsedTime == 0.0) {
+        // We require at least two poses to calculate velocity
+        if (lastPose == null) {
             return 0.0;
         }
 
-        return currentPose.heading.toDouble() / elapsedTime;
+        return Math.abs(currentPose.heading.toDouble() - lastPose.heading.toDouble()) / elapsedTime;
     }
 
     /**

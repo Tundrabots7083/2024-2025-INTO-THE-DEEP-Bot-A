@@ -64,12 +64,9 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
 
     @Override
     public PoseVelocity2d getVelocity() {
-        PoseVelocity2d velocity;
-        if (aprilTagLocalizer.aprilTagsDetected()) {
-            velocity = aprilTagLocalizer.getVelocity();
-        } else {
-            velocity = otosLocalizer.getVelocity();
-        }
-        return velocity;
+        // Use the velocity and acceleration values from the SparkFun OTOS, even if we get the pose
+        // from April Tags. While we could use the velocity from the April Tags, the velocity tends
+        // to be less accurate, so we use the values from the SparkFun OTOS.
+        return otosLocalizer.getVelocity();
     }
 }

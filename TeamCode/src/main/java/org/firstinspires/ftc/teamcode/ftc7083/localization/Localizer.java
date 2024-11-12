@@ -31,9 +31,10 @@ public interface Localizer {
     void setPose2d(Pose2d pose);
 
     /**
-     * Gets the current velocity of the robot along the X and Y axis.
+     * Gets the current velocity of the robot along the X and Y axis as well as the rotational
+     * velocity.
      *
-     * @return the current velocity of the robot along the X and Y axis
+     * @return the current velocity of the robot along the X and Y axis and it's rotation
      */
     PoseVelocity2d getVelocity();
 }
