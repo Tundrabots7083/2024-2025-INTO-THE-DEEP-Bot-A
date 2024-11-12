@@ -7,8 +7,9 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AprilTagLocalizer;
-import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.Localizer;
+import org.firstinspires.ftc.teamcode.ftc7083.localization.AprilTagAndOTOSLocalizer;
+import org.firstinspires.ftc.teamcode.ftc7083.localization.AprilTagLocalizer;
+import org.firstinspires.ftc.teamcode.ftc7083.localization.Localizer;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
@@ -116,7 +117,7 @@ public class Robot {
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         webcams = Arrays.asList(leftWebcam, rightWebcam);
-        localizer = new AprilTagLocalizer(webcams);
+        localizer = new AprilTagAndOTOSLocalizer(webcams, otos);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();

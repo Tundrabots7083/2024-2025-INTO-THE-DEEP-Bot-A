@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive;
+package org.firstinspires.ftc.teamcode.ftc7083.localization;
 
 import android.annotation.SuppressLint;
 
@@ -17,8 +17,6 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,11 +26,12 @@ import java.util.List;
  * vision processor.
  */
 public class AprilTagLocalizer implements Localizer {
+    private final ElapsedTime timer = new ElapsedTime();
+    private final List<Webcam> webcams;
     private Pose2d lastPose;
     private Pose2d currentPose;
-    private final ElapsedTime timer = new ElapsedTime();
     private double elapsedTime = 0.0;
-    private final List<Webcam> webcams;
+    private int numDetections = 0;
 
     /**
      * Instantiates a new April Tag localizer. The localizer uses the webcams on the robot to
@@ -42,6 +41,23 @@ public class AprilTagLocalizer implements Localizer {
         this.webcams = webcams;
         this.currentPose = new Pose2d(0, 0, 0);
         this.lastPose = currentPose;
+    }
+
+    /**
+     * Gets the number of April Tags that were detected in the last update.
+     *
+     * @return the number of April Tags that were detected in the last update
+     */
+    public int getNumDetections() {
+        return numDetections;
+    }
+
+    @Override
+    public void update() {
+        updatePose();
+
+        elapsedTime = timer.time();
+        timer.reset();
     }
 
     @Override
@@ -84,14 +100,6 @@ public class AprilTagLocalizer implements Localizer {
         return currentPose.heading.toDouble() / elapsedTime;
     }
 
-    @Override
-    public void update() {
-        updatePose();
-
-        elapsedTime = timer.time();
-        timer.reset();
-    }
-
     /**
      * Updates the pose of the robot using each webcam on the robot. For each webcam, it gets the
      * April Tags detected by that camera and determines the pose and orientation of the robot.
@@ -102,13 +110,13 @@ public class AprilTagLocalizer implements Localizer {
     private void updatePose() {
         Telemetry telemetry = Robot.getInstance().telemetry;
 
-        double count = 0;
         double totalX = 0.0;
         double totalY = 0.0;
         double totalHeading = 0.0;
 
         // Get the total number of April Tag detections and the X, Y and heading for the robot as
         // determined by that detection.
+        numDetections = 0;
         for (Webcam webcam : webcams) {
             telemetry.addLine(String.format("\nWebcam %s", webcam));
 
@@ -122,7 +130,7 @@ public class AprilTagLocalizer implements Localizer {
                     YawPitchRollAngles orientation = detection.robotPose.getOrientation();
                     totalHeading += orientation.getYaw();
 
-                    count++;
+                    numDetections++;
 
                     telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
                     telemetry.addLine(String.format("X=%6.1f Y=%6.1f Z=%6.1f  (inch)",
@@ -142,11 +150,10 @@ public class AprilTagLocalizer implements Localizer {
         }
 
         // Take the average of all April tag detections and save as the current pose for the robot
-        Pose2d pose;
-        if (count > 0) {
-            pose = new Pose2d(
-                    new Vector2d(totalX / count, totalY / count)
-                    , new Rotation2d(totalHeading / count, 0.0)
+        if (numDetections > 0) {
+            Pose2d pose = new Pose2d(
+                    new Vector2d(totalX / numDetections, totalY / numDetections)
+                    , new Rotation2d(totalHeading / numDetections, 0.0)
             );
             lastPose = currentPose;
             currentPose = pose;

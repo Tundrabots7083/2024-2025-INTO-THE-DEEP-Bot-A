@@ -1,0 +1,48 @@
+package org.firstinspires.ftc.teamcode.ftc7083.localization;
+
+import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
+
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
+
+import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
+
+/**
+ * A localizer that uses the SparkFun OTOS to determine the field pose and velocity.
+ */
+public class SparkFunOTOSLocalizer implements Localizer {
+    private final SparkFunOTOS otos;
+    private Pose2d pose;
+    private SparkFunOTOS.Pose2D otosVel;
+    private SparkFunOTOS.Pose2D otosAcc;
+
+    /**
+     * Instantiates a new SparkFun OTOS localizer, using the SparkFun OTOS provided to calculate
+     * the field position.
+     *
+     * @param otos the SparkFun OTOS to use for localization
+     */
+    public SparkFunOTOSLocalizer(SparkFunOTOS otos) {
+        this.otos = otos;
+    }
+
+    @Override
+    public void update() {
+        com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D otosPose = new com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D();
+        otosVel = new SparkFunOTOS.Pose2D();
+        otosAcc = new SparkFunOTOS.Pose2D();
+        otos.getPosVelAcc(otosPose, otosVel, otosAcc);
+        pose = OTOSPoseToRRPose(otosPose);
+    }
+
+    @Override
+    public Pose2d getPose2d() {
+        return pose;
+    }
+
+    @Override
+    public PoseVelocity2d getVelocity() {
+        return new PoseVelocity2d(new Vector2d(otosVel.x, otosVel.y), otosVel.h);
+    }
+}
