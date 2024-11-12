@@ -38,6 +38,11 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
     public void update() {
         aprilTagLocalizer.update();
         otosLocalizer.update();
+        if (aprilTagLocalizer.aprilTagsDetected()) {
+            otosLocalizer.setPose2d(aprilTagLocalizer.getPose2d());
+        } else {
+            aprilTagLocalizer.setPose2d(otosLocalizer.getPose2d());
+        }
     }
 
     @Override
@@ -45,10 +50,8 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
         Pose2d pose;
         if (aprilTagLocalizer.aprilTagsDetected()) {
             pose = aprilTagLocalizer.getPose2d();
-            otosLocalizer.setPose2d(pose);
         } else {
             pose = otosLocalizer.getPose2d();
-            aprilTagLocalizer.setPose2d(pose);
         }
         return pose;
     }
