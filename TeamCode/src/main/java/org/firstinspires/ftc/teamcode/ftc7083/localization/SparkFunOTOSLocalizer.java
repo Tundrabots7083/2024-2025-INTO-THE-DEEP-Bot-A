@@ -16,7 +16,6 @@ public class SparkFunOTOSLocalizer implements Localizer {
     private final SparkFunOTOS otos;
     private Pose2d pose;
     private SparkFunOTOS.Pose2D otosVel;
-    private SparkFunOTOS.Pose2D otosAcc;
 
     /**
      * Instantiates a new SparkFun OTOS localizer, using the SparkFun OTOS provided to calculate
@@ -32,7 +31,7 @@ public class SparkFunOTOSLocalizer implements Localizer {
     public void update() {
         com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D otosPose = new com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D();
         otosVel = new SparkFunOTOS.Pose2D();
-        otosAcc = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D otosAcc = new SparkFunOTOS.Pose2D();
         otos.getPosVelAcc(otosPose, otosVel, otosAcc);
         pose = OTOSPoseToRRPose(otosPose);
     }
