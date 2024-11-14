@@ -72,6 +72,7 @@ public class AprilTagLocalizer implements Localizer {
         Telemetry telemetry = Robot.getInstance().telemetry;
         lastPose = currentPose;
         currentPose = pose;
+        telemetry.addData("[AprilTag] re-localize", pose);
     }
 
     @Override

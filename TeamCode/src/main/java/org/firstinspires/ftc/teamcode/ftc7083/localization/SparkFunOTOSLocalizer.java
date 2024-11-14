@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
 
 /**
@@ -44,6 +46,8 @@ public class SparkFunOTOSLocalizer implements Localizer {
     @Override
     public void setPose2d(Pose2d pose) {
         otos.setPosition(RRPoseToOTOSPose(pose));
+        Telemetry telemetry = Robot.getInstance().telemetry;
+        telemetry.addData("[OTOS] re-localize", pose);
     }
 
     @Override
