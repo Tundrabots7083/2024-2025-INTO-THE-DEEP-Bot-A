@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
-import org.firstinspires.ftc.teamcode.ftc7083.action.SequentialAction;
 import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AutoMecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
@@ -16,24 +15,24 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
  */
 @Config
 public class BlueChamber {
+    // Orientations for the robot, in degrees
+    public static double ORIENTATION_TOWARD_WALL = -90;
+    public static double ORIENTATION_SPIKE_MARK_1 = 120;
+    public static double ORIENTATION_SPIKE_MARK_2 = 90;
+    public static double ORIENTATION_SPIKE_MARK_3 = 60;
+
     // Initial pose for the robot
     public static double INITIAL_POSE_X = 16.0;
     public static double INITIAL_POSE_Y = -62.0;
-    public static double INITIAL_HEADING_DEGREES = -90;
-    public static double INITIAL_HEADING = Math.toRadians(INITIAL_HEADING_DEGREES);
+    public static double INITIAL_HEADING = Math.toRadians(ORIENTATION_TOWARD_WALL);
 
     // Position for scoring on the high chamber
     public static double CHAMBER_HIGH_X = 5;
     public static double CHAMBER_HIGH_Y = -35;
 
-    // Position in front of the spike marks
-    public static double BLUE_IN_FRONT_OF_SPIKE_MARKS_X = 35;
-
-    // Strafing positions for the spike marks
-    public static double BLUE_SPIKE_MARK_START_Y = -10;
-    public static double BLUE_SPIKE_MARK_END_Y = -55;
-    public static double BLUE_SPIKE_MARK_1_X = 45;
-    public static double BLUE_SPIKE_MARK_2_X = 55;
+    // Positions for the spike marks
+    public static double BLUE_SPIKE_MARK_X = 58;
+    public static double BLUE_SPIKE_MARK_Y = -42;
 
     // Pickup specimen from wall
     public static double OBSERVATION_ZONE_X = 47;
@@ -88,29 +87,42 @@ public class BlueChamber {
                 // Move to the chamber and score the specimen
                 .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
-                // Strafe the sample from Spike Mark 1 to the observation zone
-                .strafeTo(new Vector2d(BLUE_IN_FRONT_OF_SPIKE_MARKS_X, CHAMBER_HIGH_Y))
-                .strafeTo(new Vector2d(BLUE_IN_FRONT_OF_SPIKE_MARKS_X, BLUE_SPIKE_MARK_START_Y))
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_1_X, BLUE_SPIKE_MARK_START_Y))
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_1_X, BLUE_SPIKE_MARK_END_Y))
-                // Strafe the sample from Spike Mark 2 to the observation zone
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_1_X, BLUE_SPIKE_MARK_START_Y))
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_2_X, BLUE_SPIKE_MARK_START_Y))
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_2_X, BLUE_SPIKE_MARK_END_Y))
-                // Move to the observation zone to pickup specimen 1 from the wall
+                // Move to the spike marks
+                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_X, BLUE_SPIKE_MARK_Y))
+                // Move the sample from Spike Mark 1 to the observation zone
+                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_1))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                // Move the sample from Spike Mark 2 to the observation zone
+                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_2))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                // Move the sample from Spike Mark 3 to the observation zone
+                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_3))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                // Move to the observation zone to pickup specimen 1 from the wall and score on the chamber
                 .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
-                .stopAndAdd(ias.actionAcquireSpecimenFromWall())
-                // Move to the chamber and score the specimen
+                .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
+                .stopAndAdd(ias.actionIntakeSpecimen())
                 .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
-                // Move to the observation zone to pickup specimen 2 from the wall
+                // Move to the observation zone to pickup specimen 2 from the wall and score on the chamber
                 .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
-                .stopAndAdd(ias.actionAcquireSpecimenFromWall())
-                // Move to the chamber and score the specimen
+                .stopAndAdd(ias.actionIntakeSpecimen())
+                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber())
+                // Move to the observation zone to pickup specimen 3 from the wall and score on the chamber
+                .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
+                .stopAndAdd(ias.actionIntakeSpecimen())
                 .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Park the robot
                 .strafeTo(new Vector2d(PARK_X, PARK_Y))
+                .stopAndAdd(ias.actionMoveToStartPosition())
                 .build();
     }
 }

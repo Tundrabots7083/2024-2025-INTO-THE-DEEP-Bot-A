@@ -89,4 +89,14 @@ public class Arm extends SubsystemBase {
         double error = Math.abs(targetAngle - degrees);
         return error <= TOLERABLE_ERROR;
     }
+
+    /**
+     * Moves the arm to the start position, resets the encoders to make that the zero position, and
+     * then moves the arm to the neutral position.
+     *
+     * @param currentAngle the current angle at which the arm is positioned
+     */
+    public void resetArm(double currentAngle) {
+        
+    }
 }

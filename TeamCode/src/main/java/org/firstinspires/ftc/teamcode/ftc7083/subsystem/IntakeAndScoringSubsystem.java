@@ -46,6 +46,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double LOW_CHAMBER_HEIGHT = 13.0;
     public static double HIGH_BASKET_HEIGHT = 48.6;
     public static double LOW_BASKET_HEIGHT = 25.75;
+    public static double LOW_ASCENT_BAR_HEIGHT = 13.0;
+    public static double HIGH_ASCENT_BAR_HEIGHT = 26.0;
 
     // Maximum horizontal length of robot when extended
     public static double MAX_EXTENDED_ROBOT_LENGTH = 40.0;
@@ -65,6 +67,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_X = ARM_LENGTH + 6.0;
     public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y = 4.5;
     public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_ACQUIRE_Y = OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y + 5;
+    public static double LOW_ASCENT_BAR_X = ARM_LENGTH;
+    public static double LOW_ASCENT_BAR_Y = LOW_ASCENT_BAR_HEIGHT;
 
     // Other scoring constants
     public static double MOVE_ARM_AMOUNT = 3.0;
@@ -339,18 +343,67 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Gets an action to score a specimen on the high chamber. The robot must be in the correct
+     * scoring position prior to calling this method.
+     *
+     * @return an action to score a specimen on the high chamber
+     */
+    public ActionEx actionScoreSpecimenHighBasket() {
+        return new SequentialAction(
+                new MoveTo(this, HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y),
+                actionOpenClawWithWait(),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
+     * Gets an action to intake a specimen from the ground. The robot must be in the
+     * correct position prior to calling this method.
+     *
+     * @return an action to intake a specimen from the observation zone wall
+     */
+    public ActionEx actionIntakeSample() {
+        return new SequentialAction(
+                // TODO: this is not correct - it will need to use the LimeLight camera to orient the wrist and
+                //       adjust the length of the linear slide
+                new MoveTo(this, INTAKE_SHORT_X, INTAKE_SHORT_Y),
+                actionCloseClawWithWait(),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
      * Gets an action to intake a specimen from the observation zone wall. The robot must be in the
      * correct position prior to calling this method.
      *
      * @return an action to intake a specimen from the observation zone wall
      */
-    public ActionEx actionAcquireSpecimenFromWall() {
+    public ActionEx actionIntakeSpecimen() {
         return new SequentialAction(
                 new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y),
                 actionCloseClawWithWait(),
                 new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_ACQUIRE_Y),
                 actionRetractLinearSlide()
         );
+    }
+
+    /**
+     * Gets an action to touch the low ascent bar. The robot must be in the correct position prior
+     * to calling this method.
+     *
+     * @return an action to touch the low ascent bar
+     */
+    public ActionEx actionTouchAscentBarLow() {
+        return new MoveTo(this, LOW_ASCENT_BAR_X, LOW_ASCENT_BAR_Y);
+    }
+
+    /**
+     * Gets an action to move the scoring subsystem to the start position.
+     *
+     * @return an action to move the scoring subsystem to the start position.
+     */
+    public ActionEx actionMoveToStartPosition() {
+        return new MoveTo(this, START_X, START_Y);
     }
 
     /**
