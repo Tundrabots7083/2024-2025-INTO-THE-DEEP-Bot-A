@@ -88,11 +88,7 @@ public class BlueChamber {
                 // Move to the high chamber scoring position
                 .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
                 // Score the specimen
-                .stopAndAdd(new SequentialAction(
-                        ias.actionMoveTo(IntakeAndScoringSubsystem.HIGH_BASKET_SCORING_X, IntakeAndScoringSubsystem.HIGH_CHAMBER_SCORING_Y),
-                        ias.actionOpenClawWithWait(),
-                        ias.actionRetractLinearSlide()
-                ))
+                .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Strafe the sample from Spike Mark 1 to the observation zone
                 .turn(Math.toRadians(90))
                 .strafeTo(new Vector2d(BLUE_IN_FRONT_OF_SPIKE_MARKS_X, CHAMBER_HIGH_Y))
