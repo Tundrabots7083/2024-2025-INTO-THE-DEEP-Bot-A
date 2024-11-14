@@ -2,13 +2,8 @@ package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDController;
-import org.firstinspires.ftc.teamcode.ftc7083.feedback.PIDControllerImpl;
-import org.firstinspires.ftc.teamcode.ftc7083.hardware.Motor;
 
 /**
  * A linear slide can extend and retract the wrist and claw attached to the robot's scoring
@@ -25,9 +20,7 @@ public class LinearSlide extends SubsystemBase {
     public static double TOLERABLE_ERROR = 0.05; // inches
     public static double MIN_EXTENSION_LENGTH = 0.0;
     public static double MAX_EXTENSION_LENGTH = 18;
-    private final Motor slideMotor;
     private final Telemetry telemetry;
-    private final PIDController pidController;
     public double GEARING = 1.0;
     private double targetLength = 0;
 
@@ -39,26 +32,6 @@ public class LinearSlide extends SubsystemBase {
      */
     public LinearSlide(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        slideMotor = new Motor(hardwareMap, telemetry, "armSlideMotor");
-        configMotor(slideMotor);
-        pidController = new PIDControllerImpl(KP, KI, KD);
-    }
-
-    /**
-     * Configures the motor used for the linear slide
-     *
-     * @param motor the motor to be configured
-     */
-    private void configMotor(Motor motor) {
-        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
-        motorConfigurationType.setGearing(GEARING);
-        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
-        motor.setMotorType(motorConfigurationType);
-//        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(Motor.Direction.FORWARD);
-        motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
     /**
@@ -77,14 +50,6 @@ public class LinearSlide extends SubsystemBase {
      * @param length Length of desired slide position in inches.
      */
     public void setLength(double length) {
-        double targetLength = Range.clip(length, MIN_EXTENSION_LENGTH, MAX_EXTENSION_LENGTH);
-        if (length != targetLength) {
-            telemetry.addData("[Slide] clipped", length);
-        }
-        if (this.targetLength != targetLength) {
-            this.targetLength = targetLength;
-            pidController.reset();
-        }
     }
 
     /**
@@ -92,11 +57,9 @@ public class LinearSlide extends SubsystemBase {
      */
     public void execute() {
         if (!isAtTarget()) {
-            double power = pidController.calculate(targetLength, getCurrentLength());
-            slideMotor.setPower(power);
-            telemetry.addData("[Slide] power", power);
+            telemetry.addData("[Slide] power", 0.0);
             telemetry.addData("[Slide] inches", getCurrentLength());
-            telemetry.addData("[Slide] ticks", slideMotor.getCurrentPosition());
+            telemetry.addData("[Slide] ticks", 0.0);
         }
     }
 
@@ -118,6 +81,6 @@ public class LinearSlide extends SubsystemBase {
      * @return slide length in inches
      */
     public double getCurrentLength() {
-        return -slideMotor.getCurrentInches();
+        return 0.0;
     }
 }

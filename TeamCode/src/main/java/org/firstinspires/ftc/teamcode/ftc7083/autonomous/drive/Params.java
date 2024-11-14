@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
+/**
+ * Parameters originally embedded in RoadRunner's MecanumDrive, split out here for ease of finding
+ * and configuring.
+ */
 @Config
 public class Params {
     // drive model parameters

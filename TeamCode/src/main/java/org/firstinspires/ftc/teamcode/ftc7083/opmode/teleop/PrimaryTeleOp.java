@@ -22,6 +22,7 @@ import java.util.Collection;
 @Config
 @TeleOp(name = "Primary TeleOp", group = "Active")
 public class PrimaryTeleOp extends OpMode {
+    public static boolean RAN_AUTONOMOUS = false;
     private final Gamepad currentGamepad1 = new Gamepad();
     private final Gamepad currentGamepad2 = new Gamepad();
     private Robot robot;
@@ -64,6 +65,9 @@ public class PrimaryTeleOp extends OpMode {
         for (SubsystemController controller : controllers) {
             controller.execute(currentGamepad1, currentGamepad2);
         }
+
+        // Update the location of the robot on the field using April Tag localization
+        robot.localizer.update();
 
         telemetry.update();
     }
