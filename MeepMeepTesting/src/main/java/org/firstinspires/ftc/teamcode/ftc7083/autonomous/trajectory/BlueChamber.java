@@ -37,7 +37,7 @@ public class BlueChamber {
 
     // Pickup specimen from wall
     public static double OBSERVATION_ZONE_X = 47;
-    public static double OBSERVATION_ZONE_Y = -40;
+    public static double OBSERVATION_ZONE_Y = -45;
 
     // Park in the observation zone
     public static double PARK_X = 50;

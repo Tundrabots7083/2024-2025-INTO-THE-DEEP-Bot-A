@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(75, 75, Math.toRadians(180), Math.toRadians(180), 18)
                 .build();
 
         // Trajectory builders for Blue and Red alliances when scoring on the chambers or in the baskets
