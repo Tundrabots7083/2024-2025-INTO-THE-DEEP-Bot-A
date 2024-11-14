@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.ftc7083.opmode.autonomous;
 
-import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -30,7 +27,7 @@ public class BlueChamberOpMode extends OpMode {
     private BlueChamber trajectoryBuilder;
     private Action trajectory;
     private List<Subsystem> subsystems;
-    private boolean runActions = true;
+    private boolean actionsRunning = true;
     private Canvas canvas;
 
     @Override
@@ -78,10 +75,10 @@ public class BlueChamberOpMode extends OpMode {
 
         // Run the trajectory action. We aren't using Actions.runBlocking so that we can make sure
         // our subsystems continue to be given a chance to execute.
-        if (runActions) {
+        if (actionsRunning) {
             TelemetryPacket tp = new TelemetryPacket();
             tp.fieldOverlay().getOperations().addAll(canvas.getOperations());
-            runActions = trajectory.run(tp);
+            actionsRunning = trajectory.run(tp);
             FtcDashboard.getInstance().sendTelemetryPacket(tp);
         }
 
