@@ -1,0 +1,83 @@
+package org.firstinspires.ftc.teamcode.ftc7083.opmode.autonomous;
+
+import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AutoMecanumDrive;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.BlueChamber;
+import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Subsystem;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Autonomous OpMode used for scoring on the chamber when in the blue alliance.
+ */
+@Autonomous(name = "Blue Chamber", group = "Active")
+public class BlueChamberOpMode extends OpMode {
+    private Robot robot;
+    private BlueChamber trajectoryBuilder;
+    private Action trajectory;
+    private List<Subsystem> subsystems;
+    private boolean runAction = true;
+
+    @Override
+    public void init() {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+        robot = Robot.init(hardwareMap, telemetry);
+
+        subsystems = Arrays.asList(robot.arm, robot.linearSlide, robot.mecanumDrive, robot.claw, robot.wrist);
+
+        robot.localizer.setPose2d(new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING));
+
+        trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING)));
+
+        telemetry.addLine("Initialization Complete");
+        telemetry.update();
+    }
+
+    @Override
+    public void init_loop() {
+        robot.localizer.update();
+    }
+
+    @Override
+    public void start() {
+        trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, robot.localizer.getPose2d()));
+        trajectory = trajectoryBuilder.getTrajectory();
+        robot.intakeAndScoringSubsystem.moveToNeutralPosition();
+    }
+
+    @Override
+    public void loop() {
+        // Clear the bulk cache for each Lynx module hub. This must be performed once per loop
+        // as the bulk read caches are being handled manually.
+        for (LynxModule hub : robot.allHubs) {
+            hub.clearBulkCache();
+        }
+
+        // Update all the hardware subsystems and the localizer
+        for (Subsystem subsystem : subsystems) {
+            subsystem.execute();
+        }
+        robot.localizer.update();
+
+        // Run the trajectory action
+        if (runAction) {
+            runAction = trajectory.run(new TelemetryPacket());
+        }
+
+        telemetry.update();
+    }
+}
