@@ -22,6 +22,9 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
     private final AprilTagLocalizer aprilTagLocalizer;
     private final SparkFunOTOSLocalizer otosLocalizer;
 
+    private Pose2d pose;
+    private PoseVelocity2d velocity;
+
     /**
      * Instantiates a new localizer that uses the list of webcams and the SparkFun OTOS to
      * determine the localization information for the robot.
@@ -38,21 +41,17 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
     public void update() {
         aprilTagLocalizer.update();
         otosLocalizer.update();
+
+        pose = otosLocalizer.getPose2d();
+        velocity = otosLocalizer.getVelocity();
+
         if (aprilTagLocalizer.aprilTagsDetected()) {
             otosLocalizer.setPose2d(aprilTagLocalizer.getPose2d());
-        } else {
-            aprilTagLocalizer.setPose2d(otosLocalizer.getPose2d());
         }
     }
 
     @Override
     public Pose2d getPose2d() {
-        Pose2d pose;
-        if (aprilTagLocalizer.aprilTagsDetected()) {
-            pose = aprilTagLocalizer.getPose2d();
-        } else {
-            pose = otosLocalizer.getPose2d();
-        }
         return pose;
     }
 
@@ -64,12 +63,6 @@ public class AprilTagAndOTOSLocalizer implements Localizer {
 
     @Override
     public PoseVelocity2d getVelocity() {
-        PoseVelocity2d velocity;
-        if (aprilTagLocalizer.aprilTagsDetected()) {
-            velocity = aprilTagLocalizer.getVelocity();
-        } else {
-            velocity = otosLocalizer.getVelocity();
-        }
         return velocity;
     }
 }
