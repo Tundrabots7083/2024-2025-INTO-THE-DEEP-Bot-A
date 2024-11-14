@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.ftc7083.opmode.autonomous;
 import static com.acmerobotics.roadrunner.ftc.OTOSKt.OTOSPoseToRRPose;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -28,7 +30,8 @@ public class BlueChamberOpMode extends OpMode {
     private BlueChamber trajectoryBuilder;
     private Action trajectory;
     private List<Subsystem> subsystems;
-    private boolean runAction = true;
+    private boolean runActions = true;
+    private Canvas canvas;
 
     @Override
     public void init() {
@@ -36,9 +39,7 @@ public class BlueChamberOpMode extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         robot = Robot.init(hardwareMap, telemetry);
-
-        subsystems = Arrays.asList(robot.arm, robot.linearSlide, robot.mecanumDrive, robot.claw, robot.wrist);
-
+        subsystems = Arrays.asList(robot.mecanumDrive, robot.arm, robot.linearSlide, robot.claw, robot.wrist);
         robot.localizer.setPose2d(new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING));
 
         trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING)));
@@ -56,6 +57,8 @@ public class BlueChamberOpMode extends OpMode {
     public void start() {
         trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, robot.localizer.getPose2d()));
         trajectory = trajectoryBuilder.getTrajectory();
+        canvas = new Canvas();
+        trajectory.preview(canvas);
         robot.intakeAndScoringSubsystem.moveToNeutralPosition();
     }
 
@@ -73,9 +76,13 @@ public class BlueChamberOpMode extends OpMode {
         }
         robot.localizer.update();
 
-        // Run the trajectory action
-        if (runAction) {
-            runAction = trajectory.run(new TelemetryPacket());
+        // Run the trajectory action. We aren't using Actions.runBlocking so that we can make sure
+        // our subsystems continue to be given a chance to execute.
+        if (runActions) {
+            TelemetryPacket tp = new TelemetryPacket();
+            tp.fieldOverlay().getOperations().addAll(canvas.getOperations());
+            runActions = trajectory.run(tp);
+            FtcDashboard.getInstance().sendTelemetryPacket(tp);
         }
 
         telemetry.update();
