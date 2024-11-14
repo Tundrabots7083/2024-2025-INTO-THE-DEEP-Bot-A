@@ -89,7 +89,7 @@ public class Arm extends SubsystemBase {
         motorConfigurationType.setGearing(GEARING);
         motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
         motor.setMotorType(motorConfigurationType);
-        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+//        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }

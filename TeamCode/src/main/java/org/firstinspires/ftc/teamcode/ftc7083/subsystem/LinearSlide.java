@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
@@ -56,9 +55,9 @@ public class LinearSlide extends SubsystemBase {
         motorConfigurationType.setGearing(GEARING);
         motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
         motor.setMotorType(motorConfigurationType);
-        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+//        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(Motor.Direction.FORWARD);
         motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
