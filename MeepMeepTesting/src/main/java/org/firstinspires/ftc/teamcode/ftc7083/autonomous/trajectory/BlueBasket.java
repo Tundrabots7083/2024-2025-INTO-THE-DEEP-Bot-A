@@ -116,7 +116,7 @@ public class BlueBasket {
                 .turnTo(Math.toRadians(ORIENTATION_AWAY_FROM_ASCENT_BARS))
                 .strafeTo(new Vector2d(PARK_APPROACH_X, PARK_Y))
                 .strafeTo(new Vector2d(PARK_X, PARK_Y))
-                .stopAndAdd(ias.actionMoveToStartPosition())
+                .stopAndAdd(ias.actionTouchAscentBarLow())
                 .build();
     }
 }

@@ -46,8 +46,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double LOW_CHAMBER_HEIGHT = 13.0;
     public static double HIGH_BASKET_HEIGHT = 48.6;
     public static double LOW_BASKET_HEIGHT = 25.75;
-    public static double LOW_ASCENT_BAR_HEIGHT = 13.0;
-    public static double HIGH_ASCENT_BAR_HEIGHT = 26.0;
+    public static double LOW_ASCENT_BAR_HEIGHT = 20.0;
+    public static double HIGH_ASCENT_BAR_HEIGHT = 36.0;
 
     // Maximum horizontal length of robot when extended
     public static double MAX_EXTENDED_ROBOT_LENGTH = 40.0;
