@@ -91,19 +91,19 @@ public class BlueChamber {
                 .strafeTo(new Vector2d(BLUE_SPIKE_MARK_X, BLUE_SPIKE_MARK_Y))
                 // Move the sample from Spike Mark 1 to the observation zone
                 .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_1))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .stopAndAdd(ias.actionIntakeSample())
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                .stopAndAdd(ias.actionDepositSample())
                 // Move the sample from Spike Mark 2 to the observation zone
                 .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_2))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .stopAndAdd(ias.actionIntakeSample())
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                .stopAndAdd(ias.actionDepositSample())
                 // Move the sample from Spike Mark 3 to the observation zone
                 .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_3))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to pickup sample
+                .stopAndAdd(ias.actionIntakeSample())
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
-                .stopAndAdd(ias.actionScoreSpecimenHighChamber()) // TODO: new action to deposit sample
+                .stopAndAdd(ias.actionDepositSample())
                 // Move to the observation zone to pickup specimen 1 from the wall and score on the chamber
                 .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))

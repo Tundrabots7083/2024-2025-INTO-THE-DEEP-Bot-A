@@ -40,6 +40,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double INTAKE_SHORT_Y = 1.6;
     public static double INTAKE_LONG_X = 36.0;
     public static double INTAKE_LONG_Y = 1.6;
+    public static double DEPOSIT_SAMPLE_X = 27.0;
+    public static double DEPOSIT_SAMPLE_Y = 1.6;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
@@ -373,6 +375,20 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Gets an action to intake a specimen from the ground. The robot must be in the
+     * correct position prior to calling this method.
+     *
+     * @return an action to intake a specimen from the observation zone wall
+     */
+    public ActionEx actionDepositSample() {
+        return new SequentialAction(
+                new MoveTo(this, DEPOSIT_SAMPLE_X, DEPOSIT_SAMPLE_Y),
+                actionOpenClawWithWait(),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
      * Gets an action to intake a specimen from the observation zone wall. The robot must be in the
      * correct position prior to calling this method.
      *
@@ -380,6 +396,8 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      */
     public ActionEx actionIntakeSpecimen() {
         return new SequentialAction(
+                // TODO: this is not correct - it will need to use the LimeLight camera to orient the wrist and
+                //       adjust the length of the linear slide
                 new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y),
                 actionCloseClawWithWait(),
                 new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_ACQUIRE_Y),
