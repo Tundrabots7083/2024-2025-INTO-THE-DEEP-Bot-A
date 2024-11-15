@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.LinearSlide;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Wrist;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +106,8 @@ public class Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
+        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
+
         // Instantiate all the hardware on the robot
         mecanumDrive = new MecanumDrive(hardwareMap, telemetry);
         arm = new Arm(hardwareMap, telemetry);
@@ -112,8 +115,8 @@ public class Robot {
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap, telemetry);
-        leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT);
-        rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT);
+        leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
+        rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         webcams = Arrays.asList(leftWebcam, rightWebcam);
