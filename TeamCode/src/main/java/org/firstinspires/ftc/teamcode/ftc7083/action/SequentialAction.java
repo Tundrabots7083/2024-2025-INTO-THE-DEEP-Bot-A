@@ -28,16 +28,17 @@ public class SequentialAction extends ActionExBase {
      *
      * @param telemetryPacket the telemetry to use for output.
      * @return <code>false</code> if all actions have completed running; <code>true</code> if any
-     * action is still running.
+     *         action is still running.
      */
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
         boolean isActionRunning = false;
-        if (currentAction < actions.length) {
+        while (currentAction < actions.length) {
             isActionRunning = actions[currentAction].run(telemetryPacket);
-            if (!isActionRunning) {
-                currentAction++;
+            if (isActionRunning) {
+                break;
             }
+            currentAction++;
         }
 
         return isActionRunning;

@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public class ParallelAction extends ActionExBase {
     private final Action[] actions;
-    private final boolean[] actionsFinished;
+    private final boolean[] actionsRunning;
 
     /**
      * Instantiates a ParallelAction that runs a set of actions in parallel.
@@ -22,8 +22,8 @@ public class ParallelAction extends ActionExBase {
      */
     public ParallelAction(Action... actions) {
         this.actions = actions;
-        actionsFinished = new boolean[actions.length];
-        Arrays.fill(actionsFinished, false);
+        actionsRunning = new boolean[actions.length];
+        Arrays.fill(actionsRunning, true);
     }
 
     /**
@@ -31,20 +31,20 @@ public class ParallelAction extends ActionExBase {
      *
      * @param telemetryPacket the telemetry to use for output.
      * @return <code>false</code> if all actions have finished running; <code>true</code> if any
-     * of the actions is still running.
+     *         of the actions are still running.
      */
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-        boolean isFinished = true;
-        for (int i = 0; i < actionsFinished.length; i++) {
-            if (!actionsFinished[i]) {
-                actionsFinished[i] = actions[i].run(telemetryPacket);
-                if (!actionsFinished[i]) {
-                    isFinished = false;
+        boolean isRunning = false;
+        for (int i = 0; i < actionsRunning.length; i++) {
+            if (actionsRunning[i]) {
+                actionsRunning[i]  = actions[i].run(telemetryPacket);
+                if (actionsRunning[i]) {
+                    isRunning = true;
                 }
             }
         }
 
-        return isFinished;
+        return isRunning;
     }
 }

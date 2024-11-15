@@ -37,15 +37,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -70,7 +69,8 @@ import java.util.List;
 @TeleOp(name = "Concept: AprilTag Localization", group = "tests")
 //@Disabled
 public class ConceptAprilTagLocalization extends LinearOpMode {
-    private Webcam webcam;
+    private Webcam leftWebcam, rightWebcam;
+    private List<Webcam> webcams;
 
     @Override
     public void runOpMode() {
@@ -85,7 +85,10 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
         }
 
         selectCameraResolution();
-        webcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT);
+        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);;
+        leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
+        rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
+        webcams = Arrays.asList(leftWebcam, rightWebcam);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -95,9 +98,9 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
 
         waitForStart();
 
-        long startLoopTime;
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         while (opModeIsActive()) {
-            startLoopTime = System.currentTimeMillis();
+            timer.reset();
             // Clear the bulk cache for each Lynx module hub. This must be performed once per loop
             // as the bulk read caches are being handled manually.
             for (LynxModule hub : allHubs) {
@@ -105,17 +108,21 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
             }
 
             telemetryAprilTag();
-            telemetry.addData("FPS", webcam.getFps());
+            telemetry.addData("[LEFT] FPS", leftWebcam.getFps());
+            telemetry.addData("[RIGHT] FPS", rightWebcam.getFps());
 
             // Save CPU resources; can resume streaming when needed.
             if (gamepad1.dpad_down) {
-                webcam.stopStreaming();
+                for (Webcam webcam : webcams) {
+                    webcam.stopStreaming();
+                }
             } else if (gamepad1.dpad_up) {
-                webcam.resumeStreaming();
+                for (Webcam webcam : webcams) {
+                    webcam.resumeStreaming();
+                }
             }
 
-            long elapsedTime = System.currentTimeMillis() - startLoopTime;
-            telemetry.addData("loop time (millis)",  elapsedTime);
+            telemetry.addData("loop time (millis)", timer.time());
 
             telemetry.update();
 
@@ -124,8 +131,9 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
         }
 
         // Save more CPU resources when camera is no longer needed.
-        webcam.close();
-
+        for (Webcam webcam : webcams) {
+            webcam.close();
+        }
     }   // end method runOpMode()
 
     /**
@@ -172,31 +180,32 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
      */
     @SuppressLint("DefaultLocale")
     private void telemetryAprilTag() {
+        for (Webcam webcam : webcams) {
+            List<AprilTagDetection> currentDetections = webcam.getDetections();
+            telemetry.addData("\n# AprilTags Detected for " +  webcam.getLocation().webcamName(), currentDetections.size());
 
-        List<AprilTagDetection> currentDetections = webcam.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+            // Step through the list of detections and display info for each one.
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
+                            detection.robotPose.getPosition().x,
+                            detection.robotPose.getPosition().y,
+                            detection.robotPose.getPosition().z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
+                            detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
+                            detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
+                            detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
+            }   // end for() loop
 
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
-                        detection.robotPose.getPosition().x,
-                        detection.robotPose.getPosition().y,
-                        detection.robotPose.getPosition().z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
-                        detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
-                        detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
-                        detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }   // end for() loop
-
-        // Add "key" information to telemetry
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+            // Add "key" information to telemetry
+            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        }
 
     }   // end method telemetryAprilTag()
 

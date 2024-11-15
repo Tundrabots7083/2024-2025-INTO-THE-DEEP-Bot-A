@@ -4,7 +4,6 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -72,15 +71,15 @@ public class Webcam extends SubsystemBase {
      * @param telemetry   the telemetry used to provide output on the driver station
      * @param location    the location of the webcam on the robot
      */
-    public Webcam(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, @NonNull Location location) {
+    public Webcam(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, @NonNull Location location, int viewId) {
         this.location = location;
-        WebcamName webcamName;
+
         if (location == Location.LEFT) {
-            webcamName = hardwareMap.get(WebcamName.class, Location.LEFT.webcamName());
-            initAprilTag(webcamName, LEFT_CAMERA_POSITION, LEFT_CAMERA_ORIENTATION);
+            WebcamName webcamName = hardwareMap.get(WebcamName.class, location.webcamName());
+            initAprilTag(webcamName, LEFT_CAMERA_POSITION, LEFT_CAMERA_ORIENTATION, viewId);
         } else {
-            webcamName = hardwareMap.get(WebcamName.class, Location.RIGHT.webcamName());
-            initAprilTag(webcamName, RIGHT_CAMERA_POSITION, RIGHT_CAMERA_ORIENTATION);
+            WebcamName webcamName = hardwareMap.get(WebcamName.class, location.webcamName());
+            initAprilTag(webcamName, RIGHT_CAMERA_POSITION, RIGHT_CAMERA_ORIENTATION, viewId);
         }
 
         CameraStreamServer.getInstance().setSource(visionPortal);
@@ -89,7 +88,7 @@ public class Webcam extends SubsystemBase {
     /**
      * Initialize the AprilTag processor.
      */
-    private void initAprilTag(WebcamName webcam, Position cameraPosition, YawPitchRollAngles cameraOrientation) {
+    private void initAprilTag(WebcamName webcam, Position cameraPosition, YawPitchRollAngles cameraOrientation, int containerId) {
         // Get the camera resolution selection
         Size cameraResolution = SUPPORTED_CAMERA_RESOLUTIONS.get(RESOLUTION_SELECTION);
 
@@ -104,6 +103,7 @@ public class Webcam extends SubsystemBase {
                 .setCameraResolution(cameraResolution)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)
+                .setLiveViewContainerId(containerId)
                 .build();
 
         // Stopping the LiveView is recommended during competition to save CPU resources when
@@ -140,6 +140,15 @@ public class Webcam extends SubsystemBase {
      */
     public float getFps() {
         return visionPortal.getFps();
+    }
+
+    /**
+     * Gets the location of the webcam.
+     *
+     * @return the location of the webcam
+     */
+    public Location getLocation() {
+        return location;
     }
 
     /**
