@@ -1,15 +1,13 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
-import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.BlueBasket;
-import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.BlueChamber;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.RedBasket;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -23,7 +21,7 @@ public class MeepMeepTesting {
 
         // Trajectory builders for Blue and Red alliances when scoring on the chambers or in the baskets
 //        BlueChamber trajectoryBuilder = new BlueChamber(myBot.getDrive().actionBuilder(new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING)));
-        BlueBasket trajectoryBuilder = new BlueBasket(myBot.getDrive().actionBuilder(new Pose2d(BlueBasket.INITIAL_POSE_X, BlueBasket.INITIAL_POSE_Y, BlueBasket.INITIAL_HEADING)));
+        RedBasket trajectoryBuilder = new RedBasket(myBot.getDrive().actionBuilder(new Pose2d(RedBasket.INITIAL_POSE_X, RedBasket.INITIAL_POSE_Y, RedBasket.INITIAL_HEADING)));
 
         myBot.runAction(trajectoryBuilder.getTrajectory());
 

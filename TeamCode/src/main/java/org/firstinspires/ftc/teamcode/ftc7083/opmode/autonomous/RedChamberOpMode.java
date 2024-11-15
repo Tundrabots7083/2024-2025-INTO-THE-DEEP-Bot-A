@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AutoMecanumDrive;
-import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.BlueChamber;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.RedChamber;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Subsystem;
 
 import java.util.Arrays;
@@ -21,10 +21,10 @@ import java.util.List;
 /**
  * Autonomous OpMode used for scoring on the chamber when in the blue alliance.
  */
-@Autonomous(name = "Blue Chamber", group = "Active")
-public class BlueChamberOpMode extends OpMode {
+@Autonomous(name = "Red Chamber", group = "Active")
+public class RedChamberOpMode extends OpMode {
     private Robot robot;
-    private BlueChamber trajectoryBuilder;
+    private RedChamber trajectoryBuilder;
     private Action trajectory;
     private List<Subsystem> subsystems;
     private boolean actionsRunning = true;
@@ -37,9 +37,9 @@ public class BlueChamberOpMode extends OpMode {
 
         robot = Robot.init(hardwareMap, telemetry);
         subsystems = Arrays.asList(robot.mecanumDrive, robot.arm, robot.linearSlide, robot.claw, robot.wrist);
-        robot.localizer.setPose2d(new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING));
+        robot.localizer.setPose2d(new Pose2d(RedChamber.INITIAL_POSE_X, RedChamber.INITIAL_POSE_Y, RedChamber.INITIAL_HEADING));
 
-        trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING)));
+        trajectoryBuilder = new RedChamber(new AutoMecanumDrive(hardwareMap, new Pose2d(RedChamber.INITIAL_POSE_X, RedChamber.INITIAL_POSE_Y, RedChamber.INITIAL_HEADING)));
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
@@ -52,7 +52,7 @@ public class BlueChamberOpMode extends OpMode {
 
     @Override
     public void start() {
-        trajectoryBuilder = new BlueChamber(new AutoMecanumDrive(hardwareMap, robot.localizer.getPose2d()));
+        trajectoryBuilder = new RedChamber(new AutoMecanumDrive(hardwareMap, robot.localizer.getPose2d()));
         trajectory = trajectoryBuilder.getTrajectory();
         canvas = new Canvas();
         trajectory.preview(canvas);

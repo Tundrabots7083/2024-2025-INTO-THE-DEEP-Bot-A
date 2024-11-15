@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.ftc7083.autonomous.drive.AutoMecanumDrive;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
 
 /**
- * Autonomous trajectory builder for the Blue Alliance when scoring specimen on the chamber.
+ * Autonomous trajectory builder for the Red Alliance when scoring specimen on the chamber.
  */
 @Config
-public class BlueBasket {
+public class RedBasket {
     // Orientations for the robot, in degrees
     public static double ORIENTATION_TOWARD_WALL = -90;
     public static double ORIENTATION_SPIKE_MARK_1 = 60;
@@ -49,34 +49,34 @@ public class BlueBasket {
     private final TrajectoryActionBuilder actionBuilder;
 
     /**
-     * Creates a new autonomous trajectory builder for the Blue Alliance when scoring on the
+     * Creates a new autonomous trajectory builder for the Red Alliance when scoring on the
      * chamber. This uses the default Pose2d for the robot.
      *
      * @param drive the Mecanum Drive used to move the robot autonomously
      */
-    public BlueBasket(AutoMecanumDrive drive) {
+    public RedBasket(AutoMecanumDrive drive) {
         this(drive, new Pose2d(new Vector2d(INITIAL_POSE_X, INITIAL_POSE_Y), INITIAL_HEADING));
     }
 
     /**
-     * Creates a new autonomous trajectory builder for the Blue Alliance when scoring on the
+     * Creates a new autonomous trajectory builder for the Red Alliance when scoring on the
      * chamber. This uses the specified pose for the robot, which allows the invoker to override
      * the pose if desired.
      *
      * @param drive       the Mecanum Drive used to move the robot autonomously
      * @param initialPose the initial pose for the robot
      */
-    public BlueBasket(AutoMecanumDrive drive, Pose2d initialPose) {
+    public RedBasket(AutoMecanumDrive drive, Pose2d initialPose) {
         this(drive.actionBuilder(initialPose));
     }
 
     /**
-     * Creates a new autonomous trajectory builder for the Blue Alliance when scoring on the
+     * Creates a new autonomous trajectory builder for the Red Alliance when scoring on the
      * chamber. This uses the specified trajectory action builder for building the trajectories.
      *
      * @param actionBuilder the action builder to use when creating the trajectories
      */
-    public BlueBasket(TrajectoryActionBuilder actionBuilder) {
+    public RedBasket(TrajectoryActionBuilder actionBuilder) {
         this.actionBuilder = actionBuilder;
     }
 
