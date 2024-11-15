@@ -43,24 +43,29 @@ public class Arm extends SubsystemBase {
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
                 new LookUpTableArgs(-59, 0.03),
-                new LookUpTableArgs(0, 0.04),
-                new LookUpTableArgs(90, 0.019),
-                new LookUpTableArgs(120, 0.025),
-                new LookUpTableArgs(180, 0.032),
-                new LookUpTableArgs(230, 0.01)};
+                new LookUpTableArgs(-20, 0.04),
+                new LookUpTableArgs(0, 0.05),
+                new LookUpTableArgs(20, 0.04),
+                new LookUpTableArgs(90, 0.026),
+                new LookUpTableArgs(120, 0.04),
+                new LookUpTableArgs(200,0.03)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.4),
-                new LookUpTableArgs(0, 0.1),
-                new LookUpTableArgs(90, 0.07),
-                new LookUpTableArgs(150, 0.09),
-                new LookUpTableArgs(230, 0.1)};
+                new LookUpTableArgs(-59, 0.12),
+                new LookUpTableArgs(-20, 0.12),
+                new LookUpTableArgs(0, 0.135),
+                new LookUpTableArgs(20, 0.08),
+                new LookUpTableArgs(90, 0.1),
+                new LookUpTableArgs(120, 0.08),
+                new LookUpTableArgs(200,0.08)};
         LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0.0075),
-                new LookUpTableArgs(0, 0.0075),
-                new LookUpTableArgs(90, 0.003),
-                new LookUpTableArgs(150, 0.008),
-                new LookUpTableArgs(230, 0.006)};
-
+                new LookUpTableArgs(-59, 0.001),
+                new LookUpTableArgs(-20, 0.001),
+                new LookUpTableArgs(0, 0.001),
+                new LookUpTableArgs(20, 0.0015),
+                new LookUpTableArgs(90, 0.0017),
+                new LookUpTableArgs(120, 0.001),
+                new LookUpTableArgs(200,0.001)};
+        
         gainSchedulingPIDController = new GainSchedulingPIDController(kpLUTArgs, kiLUTArgs, kdLUTArgs);
     }
 
