@@ -94,12 +94,12 @@ public class MecanumDrive extends SubsystemBase {
             rightRearPower /= maxMotorPower;
         }
 
-        // Adjust the power applied to the motors. This raises the power to an exponent to create
+        /*// Adjust the power applied to the motors. This raises the power to an exponent to create
         // an exponential curve, as well as applies the power gain to each motor's power.
         leftFrontPower = adjustMotorPower(leftFrontPower);
         rightFrontPower = adjustMotorPower(rightFrontPower);
         leftRearPower = adjustMotorPower(leftRearPower);
-        rightRearPower = adjustMotorPower(rightRearPower);
+        rightRearPower = adjustMotorPower(rightRearPower);*/
 
         setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
     }

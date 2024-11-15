@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponen
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.DetectYellowSamples;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.ExtendArmToSubmersibleSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.IsBotOriented;
+import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.NavigateAndOrientToSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.NavigateWithinRangeOfSample;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.OpenClaw;
 import org.firstinspires.ftc.teamcode.ftc7083.BehaviorTrees.BehaviorTreeComponents.ActionFunctions.RaiseArmToNeutralPosition;
@@ -66,9 +67,7 @@ public class IntakeYellowAndRedSamplesBehaviorTree {
                                         new Action(new SearchForSample(telemetry,mecanumDrive),telemetry)
                                 ),telemetry),
                         new Action(new RaiseArmToNeutralPosition(telemetry,intakeAndScoringSubsystem),telemetry),
-                        new Action(new SquareBotWithSample(telemetry,mecanumDrive),telemetry),
-                        new Action(new NavigateWithinRangeOfSample(telemetry,mecanumDrive),telemetry),
-                        new Action(new SquareBotWithSample(telemetry,mecanumDrive),telemetry),
+                        new Action(new NavigateAndOrientToSample(telemetry,mecanumDrive),telemetry),
                         new Action(new OpenClaw(telemetry,intakeAndScoringSubsystem),telemetry),
                         new Action(new ExtendArmToSubmersibleSample(telemetry,intakeAndScoringSubsystem),telemetry),
                         new Action(new CloseClaw(telemetry,intakeAndScoringSubsystem),telemetry),

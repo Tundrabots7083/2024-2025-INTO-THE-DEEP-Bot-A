@@ -16,8 +16,8 @@ import java.util.Queue;
 @Config
 public class Limelight extends SubsystemBase {
 
-    public static double LL_ANGLE_WITH_VERTICAL = 21.6;
-    public static double LL_HEIGHT = 15.5;
+    public static double LL_ANGLE_WITH_VERTICAL = 24.7;
+    public static double LL_HEIGHT = 14.8;
 
     private final Limelight3A limelight;
     private final Telemetry telemetry;
@@ -28,8 +28,8 @@ public class Limelight extends SubsystemBase {
     private final int RED_SAMPLE_COLOR_PIPELINE = 1;
     private final int BLUE_SAMPLE_COLOR_PIPELINE = 2;
     private final int APRIL_TAG_PIPELINE = 3;
-    public static int MAX_COLOR_PIPELINE = 2;
-    private static int NUM_SAMPLES_TO_AVERAGE = 3;
+    private static int MAX_COLOR_PIPELINE = 2;
+    private static int NUM_SAMPLES_TO_AVERAGE = 2;
     private static final double SAMPLE_HEIGHT_INCHES = 1.1;
     private static final double WALL_HEIGHT_INCHES = 6.5;
     private static double LL_DISTANCE_FROM_ARM_AXEL = 3;
