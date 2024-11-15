@@ -28,14 +28,12 @@ public class Arm extends SubsystemBase {
     public static double TOLERABLE_ERROR = 0.1; // In degrees
     public static double MIN_ANGLE = -47.0;
     public static double MAX_ANGLE = 90.0;
-    public static double Kpn45 = 0.0;
-    public static double Kpn20 = 0.0;
-    public static double Kp0 = 0.0;
-    public static double Kp20 = 0.0;
-    public static double Kp50 = 0.0;
-    public static double Kp75 = 0.0;
-    public static double Kp90 = 0.0;
-    public static double Kp120 = 0.0;
+    public static double Kdn20 = 0.0;
+    public static double Kd0 = 0.0;
+    public static double Kd20 = 0.0;
+    public static double Kd90 = 0.0;
+    public static double Kd120 = 0.0;
+    public static double Kd200 = 0.0;
     private final Motor shoulderMotor;
     private final Telemetry telemetry;
     private final double feedforward;
@@ -67,56 +65,29 @@ public class Arm extends SubsystemBase {
         configMotor(shoulderMotor);
 
         LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, Kpn45),
-                new LookUpTableArgs(-45, Kpn45),
-                new LookUpTableArgs(-20, Kpn20),
-                new LookUpTableArgs(0, Kp0),
-                new LookUpTableArgs(20, Kp20),
-                new LookUpTableArgs(50, Kp50),
-                new LookUpTableArgs(75, Kp75),
-                new LookUpTableArgs(90, Kp90),
-                new LookUpTableArgs(120, Kp120)};
-        LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0),
-                new LookUpTableArgs(-45, 0),
-                new LookUpTableArgs(-20, 0),
-                new LookUpTableArgs(0, 0),
-                new LookUpTableArgs(20, 0),
-                new LookUpTableArgs(50, 0),
-                new LookUpTableArgs(75, 0),
-                new LookUpTableArgs(90, 0),
-                new LookUpTableArgs(120, 0)};
-        LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, 0),
-                new LookUpTableArgs(-45, 0),
-                new LookUpTableArgs(-20, 0),
-                new LookUpTableArgs(0, 0),
-                new LookUpTableArgs(20, 0),
-                new LookUpTableArgs(50, 0),
-                new LookUpTableArgs(75, 0),
-                new LookUpTableArgs(90, 0),
-                new LookUpTableArgs(120, 0)};
-
-        /* LookUpTableArgs[] kpLUTArgs = new LookUpTableArgs[]{
                 new LookUpTableArgs(-59, 0.03),
-                new LookUpTableArgs(-45, 0.03),
                 new LookUpTableArgs(-20, 0.04),
                 new LookUpTableArgs(0, 0.05),
-                new LookUpTableArgs(20, 0.025),
-                new LookUpTableArgs(50, 0.02),
-                new LookUpTableArgs(75, 0.025),
-                new LookUpTableArgs(90, 0.018),
-                new LookUpTableArgs(120, 0.02)};
+                new LookUpTableArgs(20, 0.04),
+                new LookUpTableArgs(90, 0.026),
+                new LookUpTableArgs(120, 0.04),
+                new LookUpTableArgs(200,0.03)};
         LookUpTableArgs[] kiLUTArgs = new LookUpTableArgs[]{
-                new LookUpTableArgs(-59, Kin45),
-                new LookUpTableArgs(-45, Kin45),
-                new LookUpTableArgs(-20, Kin20),
-                new LookUpTableArgs(0, Ki0),
-                new LookUpTableArgs(20, Ki20),
-                new LookUpTableArgs(50, Ki50),
-                new LookUpTableArgs(75, Ki75),
-                new LookUpTableArgs(90, Ki90),
-                new LookUpTableArgs(120, Ki120)};*/
+                new LookUpTableArgs(-59, 0.12),
+                new LookUpTableArgs(-20, 0.12),
+                new LookUpTableArgs(0, 0.135),
+                new LookUpTableArgs(20, 0.08),
+                new LookUpTableArgs(90, 0.1),
+                new LookUpTableArgs(120, 0.08),
+                new LookUpTableArgs(200,0.08)};
+        LookUpTableArgs[] kdLUTArgs = new LookUpTableArgs[]{
+                new LookUpTableArgs(-59, 0.001),
+                new LookUpTableArgs(-20, 0.001),
+                new LookUpTableArgs(0, 0.001),
+                new LookUpTableArgs(20, 0.0015),
+                new LookUpTableArgs(90, 0.0017),
+                new LookUpTableArgs(120, 0.001),
+                new LookUpTableArgs(200,0.001)};
 
         gainSchedulingPIDController = new GainSchedulingPIDController(kpLUTArgs, kiLUTArgs, kdLUTArgs);
     }
