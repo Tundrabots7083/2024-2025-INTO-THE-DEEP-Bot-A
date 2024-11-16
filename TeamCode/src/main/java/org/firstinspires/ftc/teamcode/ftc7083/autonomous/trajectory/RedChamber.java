@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
 @Config
 public class RedChamber {
     // Orientations for the robot, in degrees
+    public static double ORIENTATION_CHAMBER = 90;
     public static double ORIENTATION_TOWARD_WALL = -90;
     public static double ORIENTATION_SPIKE_MARK_1 = 120;
     public static double ORIENTATION_SPIKE_MARK_2 = 90;
@@ -85,12 +86,11 @@ public class RedChamber {
         IntakeAndScoringSubsystem ias = Robot.getInstance().intakeAndScoringSubsystem;
         return actionBuilder
                 // Move to the chamber and score the specimen
-                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .strafeToSplineHeading(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y), Math.toRadians(ORIENTATION_CHAMBER))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
-                // Move to the spike marks
-                .strafeTo(new Vector2d(BLUE_SPIKE_MARK_X, BLUE_SPIKE_MARK_Y))
-                // Move the sample from Spike Mark 1 to the observation zone
-                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_1))
+                //.strafeTo(new Vector2d(BLUE_SPIKE_MARK_X, BLUE_SPIKE_MARK_Y))
+                // Move the the spike marks and move the sample from Spike Mark 1 to the observation zone
+                .strafeToSplineHeading(new Vector2d(BLUE_SPIKE_MARK_X, BLUE_SPIKE_MARK_Y), Math.toRadians(ORIENTATION_SPIKE_MARK_1))
                 .stopAndAdd(ias.actionIntakeSample())
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
                 .stopAndAdd(ias.actionDepositSample())
@@ -105,20 +105,19 @@ public class RedChamber {
                 .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
                 .stopAndAdd(ias.actionDepositSample())
                 // Move to the observation zone to pickup specimen 1 from the wall and score on the chamber
-                .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
-                .turnTo(Math.toRadians(ORIENTATION_TOWARD_WALL))
+                .strafeToSplineHeading(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y), Math.toRadians(ORIENTATION_TOWARD_WALL))
                 .stopAndAdd(ias.actionIntakeSpecimen())
-                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .strafeToSplineHeading(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y), Math.toRadians(ORIENTATION_CHAMBER))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Move to the observation zone to pickup specimen 2 from the wall and score on the chamber
-                .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
+                .strafeToSplineHeading(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y), Math.toRadians(ORIENTATION_TOWARD_WALL))
                 .stopAndAdd(ias.actionIntakeSpecimen())
-                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .strafeToSplineHeading(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y), Math.toRadians(ORIENTATION_CHAMBER))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Move to the observation zone to pickup specimen 3 from the wall and score on the chamber
-                .strafeTo(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y))
+                .strafeToSplineHeading(new Vector2d(OBSERVATION_ZONE_X, OBSERVATION_ZONE_Y), Math.toRadians(ORIENTATION_TOWARD_WALL))
                 .stopAndAdd(ias.actionIntakeSpecimen())
-                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .strafeToSplineHeading(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y), Math.toRadians(ORIENTATION_CHAMBER))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Park the robot
                 .strafeTo(new Vector2d(PARK_X, PARK_Y))

@@ -16,12 +16,13 @@ import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsyste
 @Config
 public class RedBasket {
     // Orientations for the robot, in degrees
+    public static double ORIENTATION_CHAMBER = 90;
     public static double ORIENTATION_TOWARD_WALL = -90;
     public static double ORIENTATION_SPIKE_MARK_1 = 60;
     public static double ORIENTATION_SPIKE_MARK_2 = 90;
     public static double ORIENTATION_SPIKE_MARK_3 = 120;
     public static double ORIENTATION_BASKET = 45;
-    public static double ORIENTATION_AWAY_FROM_ASCENT_BARS = 0;
+    public static double ORIENTATION_TOWARD_ASCENT_BARS = 0;
 
     // Initial pose for the robot
     public static double INITIAL_POSE_X = -16.0;
@@ -89,32 +90,25 @@ public class RedBasket {
         IntakeAndScoringSubsystem ias = Robot.getInstance().intakeAndScoringSubsystem;
         return actionBuilder
                 // Move to the chamber and score the specimen
-                .strafeTo(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y))
+                .strafeToSplineHeading(new Vector2d(CHAMBER_HIGH_X, CHAMBER_HIGH_Y), Math.toRadians(ORIENTATION_CHAMBER))
                 .stopAndAdd(ias.actionScoreSpecimenHighChamber())
                 // Pick up the sample from Spike Mark 1 and score in the high basket
-                .strafeTo(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y))
-                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_1))
+                .strafeToSplineHeading(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y), Math.toRadians(ORIENTATION_SPIKE_MARK_1))
                 .stopAndAdd(ias.actionIntakeSample())
-                .strafeTo(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y))
-                .turnTo(Math.toRadians(ORIENTATION_BASKET))
+                .strafeToSplineHeading(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y), Math.toRadians(ORIENTATION_BASKET))
                 .stopAndAdd(ias.actionScoreSpecimenHighBasket())
                 // Pick up the sample from Spike Mark 2 and score in the high basket
-                .strafeTo(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y))
-                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_2))
+                .strafeToSplineHeading(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y), Math.toRadians(ORIENTATION_SPIKE_MARK_2))
                 .stopAndAdd(ias.actionIntakeSample())
-                .strafeTo(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y))
-                .turnTo(Math.toRadians(ORIENTATION_BASKET))
+                .strafeToSplineHeading(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y), Math.toRadians(ORIENTATION_BASKET))
                 .stopAndAdd(ias.actionScoreSpecimenHighBasket())
                 // Pick up the sample from Spike Mark 2 and score in the high basket
-                .strafeTo(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y))
-                .turnTo(Math.toRadians(ORIENTATION_SPIKE_MARK_3))
+                .strafeToSplineHeading(new Vector2d(YELLOW_SPIKE_MARK_X, YELLOW_SPIKE_MARK_Y), Math.toRadians(ORIENTATION_SPIKE_MARK_3))
                 .stopAndAdd(ias.actionIntakeSample())
-                .strafeTo(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y))
-                .turnTo(Math.toRadians(ORIENTATION_BASKET))
+                .strafeToSplineHeading(new Vector2d(BASKET_HIGH_X, BASKET_HIGH_Y), Math.toRadians(ORIENTATION_BASKET))
                 .stopAndAdd(ias.actionScoreSpecimenHighBasket())
                 // Park the robot
-                .turnTo(Math.toRadians(ORIENTATION_AWAY_FROM_ASCENT_BARS))
-                .strafeTo(new Vector2d(PARK_APPROACH_X, PARK_Y))
+                .strafeToSplineHeading(new Vector2d(PARK_APPROACH_X, PARK_Y), Math.toRadians(ORIENTATION_TOWARD_ASCENT_BARS))
                 .strafeTo(new Vector2d(PARK_X, PARK_Y))
                 .stopAndAdd(ias.actionTouchAscentBarLow())
                 .build();

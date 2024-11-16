@@ -8,6 +8,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
 import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.RedBasket;
+import org.firstinspires.ftc.teamcode.ftc7083.autonomous.trajectory.RedChamber;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -20,7 +21,7 @@ public class MeepMeepTesting {
                 .build();
 
         // Trajectory builders for Blue and Red alliances when scoring on the chambers or in the baskets
-//        BlueChamber trajectoryBuilder = new BlueChamber(myBot.getDrive().actionBuilder(new Pose2d(BlueChamber.INITIAL_POSE_X, BlueChamber.INITIAL_POSE_Y, BlueChamber.INITIAL_HEADING)));
+//        RedChamber trajectoryBuilder = new RedChamber(myBot.getDrive().actionBuilder(new Pose2d(RedChamber.INITIAL_POSE_X, RedChamber.INITIAL_POSE_Y, RedChamber.INITIAL_HEADING)));
         RedBasket trajectoryBuilder = new RedBasket(myBot.getDrive().actionBuilder(new Pose2d(RedBasket.INITIAL_POSE_X, RedBasket.INITIAL_POSE_Y, RedBasket.INITIAL_HEADING)));
 
         myBot.runAction(trajectoryBuilder.getTrajectory());
