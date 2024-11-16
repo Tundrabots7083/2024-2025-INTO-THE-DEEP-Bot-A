@@ -90,7 +90,7 @@ public class PIDControllerImpl implements PIDController {
      * @param state     the current state.
      * @return the difference between the target state and the current state.
      */
-    private double calculateError(double reference, double state) {
+    protected double calculateError(double reference, double state) {
         return reference - state;
     }
 
@@ -110,7 +110,7 @@ public class PIDControllerImpl implements PIDController {
      *
      * @param error the current error
      * @param dt    the time since the PID controller last updated.
-     * @return the derrivative.
+     * @return the derivative.
      */
     private double calculateDerivative(double error, double dt) {
         double derivative = (error - previousError) / dt;
