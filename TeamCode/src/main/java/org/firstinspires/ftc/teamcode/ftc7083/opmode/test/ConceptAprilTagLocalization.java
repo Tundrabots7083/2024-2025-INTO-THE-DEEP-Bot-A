@@ -182,7 +182,8 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
     private void telemetryAprilTag() {
         for (Webcam webcam : webcams) {
             List<AprilTagDetection> currentDetections = webcam.getDetections();
-            telemetry.addData("\n# AprilTags Detected for " +  webcam.getLocation().webcamName(), currentDetections.size());
+            telemetry.addLine(" ");
+            telemetry.addLine("\n# AprilTags Detected for " +  webcam.getLocation().webcamName() + " (" + webcam.getLocation() + "): " + currentDetections.size());
 
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {

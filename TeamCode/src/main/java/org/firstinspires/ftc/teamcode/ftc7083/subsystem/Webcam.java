@@ -47,18 +47,32 @@ public class Webcam extends SubsystemBase {
     public static final int RESOLUTION_864x480 = 4;
     public static final int RESOLUTION_1920x1080 = 5;
 
-    // Resolution to use for the webcams. This is an index into the SUPPORTED_CAMERA_RESOLUTIONS list.
-    public static int RESOLUTION_SELECTION = RESOLUTION_864x480;
+    // Dimensions of the robot
+    public static double BOT_LENGTH = 17.0; // 1/2 == 8.5
+    public static double BOT_WIDTH = 11.375; // 1/2 == 5.6875
 
-    // Positions and orientations for the webcams on this robot
+    // Camera position
+    public static double LEFT_CAMERA_X = -5.875;
+    public static double LEFT_CAMERA_Y = 8.625; // measured at 5.625
+    public static double LEFT_CAMERA_Z = 5.75;
+    public static double LEFT_CAMERA_YAW = 90.0;
+    public static double RIGHT_CAMERA_X = 5.875;
+    public static double RIGHT_CAMERA_Y = 6.5625; // measured at 4.5625
+    public static double RIGHT_CAMERA_Z = 5.75;
+    public static double RIGHT_CAMERA_YAW = -90.0;
+
+    // Resolution to use for the webcams. This is an index into the SUPPORTED_CAMERA_RESOLUTIONS list.
+    public static int RESOLUTION_SELECTION = RESOLUTION_800x600;
+
+    // Position and orientation for the webcams on this robot
     public static Position LEFT_CAMERA_POSITION = new Position(DistanceUnit.INCH,
-            0, 0, 0, 0);
+            LEFT_CAMERA_X, LEFT_CAMERA_Y, LEFT_CAMERA_Z, 0);
     public static YawPitchRollAngles LEFT_CAMERA_ORIENTATION = new YawPitchRollAngles(AngleUnit.DEGREES,
-            0, -90, 0, 0);
+            LEFT_CAMERA_YAW, -90, 0, 0);
     public static Position RIGHT_CAMERA_POSITION = new Position(DistanceUnit.INCH,
-            0, 0, 0, 0);
+            RIGHT_CAMERA_X, RIGHT_CAMERA_Y, RIGHT_CAMERA_Z, 0);
     public static YawPitchRollAngles RIGHT_CAMERA_ORIENTATION = new YawPitchRollAngles(AngleUnit.DEGREES,
-            0, -90, 0, 0);
+            RIGHT_CAMERA_YAW, -90, 0, 0);
 
     private final Location location;
     private VisionPortal visionPortal;
@@ -207,8 +221,8 @@ public class Webcam extends SubsystemBase {
      * Position of the webcam on the robot
      */
     public enum Location {
-        LEFT("Webcam 1"),
-        RIGHT("Webcam 2");
+        LEFT("Webcam 2"),
+        RIGHT("Webcam 1");
 
         private final String webcamName;
 
