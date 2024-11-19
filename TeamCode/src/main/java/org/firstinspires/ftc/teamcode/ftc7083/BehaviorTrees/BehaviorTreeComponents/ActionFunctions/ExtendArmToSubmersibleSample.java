@@ -39,7 +39,7 @@ public class ExtendArmToSubmersibleSample implements ActionFunction {
             return status;
         }
 
-        intakeAndScoringSubsystem.moveToPosition(xDistance,0.8);
+        intakeAndScoringSubsystem.moveToPosition(xDistance,1.6);
         intakeAndScoringSubsystem.execute();
 
         if(intakeAndScoringSubsystem.isAtTarget()) {

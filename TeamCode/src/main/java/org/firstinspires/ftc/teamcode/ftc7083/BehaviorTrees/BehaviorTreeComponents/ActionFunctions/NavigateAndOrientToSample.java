@@ -12,11 +12,11 @@ public class NavigateAndOrientToSample implements ActionFunction {
     MecanumDrive mecanumDrive;
     Telemetry telemetry;
 
-    public static double KPDrive = 0.01;
+    public static double KPDrive = 0.008;
     public static double KIDrive = 0.007;
     public static double KDDrive = 0;
-    public static double KPTurn = 0.01;
-    public static double KITurn = 0.04;
+    public static double KPTurn = 0.025;
+    public static double KITurn = 0.05;
     public static double KDTurn = 0;
     public static double TOLERABLE_ERROR = 0.5; // inches
     public static double MAXIMUM_INTAKE_DISTANCE = 35; //inches
@@ -43,6 +43,8 @@ public class NavigateAndOrientToSample implements ActionFunction {
         double xDistanceToSample;
         double distanceError;
         double turnError;
+        double drivePower = 0.0;
+        double turnPower = 0.0;
 
         if (lastStatus == Status.SUCCESS) {
             telemetry.addData("[NavigateWithinRange] status:", "Just left it as success");
@@ -81,8 +83,12 @@ public class NavigateAndOrientToSample implements ActionFunction {
             return status;
         }
 
-        double drivePower = DrivePIDController.calculate(MAXIMUM_INTAKE_DISTANCE, distanceError);
-        double turnPower = TurnPIDController.calculate(INTAKE_ANGLE,turnError);
+        if (distanceError >= TOLERABLE_ERROR) {
+            drivePower = DrivePIDController.calculate(MAXIMUM_INTAKE_DISTANCE, distanceError);
+        }
+        if (Math.abs(turnError) >= TOLERABLE_ERROR) {
+            turnPower = TurnPIDController.calculate(INTAKE_ANGLE, turnError);
+        }
 
         mecanumDrive.drive(0,drivePower,turnPower);
 

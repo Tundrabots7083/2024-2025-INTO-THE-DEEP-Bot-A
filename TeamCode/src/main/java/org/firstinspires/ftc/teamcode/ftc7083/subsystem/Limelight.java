@@ -16,8 +16,8 @@ import java.util.Queue;
 @Config
 public class Limelight extends SubsystemBase {
 
-    public static double LL_ANGLE_WITH_VERTICAL = 24.7;
-    public static double LL_HEIGHT = 14.8;
+    public static double LL_ANGLE_WITH_VERTICAL = 22.5;
+    public static double LL_HEIGHT = 15.0;
 
     private final Limelight3A limelight;
     private final Telemetry telemetry;

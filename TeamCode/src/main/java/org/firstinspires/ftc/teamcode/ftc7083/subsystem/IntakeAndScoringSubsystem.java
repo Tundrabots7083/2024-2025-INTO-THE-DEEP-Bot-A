@@ -58,7 +58,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Other scoring constants
     public static double MOVE_ARM_AMOUNT = 3.0;
-    public static double Ka = 0.02;
+    public static double Ka = 0.011;
 
     private final Telemetry telemetry;
     private final Robot robot;
@@ -79,11 +79,13 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     @Override
     public void execute() {
         // Update each components of the intake/scoring subsystem.
+        robot.arm.setFeedforward(getArmFeedForward());
         robot.arm.execute();
         robot.linearSlide.execute();
         robot.wrist.execute();
         robot.claw.execute();
 
+        telemetry.addData("[IAS] armFeedForward",getArmFeedForward());
         telemetry.addData("[IAS] target X", targetX);
         telemetry.addData("[IAS] target Y", targetY);
     }
@@ -322,16 +324,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public void openClaw() {
         robot.claw.open();
         telemetry.addData("[IAS] claw", "open");
-    }
-
-    public double getFeedForward() {
-        double slideLength = robot.linearSlide.getCurrentLength();
-        return slideLength * Ka;
-    }
-
-    public void setArmFeedForward() {
-        double armFeedForward = getArmFeedForward();
-        robot.arm.setFeedforward(armFeedForward);
     }
 
     private double getArmFeedForward() {
