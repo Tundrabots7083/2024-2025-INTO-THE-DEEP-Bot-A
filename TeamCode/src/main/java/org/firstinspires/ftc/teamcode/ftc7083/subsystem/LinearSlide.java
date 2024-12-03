@@ -78,7 +78,7 @@ public class LinearSlide extends SubsystemBase {
      * @return slide length in inches
      */
     public double getCurrentLength() {
-        return -slideMotor.getCurrentInches();
+        return slideMotor.getCurrentInches();
     }
 
     /**
@@ -94,7 +94,7 @@ public class LinearSlide extends SubsystemBase {
         motor.setMotorType(motorConfigurationType);
         motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
