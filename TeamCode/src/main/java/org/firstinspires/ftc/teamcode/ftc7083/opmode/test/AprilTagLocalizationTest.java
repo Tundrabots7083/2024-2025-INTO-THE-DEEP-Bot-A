@@ -29,8 +29,8 @@ import java.util.List;
 @Config
 @TeleOp(name = "April Tag Localization Test", group = "tests")
 public class AprilTagLocalizationTest extends OpMode {
-    private static int WINDOW_SIZE = 9;
-    private static int MIN_NUM_SAMPLES = 5;
+    public static int WINDOW_SIZE = 10;
+    public static int MIN_NUM_SAMPLES = 5;
 
     private final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     private final Pose2DMovingAverageFilter webcamAverage = new Pose2DMovingAverageFilter(MIN_NUM_SAMPLES, WINDOW_SIZE);
@@ -157,7 +157,7 @@ public class AprilTagLocalizationTest extends OpMode {
                 double totalWebcamHeading = 0.0;
                 double totalWebcamDetections = 0.0;
                 for (AprilTagDetection detection : detections) {
-                    if (detection != null) {
+                    if (detection.robotPose != null) {
                         // Get the x-axis, y-axis and heading from the April Tag detection
                         double x = detection.robotPose.getPosition().x;
                         double y = detection.robotPose.getPosition().y;
