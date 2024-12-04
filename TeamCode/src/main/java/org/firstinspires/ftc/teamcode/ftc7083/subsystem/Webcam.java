@@ -53,11 +53,11 @@ public class Webcam extends SubsystemBase {
 
     // Camera position
     public static double LEFT_CAMERA_X = -5.875;
-    public static double LEFT_CAMERA_Y = 8.625; // measured at 5.625
+    public static double LEFT_CAMERA_Y = 7.625; // measured at 5.625
     public static double LEFT_CAMERA_Z = 5.75;
     public static double LEFT_CAMERA_YAW = 90.0;
     public static double RIGHT_CAMERA_X = 5.875;
-    public static double RIGHT_CAMERA_Y = 6.5625; // measured at 4.5625
+    public static double RIGHT_CAMERA_Y = 5.5625; // measured at 4.5625
     public static double RIGHT_CAMERA_Z = 5.75;
     public static double RIGHT_CAMERA_YAW = -90.0;
 
@@ -90,19 +90,19 @@ public class Webcam extends SubsystemBase {
 
         if (location == Location.LEFT) {
             WebcamName webcamName = hardwareMap.get(WebcamName.class, location.webcamName());
-            initAprilTag(webcamName, LEFT_CAMERA_POSITION, LEFT_CAMERA_ORIENTATION, viewId);
+            initWebcam(webcamName, LEFT_CAMERA_POSITION, LEFT_CAMERA_ORIENTATION, viewId);
         } else {
             WebcamName webcamName = hardwareMap.get(WebcamName.class, location.webcamName());
-            initAprilTag(webcamName, RIGHT_CAMERA_POSITION, RIGHT_CAMERA_ORIENTATION, viewId);
+            initWebcam(webcamName, RIGHT_CAMERA_POSITION, RIGHT_CAMERA_ORIENTATION, viewId);
         }
 
         CameraStreamServer.getInstance().setSource(visionPortal);
     }
 
     /**
-     * Initialize the AprilTag processor.
+     * Initialize the AprilTag processor for the webcam
      */
-    private void initAprilTag(WebcamName webcam, Position cameraPosition, YawPitchRollAngles cameraOrientation, int containerId) {
+    private void initWebcam(WebcamName webcam, Position cameraPosition, YawPitchRollAngles cameraOrientation, int containerId) {
         // Get the camera resolution selection
         Size cameraResolution = SUPPORTED_CAMERA_RESOLUTIONS.get(RESOLUTION_SELECTION);
 
