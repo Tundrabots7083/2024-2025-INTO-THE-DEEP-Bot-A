@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.filter;
 
+import java.util.Queue;
+
 public class DoubleMovingAverageFilter extends MovingAverageFilterBase<Double> {
 
     /**
@@ -18,17 +20,38 @@ public class DoubleMovingAverageFilter extends MovingAverageFilterBase<Double> {
     }
 
     @Override
-    public Double addValue(Double sum, Double newValue) {
+    protected Double addValue(Double sum, Double newValue) {
         return sum + newValue;
     }
 
     @Override
-    public Double remValue(Double sum, Double oldValue) {
+    protected Double remValue(Double sum, Double oldValue) {
         return sum - oldValue;
     }
 
     @Override
-    public Double getAverage(Double sum, int numValues) {
+    protected Double getMean(Double sum, int numValues) {
         return sum / (double) numValues;
+    }
+
+    @Override
+    protected Double getVariance(Queue<Double> buffer) {
+        if (buffer.isEmpty()) {
+            return 0.0;
+        }
+
+        double variance = 0.0;
+        double mean = getMean();
+
+        for (Double value : buffer) {
+            variance += Math.pow(value - mean, 2);
+        }
+        return variance / (double) buffer.size();
+    }
+
+    @Override
+    public Double getStdDev(Queue<Double> buffer) {
+        double variance = getVariance(buffer);
+        return Math.sqrt(variance);
     }
 }

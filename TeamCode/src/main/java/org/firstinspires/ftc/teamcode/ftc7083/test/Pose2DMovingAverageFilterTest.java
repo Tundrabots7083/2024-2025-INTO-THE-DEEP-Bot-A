@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc7083.test;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 
 import org.junit.Test;
@@ -58,7 +57,7 @@ public class Pose2DMovingAverageFilterTest {
         double avgX = totalX / 5.0;
         double avgY = totalY / 5.0;
         double avgH = totalH / 5.0;
-        Pose2D pose = filter.getAverage();
+        Pose2D pose = filter.getMean();
         assert pose.x == avgX;
         assert pose.y == avgY;
         assert pose.h == avgH;

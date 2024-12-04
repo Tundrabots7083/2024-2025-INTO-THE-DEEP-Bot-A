@@ -43,7 +43,7 @@ public abstract class MovingAverageFilterBase<T> implements MovingAverageFilter<
             removeMeasurement();
         }
 
-        return getAverage();
+        return getMean();
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class MovingAverageFilterBase<T> implements MovingAverageFilter<
      * @param newValue the value to add to the moving average.
      * @return the updated moving average
      */
-    abstract public T addValue(T sum, T newValue);
+    abstract protected T addValue(T sum, T newValue);
 
     /**
      * Removes a value to the moving average and returns the updated moving average.
@@ -60,14 +60,28 @@ public abstract class MovingAverageFilterBase<T> implements MovingAverageFilter<
      * @param oldValue the value to remove to the moving average.
      * @return the updated moving average
      */
-    abstract public T remValue(T sum, T oldValue);
+    abstract protected T remValue(T sum, T oldValue);
 
     /**
      * Gets the average value of the Moving Average Filter.
      *
      * @return the average value of the Moving Average Filter
      */
-    abstract public T getAverage(T sum, int numValues);
+    abstract protected T getMean(T sum, int numValues);
+
+    /**
+     * Gets the variance for the moving average filter.
+     *
+     * @return the variance for the moving average filter
+     */
+    abstract protected T getVariance(Queue<T> buffer);
+
+    /**
+     * Gets the standard deviation for the moving average filter.
+     *
+     * @return the standard deviation for the moving average filter
+     */
+    abstract protected T getStdDev(Queue<T> buffer);
 
     @Override
     public T removeMeasurement() {
@@ -78,12 +92,17 @@ public abstract class MovingAverageFilterBase<T> implements MovingAverageFilter<
             }
         }
 
-        return getAverage(sum, buffer.size());
+        return getMean(sum, buffer.size());
     }
 
     @Override
-    public T getAverage() {
-        return getAverage(sum, buffer.size());
+    public T getMean() {
+        return getMean(sum, buffer.size());
+    }
+
+    @Override
+    public T getStdDev() {
+        return getStdDev(buffer);
     }
 
     @Override
@@ -92,7 +111,7 @@ public abstract class MovingAverageFilterBase<T> implements MovingAverageFilter<
     }
 
     @Override
-    public boolean hasAverage() {
+    public boolean hasMean() {
         return buffer.size() >= minNumSamples;
     }
 

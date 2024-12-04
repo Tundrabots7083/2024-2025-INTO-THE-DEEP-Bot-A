@@ -41,7 +41,7 @@ public class MovingAverageFilterBaseTest {
         for (int i = 0; i < 20; i++) {
             filter.filter(new Pose2D(1,1,Math.toRadians(1)));
         }
-        Pose2D pose = filter.getAverage();
+        Pose2D pose = filter.getMean();
         assert pose.x == 1.0;
         assert pose.y == 1.0;
         assert String.format("%.5f", pose.h).equals(String.format("%.5f", Math.toRadians(1.0)));
@@ -70,9 +70,9 @@ public class MovingAverageFilterBaseTest {
         for (int i = 0; i < 4; i++) {
             filter.filter(new Pose2D(1,1,1));
         }
-        assert !filter.hasAverage();
+        assert !filter.hasMean();
         filter.filter(new Pose2D(1,1,1));
-        assert filter.hasAverage();
+        assert filter.hasMean();
     }
 
     @Test

@@ -32,6 +32,11 @@ public class AprilTagLocalizationTest extends OpMode {
     public static int WINDOW_SIZE = 10;
     public static int MIN_NUM_SAMPLES = 5;
 
+    // Allowable tolerances for error in the X-axis, Y-axis, and heading measurements
+    public static double X_VARIANCE = 0.4;
+    public static double Y_VARIANCE = 0.4;
+    public static double H_VARIANCE = 1.0;
+
     private final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     private final Pose2DMovingAverageFilter webcamAverage = new Pose2DMovingAverageFilter(MIN_NUM_SAMPLES, WINDOW_SIZE);
     private List<Webcam> webcams;
@@ -107,8 +112,8 @@ public class AprilTagLocalizationTest extends OpMode {
 
             telemetry.addLine(" ");
             telemetry.addLine(String.format("Webcam %s (%s)", webcam.getLocation().webcamName(), webcam.getLocation()));
-            if (webcamFilter.hasAverage()) {
-                Pose2D pose = webcamFilter.getAverage();
+            if (webcamFilter.hasMean()) {
+                Pose2D pose = webcamFilter.getMean();
                 telemetry.addLine(String.format("X=%.2f, Y=%.2f, H=%.2f", pose.x, pose.y, Math.toDegrees(pose.h)));
             } else {
                 telemetry.addLine(String.format("April Tags not available, num_measurements=%d", webcamFilter.numMeasurements()));
@@ -117,12 +122,12 @@ public class AprilTagLocalizationTest extends OpMode {
 
         // Get the average measurements for all webcams
         telemetry.addLine(" ");
-        if (webcamAverage.hasAverage()) {
-            Pose2D pose = webcamAverage.getAverage();
+        if (webcamAverage.hasMean()) {
+            Pose2D pose = webcamAverage.getMean();
             telemetry.addLine(String.format("Averages: X=%.2f, Y=%.2f, H=%.2f", pose.x, pose.y, Math.toDegrees(pose.h)));
-            double roundedX = ((double) (((int) (pose.x * 100.0))) / 100.0);
-            double roundedY = ((double) (((int) (pose.y * 100.0))) / 100.0);
-            double roundedHeading = ((double) (((int) (Math.toDegrees(pose.h) * 100.0))) / 100.0);
+            double roundedX = Math.round(pose.x * 100.0) / 100.0;
+            double roundedY = Math.round(pose.y * 100.0) / 100.0;
+            double roundedHeading = Math.round((Math.toDegrees(pose.h)) * 100.0) / 100.0;
             telemetry.addData("Avg X", roundedX);
             telemetry.addData("Avg Y", roundedY);
             telemetry.addData("Avg H", roundedHeading);
@@ -182,15 +187,37 @@ public class AprilTagLocalizationTest extends OpMode {
                 double avgWebcamY = totalWebcamY / totalWebcamDetections;
                 double avgWebcamHeading = totalWebcamHeading / totalWebcamDetections;
                 webcamFilter.filter(new Pose2D(avgWebcamX, avgWebcamY, Math.toRadians(avgWebcamHeading)));
+                // double roundedX = Math.round(avgWebcamX * 100.0) / 100.0;
+                // double roundedY = Math.round(avgWebcamY * 100.0) / 100.0;
+                // double roundedHeading = Math.round(avgWebcamHeading * 100.0) / 100.0;
+                // telemetry.addData("[" + webcam.getLocation() + "] X", roundedX);
+                // telemetry.addData("[" + webcam.getLocation() + "] Y", roundedY);
+                // telemetry.addData("[" + webcam.getLocation() + "] H", roundedHeading);
             }
         }
 
         // Update the average values for the webcams, if at least one webcam can see an April Tag
         if (totalDetections > 0) {
+            Pose2D mean = webcamAverage.getMean();
             double avgX = totalX / totalDetections;
             double avgY = totalY / totalDetections;
-            double avgHeading = totalHeading / totalDetections;
-            webcamAverage.filter(new Pose2D(avgX, avgY, Math.toRadians(avgHeading)));
+            double avgHeading = Math.toRadians(totalHeading / totalDetections);
+            double diffX = Math.abs(avgX - mean.x);
+            double diffY = Math.abs(avgY - mean.y);
+            double diffH = Math.abs(avgHeading - mean.h);
+            telemetry.addData("Diff X", diffX);
+            telemetry.addData("Diff Y", diffY);
+            telemetry.addData("Diff H", Math.toDegrees(diffH));
+            // Once there are enough samples, drop any measurements that are outliers
+            if (!webcamAverage.hasMean()
+                    || (diffX <= X_VARIANCE
+                        && diffY <= Y_VARIANCE
+                        && diffH <= Math.toRadians(H_VARIANCE))) {
+                webcamAverage.filter(new Pose2D(avgX, avgY, avgHeading));
+            } else {
+                webcamAverage.removeMeasurement();
+                // telemetry.addLine(String.format("Dropping frame, X-error=%.2f, Y-error=%.2f, H-error=%.2f", Math.abs(avgX - mean.x), Math.abs(avgY - mean.y), Math.abs(avgHeading - mean.h)));
+            }
         } else {
             webcamAverage.removeMeasurement();
         }

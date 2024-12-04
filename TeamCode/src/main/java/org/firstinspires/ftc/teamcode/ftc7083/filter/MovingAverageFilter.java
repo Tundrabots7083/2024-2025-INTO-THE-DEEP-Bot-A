@@ -7,28 +7,35 @@ public interface MovingAverageFilter<T> {
      * @param newMeasurement the new value to add to the Moving Average Filter
      * @return the new average of values
      */
-    public T filter(T newMeasurement);
+    T filter(T newMeasurement);
 
     /**
      * Removes the oldest value from the Moving Average Filter without adding a new value.
      *
      * @return the updated average value of the Moving Average Filter
      */
-    public T removeMeasurement();
+    T removeMeasurement();
 
     /**
      * Gets the average value of the Moving Average Filter.
      *
      * @return the average value of the Moving Average Filter
      */
-    public T getAverage();
+    T getMean();
+
+    /**
+     * Gets the standard deviation for the moving average filter.
+     *
+     * @return the standard deviation for the moving average filter
+     */
+    T getStdDev();
 
     /**
      * Gets the number of values in the Moving Average Filter.
      *
      * @return the number of values in the Moving Average Filter
      */
-    public int numMeasurements();
+    int numMeasurements();
 
     /**
      * Gets an indication as to whether there are enough measurements to calculate an average value.
@@ -36,10 +43,10 @@ public interface MovingAverageFilter<T> {
      * @return <code>true</code> if  there are enough measurements to calculate an average value;
      *         <code>false</code> if there aren't
      */
-    public boolean hasAverage();
+    boolean hasMean();
 
     /**
      * Clears the Moving Average Filter
      */
-    public void clear();
+    void clear();
 }
