@@ -157,22 +157,24 @@ public class AprilTagLocalizationTest extends OpMode {
                 double totalWebcamHeading = 0.0;
                 double totalWebcamDetections = 0.0;
                 for (AprilTagDetection detection : detections) {
-                    // Get the x-axis, y-axis and heading from the April Tag detection
-                    double x = detection.robotPose.getPosition().x;
-                    double y = detection.robotPose.getPosition().y;
-                    double heading = detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
+                    if (detection != null) {
+                        // Get the x-axis, y-axis and heading from the April Tag detection
+                        double x = detection.robotPose.getPosition().x;
+                        double y = detection.robotPose.getPosition().y;
+                        double heading = detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
 
-                    // Update the total detections by this webcam
-                    totalWebcamDetections++;
-                    totalWebcamX += x;
-                    totalWebcamY += y;
-                    totalWebcamHeading += heading;
+                        // Update the total detections by this webcam
+                        totalWebcamDetections++;
+                        totalWebcamX += x;
+                        totalWebcamY += y;
+                        totalWebcamHeading += heading;
 
-                    // Update the total detections by all webcams
-                    totalDetections++;
-                    totalX += x;
-                    totalY += y;
-                    totalHeading += heading;
+                        // Update the total detections by all webcams
+                        totalDetections++;
+                        totalX += x;
+                        totalY += y;
+                        totalHeading += heading;
+                    }
                 }
 
                 // Update the moving average for the webcam
