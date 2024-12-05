@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.ftc7083.opmode.test;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -11,13 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ftc7083.filter.Pose2DMovingAverageFilter;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Webcam;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,25 +28,20 @@ import java.util.List;
  * average of the values from both webcams. This is intended as a way to determine the accuracy
  * of the webcams and how effective the April Tag detections are for localization.
  */
-@Config
 @TeleOp(name = "April Tag Localization Test", group = "tests")
 public class AprilTagLocalizationTest extends OpMode {
-    public static int WINDOW_SIZE = 10;
-    public static int MIN_NUM_SAMPLES = 5;
-
-    // Allowable tolerances for error in the X-axis, Y-axis, and heading measurements
-    public static double X_VARIANCE = 0.4;
-    public static double Y_VARIANCE = 0.4;
-    public static double H_VARIANCE = 1.0;
 
     private final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    private final Pose2DMovingAverageFilter webcamAverage = new Pose2DMovingAverageFilter(MIN_NUM_SAMPLES, WINDOW_SIZE);
+    private Pose2DFilter average;
     private List<Webcam> webcams;
-    private List<Pose2DMovingAverageFilter> webcamFilters;
+    private double totalLoops = 0.0;
+    private double totalLoopTime = 0.0;
 
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        average = new Pose2DFilter(telemetry);
 
         // Enable bulk reads. This is almost always the "correct" answer, and can speed up loop
         // times. We will be managing the bulk read caches manually, which requires the code
@@ -58,11 +55,6 @@ public class AprilTagLocalizationTest extends OpMode {
         Webcam leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
         Webcam rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
         webcams = Arrays.asList(leftWebcam, rightWebcam);
-
-        webcamFilters = new ArrayList<>(webcams.size());
-        for (int i = 0; i < webcams.size(); i++) {
-            webcamFilters.add(new Pose2DMovingAverageFilter(MIN_NUM_SAMPLES, WINDOW_SIZE));
-        }
 
         // Wait for both cameras to initialize
         while (!leftWebcam.webcamInitialized() || !rightWebcam.webcamInitialized()) {
@@ -85,10 +77,15 @@ public class AprilTagLocalizationTest extends OpMode {
         timer.reset();
 
         updateWebcams();
-        telemetryAprilTag();
+        average.addTelemetry();
+
+        double elapsedTime = timer.time();
+        totalLoopTime += elapsedTime;
+        totalLoops++;
 
         telemetry.addLine(" ");
-        telemetry.addData("loop time (millis)", String.format("%.2f", timer.time()));
+        telemetry.addData("avg loop time (millis)", totalLoopTime / totalLoops);
+        telemetry.addData("loop time (millis)", String.format("%.2f", elapsedTime));
         telemetry.update();
     }
 
@@ -101,125 +98,194 @@ public class AprilTagLocalizationTest extends OpMode {
     }
 
     /**
-     * Send telemetry data for the webcams.
-     */
-    @SuppressLint("DefaultLocale")
-    private void telemetryAprilTag() {
-        // Loop through each webcam and output the average measurements for that webcam
-        for (int i = 0; i < webcamFilters.size(); i++) {
-            Webcam webcam = webcams.get(i);
-            Pose2DMovingAverageFilter webcamFilter = webcamFilters.get(i);
-
-            telemetry.addLine(" ");
-            telemetry.addLine(String.format("Webcam %s (%s)", webcam.getLocation().webcamName(), webcam.getLocation()));
-            if (webcamFilter.hasMean()) {
-                Pose2D pose = webcamFilter.getMean();
-                telemetry.addLine(String.format("X=%.2f, Y=%.2f, H=%.2f", pose.x, pose.y, Math.toDegrees(pose.h)));
-            } else {
-                telemetry.addLine(String.format("April Tags not available, num_measurements=%d", webcamFilter.numMeasurements()));
-            }
-        }
-
-        // Get the average measurements for all webcams
-        telemetry.addLine(" ");
-        if (webcamAverage.hasMean()) {
-            Pose2D pose = webcamAverage.getMean();
-            telemetry.addLine(String.format("Averages: X=%.2f, Y=%.2f, H=%.2f", pose.x, pose.y, Math.toDegrees(pose.h)));
-            double roundedX = Math.round(pose.x * 100.0) / 100.0;
-            double roundedY = Math.round(pose.y * 100.0) / 100.0;
-            double roundedHeading = Math.round((Math.toDegrees(pose.h)) * 100.0) / 100.0;
-            telemetry.addData("Avg X", roundedX);
-            telemetry.addData("Avg Y", roundedY);
-            telemetry.addData("Avg H", roundedHeading);
-        } else {
-            telemetry.addLine(String.format("Averages not available, num_measurements=%d", webcamAverage.numMeasurements()));
-        }
-    }
-
-    /**
      * Update the measurements for the webcams, as well as the average values for all webcams.
      */
     @SuppressLint("DefaultLocale")
     private void updateWebcams() {
         double totalX = 0.0;
         double totalY = 0.0;
-        double totalHeading = 0.0;
+        double totalH = 0.0;
         double totalDetections = 0.0;
 
-        // Update the moving averages for each webcam. This will weight each April Tag seen by the
-        // webcam equally.
-        for (int i = 0; i < webcams.size(); i++) {
-            Webcam webcam = webcams.get(i);
-            Pose2DMovingAverageFilter webcamFilter = webcamFilters.get(i);
-
+        // Get the April Tag detections for each webcam
+        for (Webcam webcam : webcams) {
+            int numWebcamDetections = 0;
             List<AprilTagDetection> detections = webcam.getDetections();
-            if (detections.isEmpty()) {
-                webcamFilter.removeMeasurement();
-            } else {
+            if (!detections.isEmpty()) {
                 // Get the total X, Y and heading values for all April Tags detected by the webcam
-                double totalWebcamX = 0.0;
-                double totalWebcamY = 0.0;
-                double totalWebcamHeading = 0.0;
-                double totalWebcamDetections = 0.0;
                 for (AprilTagDetection detection : detections) {
                     if (detection.robotPose != null) {
+                        numWebcamDetections++;
+
                         // Get the x-axis, y-axis and heading from the April Tag detection
                         double x = detection.robotPose.getPosition().x;
                         double y = detection.robotPose.getPosition().y;
-                        double heading = detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
+                        double h = detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS);
 
-                        // Update the total detections by this webcam
-                        totalWebcamDetections++;
-                        totalWebcamX += x;
-                        totalWebcamY += y;
-                        totalWebcamHeading += heading;
-
-                        // Update the total detections by all webcams
+                        // Update the total April Tag detections by all webcams
                         totalDetections++;
                         totalX += x;
                         totalY += y;
-                        totalHeading += heading;
+                        totalH += h;
                     }
                 }
-
-                // Update the moving average for the webcam
-                double avgWebcamX = totalWebcamX / totalWebcamDetections;
-                double avgWebcamY = totalWebcamY / totalWebcamDetections;
-                double avgWebcamHeading = totalWebcamHeading / totalWebcamDetections;
-                webcamFilter.filter(new Pose2D(avgWebcamX, avgWebcamY, Math.toRadians(avgWebcamHeading)));
-                // double roundedX = Math.round(avgWebcamX * 100.0) / 100.0;
-                // double roundedY = Math.round(avgWebcamY * 100.0) / 100.0;
-                // double roundedHeading = Math.round(avgWebcamHeading * 100.0) / 100.0;
-                // telemetry.addData("[" + webcam.getLocation() + "] X", roundedX);
-                // telemetry.addData("[" + webcam.getLocation() + "] Y", roundedY);
-                // telemetry.addData("[" + webcam.getLocation() + "] H", roundedHeading);
             }
+            telemetry.addData("[" + webcam.getLocation().webcamName() + " (" + webcam.getLocation().name() + ")] detections", numWebcamDetections);
         }
 
         // Update the average values for the webcams, if at least one webcam can see an April Tag
         if (totalDetections > 0) {
-            Pose2D mean = webcamAverage.getMean();
             double avgX = totalX / totalDetections;
             double avgY = totalY / totalDetections;
-            double avgHeading = Math.toRadians(totalHeading / totalDetections);
-            double diffX = Math.abs(avgX - mean.x);
-            double diffY = Math.abs(avgY - mean.y);
-            double diffH = Math.abs(avgHeading - mean.h);
-            telemetry.addData("Diff X", diffX);
-            telemetry.addData("Diff Y", diffY);
-            telemetry.addData("Diff H", Math.toDegrees(diffH));
-            // Once there are enough samples, drop any measurements that are outliers
-            if (!webcamAverage.hasMean()
-                    || (diffX <= X_VARIANCE
-                        && diffY <= Y_VARIANCE
-                        && diffH <= Math.toRadians(H_VARIANCE))) {
-                webcamAverage.filter(new Pose2D(avgX, avgY, avgHeading));
-            } else {
-                webcamAverage.removeMeasurement();
-                // telemetry.addLine(String.format("Dropping frame, X-error=%.2f, Y-error=%.2f, H-error=%.2f", Math.abs(avgX - mean.x), Math.abs(avgY - mean.y), Math.abs(avgHeading - mean.h)));
-            }
+            double avgH = totalH / totalDetections;
+            average.addMeasurement(new Pose2D(avgX, avgY, avgH));
         } else {
-            webcamAverage.removeMeasurement();
+            average.noMeasurement();
+        }
+    }
+
+    /**
+     * Class to manage the Moving Average Filter for Pose2D measurements.
+     */
+    @Config
+    public static class Pose2DFilter {
+        // Include debug telemetry data
+        public static boolean DEBUG = false;
+
+        // Moving Average Filter configuration
+        public static int WINDOW_SIZE = 40;
+        public static int MIN_NUM_SAMPLES = 15;
+        public static int INVALID_PACKETS_BEFORE_CLEARING = 8;
+
+        // Allowable tolerances for error in the X-axis, Y-axis, and heading measurements
+        public static double X_TOLERABLE_ERROR = 0.5; // inches
+        public static double Y_TOLERABLE_ERROR = 0.5; // inches
+        public static double H_TOLERABLE_ERROR = 1.0; // degrees
+
+        private final Telemetry telemetry;
+        private final Pose2DMovingAverageFilter average = new Pose2DMovingAverageFilter(MIN_NUM_SAMPLES, WINDOW_SIZE);
+        private int invalidPackets = 0;
+        private int numTimesCleared = 0;
+
+        /**
+         * Instantiates a new Pose2D filter.
+         *
+         * @param telemetry used to output data to the user
+         */
+        public Pose2DFilter(@NonNull Telemetry telemetry) {
+            this.telemetry = telemetry;
+        }
+
+        /**
+         * Adds a new Pose2D to the Moving Average Filter.
+         *
+         * @param pose the Pose2D to add to the Moving Average Filter
+         */
+        public void addMeasurement(@NonNull Pose2D pose) {
+            Pose2D mean = average.getMean();
+            double diffX = Math.abs(pose.x - mean.x);
+            double diffY = Math.abs(pose.y - mean.y);
+            double diffH = Math.abs(pose.h - mean.h);
+
+            // Only add the Pose2D if either a) there aren't enough measurements to calculate the
+            // mean yet, or b) the measurement is sufficiently close to the mean that it should
+            // be included
+            if (!average.hasMean()
+                    || (diffX <= X_TOLERABLE_ERROR
+                        && diffY <= Y_TOLERABLE_ERROR
+                        && Math.toDegrees(diffH) <= H_TOLERABLE_ERROR)) {
+                average.filter(pose);
+                invalidPackets = 0;
+            } else {
+                invalidMeasurement();
+            }
+
+            // Add some telemetry data for debug purposes
+            if (DEBUG) {
+                telemetry.addData("Diff X", round(diffX));
+                telemetry.addData("Diff Y", round(diffY));
+                telemetry.addData("Diff H", round(Math.toDegrees(diffH)));
+            }
+        }
+
+        /**
+         * Removes the oldest measurement from the Moving Average filter.
+         */
+        public void removeMeasurement() {
+            if (average.numMeasurements() != 0) {
+                average.removeMeasurement();
+                invalidPackets++;
+                clearIfInvalid();
+            }
+        }
+
+        /**
+         * Increases the number of invalid measurements received without a valid measurement being
+         * detected. If a sufficient number of invalid measurements are received in a row then
+         * the moving average filter is cleared of all entries, which is intended to quickly reset
+         * the queue when the robot moves rapidly.
+         */
+        public void invalidMeasurement() {
+            removeMeasurement();
+        }
+
+        /**
+         * No measurement is detected. This is an alias for <code>invalidMeasurement</code>.
+         */
+        public void noMeasurement() {
+            invalidMeasurement();
+        }
+
+        /**
+         * Removes all entries from the Moving Average Filter if there have been enough invalid
+         * or missing entries in a row. This allows the filter to be reset more rapidly if there
+         * when no measurements can be made.
+         */
+        private void clearIfInvalid() {
+            if (invalidPackets >= INVALID_PACKETS_BEFORE_CLEARING) {
+                average.clear();
+                numTimesCleared++;
+                invalidPackets = 0;
+            }
+        }
+
+        /**
+         * Gets the mean (average) from the Moving Average Filter.
+         *
+         * @return the mean (average) from the Moving Average Filter
+         */
+        public Pose2D getMean() {
+            return average.getMean();
+        }
+
+        /**
+         * Send telemetry data for the webcams.
+         */
+        @SuppressLint("DefaultLocale")
+        public void addTelemetry() {
+            // Get the average measurements for all webcams
+            telemetry.addLine(" ");
+            if (average.hasMean()) {
+                Pose2D mean = average.getMean();
+                telemetry.addData("X", round(mean.x));
+                telemetry.addData("Y", round(mean.y));
+                telemetry.addData("H", round((Math.toDegrees(mean.h))));
+            } else {
+                telemetry.addLine(String.format("Averages not available, measurements=%d", average.numMeasurements()));
+            }
+            telemetry.addData("measurements", average.numMeasurements());
+            telemetry.addData("invalid", invalidPackets);
+            telemetry.addData("clearing", numTimesCleared);
+        }
+
+        /**
+         * Helper method to round a double value to two decimal places.
+         *
+         * @param value the double value to round
+         * @return the rounded double value
+         */
+        private double round(double value) {
+            return Math.round(value * 100.0) / 100.0;
         }
     }
 }
