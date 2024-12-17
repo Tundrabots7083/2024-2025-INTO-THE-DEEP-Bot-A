@@ -330,6 +330,16 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
+     * Moves the arm, slide, and wrist to prepare the robot
+     * to intake a sample.
+     */
+    public void moveToSampleIntakePosition() {
+        double xDistance = robot.limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE);
+        double sampleHeight = 1.1;
+        moveToPosition(xDistance,sampleHeight);
+    }
+
+    /**
      * Gets an action to score a specimen on the high chamber. The robot must be in the correct
      * scoring position prior to calling this method.
      *

@@ -148,6 +148,27 @@ public class MecanumDrive extends SubsystemBase {
         telemetry.addData("[DRIVE] Right Rear Power", rightRearPower);
     }
 
+    public void turn(double turnPower) {
+
+        double leftFrontPower = turnPower;
+        double rightFrontPower = turnPower;
+        double leftRearPower = turnPower;
+        double rightRearPower = turnPower;
+
+        // Normalize motor powers to ensure none exceeds 1.0
+        double maxMotorPower = Math.abs(turnPower);
+        if (maxMotorPower > 1) {
+            leftFrontPower /= maxMotorPower;
+            rightFrontPower /= maxMotorPower;
+            leftRearPower /= maxMotorPower;
+            rightRearPower /= maxMotorPower;
+        }
+
+        setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
+
+    }
+
+
     /**
      * Gets the current power gain for the drive subsystem.
      *
