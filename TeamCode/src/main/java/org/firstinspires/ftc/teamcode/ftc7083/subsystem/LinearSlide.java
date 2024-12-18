@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
@@ -22,8 +23,8 @@ public class LinearSlide extends SubsystemBase {
     public static double KP = 0.32;
     public static double KI = 0.13;
     public static double KD = 0.02;
-    public static double TOLERABLE_ERROR = 0.05; // inches
-    public static double MIN_EXTENSION_LENGTH = 0.0;
+    public static double TOLERABLE_ERROR = 0.5; // inches
+    public static double MIN_EXTENSION_LENGTH = 0.3;
     public static double MAX_EXTENSION_LENGTH = 18;
     private final Motor slideMotor;
     private final Telemetry telemetry;
@@ -42,23 +43,6 @@ public class LinearSlide extends SubsystemBase {
         slideMotor = new Motor(hardwareMap, telemetry, "armSlideMotor");
         configMotor(slideMotor);
         pidController = new PIDControllerImpl(KP, KI, KD);
-    }
-
-    /**
-     * Configures the motor used for the linear slide
-     *
-     * @param motor the motor to be configured
-     */
-    private void configMotor(Motor motor) {
-        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
-        motorConfigurationType.setGearing(GEARING);
-        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
-        motor.setMotorType(motorConfigurationType);
-//        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(Motor.Direction.FORWARD);
-        motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
     }
 
     /**
@@ -88,6 +72,33 @@ public class LinearSlide extends SubsystemBase {
     }
 
     /**
+     * Gets the slide length in inches
+     * Finds the value for the length
+     *
+     * @return slide length in inches
+     */
+    public double getCurrentLength() {
+        return slideMotor.getCurrentInches();
+    }
+
+    /**
+     * Configures the motor used for the linear slide
+     *
+     * @param motor the motor to be configured
+     */
+    private void configMotor(Motor motor) {
+        MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+        motorConfigurationType.setTicksPerRev(TICKS_PER_REV);
+        motorConfigurationType.setGearing(GEARING);
+        motorConfigurationType.setAchieveableMaxRPMFraction(ACHIEVABLE_MAX_RPM_FRACTION);
+        motor.setMotorType(motorConfigurationType);
+        motor.setMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setInchesPerRev(Math.PI * SPOOL_DIAMETER);
+    }
+
+    /**
      * sets the power for the pid controller
      */
     public void execute() {
@@ -109,15 +120,5 @@ public class LinearSlide extends SubsystemBase {
         telemetry.addData("[Slide] target", targetLength);
         telemetry.addData("[Slide] current", getCurrentLength());
         return error <= TOLERABLE_ERROR;
-    }
-
-    /**
-     * Gets the slide length in inches
-     * Finds the value for the length
-     *
-     * @return slide length in inches
-     */
-    public double getCurrentLength() {
-        return -slideMotor.getCurrentInches();
     }
 }
