@@ -148,6 +148,11 @@ public class MecanumDrive extends SubsystemBase {
         telemetry.addData("[DRIVE] Right Rear Power", rightRearPower);
     }
 
+    /**
+     * Turns the robot given the amount of power.
+     *
+     * @param turnPower the amount of power to apply to the wheel motors.
+     */
     public void turn(double turnPower) {
 
         double leftFrontPower = turnPower;
@@ -165,9 +170,32 @@ public class MecanumDrive extends SubsystemBase {
         }
 
         setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
-
     }
 
+    /**
+     * Drives the robot in a straight direction.
+     *
+     * @param drivePower the amount of power to apply to the wheel motors.
+     */
+    public void driveStraight(double drivePower) {
+
+        double leftFrontPower = drivePower;
+        double rightFrontPower = drivePower;
+        double leftRearPower = drivePower;
+        double rightRearPower = drivePower;
+
+        // Normalize motor powers to ensure none exceeds 1.0
+        double maxMotorPower = Math.abs(drivePower);
+        if (maxMotorPower > 1) {
+            leftFrontPower /= maxMotorPower;
+            rightFrontPower /= maxMotorPower;
+            leftRearPower /= maxMotorPower;
+            rightRearPower /= maxMotorPower;
+        }
+
+        setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
+
+    }
 
     /**
      * Gets the current power gain for the drive subsystem.
