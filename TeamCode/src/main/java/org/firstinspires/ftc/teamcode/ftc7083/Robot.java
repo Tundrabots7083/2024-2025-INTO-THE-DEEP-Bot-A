@@ -7,10 +7,9 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ftc7083.localization.AprilTagAndOTOSLocalizer;
-import org.firstinspires.ftc.teamcode.ftc7083.localization.AprilTagLocalizer;
-import org.firstinspires.ftc.teamcode.ftc7083.localization.Localizer;
 import org.firstinspires.ftc.teamcode.ftc7083.hardware.SparkFunOTOS;
+import org.firstinspires.ftc.teamcode.ftc7083.localization.AprilTagAndOTOSLocalizer;
+import org.firstinspires.ftc.teamcode.ftc7083.localization.Localizer;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.ftc7083.subsystem.IntakeAndScoringSubsystem;
@@ -92,11 +91,12 @@ public class Robot {
     /**
      * Creates a new instance of the robot.
      *
-     * @param hardwareMap hardware map for the robot.
-     * @param telemetry   telemetry class for displaying data.
-     * @param opModeType  the type of opmode the robot is being used for
+     * @param hardwareMap    hardware map for the robot.
+     * @param telemetry      telemetry class for displaying data.
+     * @param opModeType     the type of opmode the robot is being used for
+     * @param armFeedForward feed forward value for the arm
      */
-    private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
+    private Robot(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType, double armFeedForward) {
         robot = this;
         this.telemetry = telemetry;
 
@@ -112,14 +112,14 @@ public class Robot {
 
         // Instantiate all the hardware on the robot
         mecanumDrive = new MecanumDrive(hardwareMap, telemetry);
-        arm = new Arm(hardwareMap, telemetry);
+        arm = new Arm(hardwareMap, telemetry, armFeedForward);
         linearSlide = new LinearSlide(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap, telemetry);
         leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
         rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
-        limelight = new Limelight(hardwareMap,telemetry);
+        limelight = new Limelight(hardwareMap, telemetry);
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         webcams = Arrays.asList(leftWebcam, rightWebcam);
@@ -151,7 +151,20 @@ public class Robot {
      * @return the robot instance
      */
     public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType) {
-        robot = new Robot(hardwareMap, telemetry, opModeType);
+        return init(hardwareMap, telemetry, OpModeType.TELEOP, 0.0);
+    }
+
+    /**
+     * Initializes the hardware mechanisms for the robot. This creates the singleton that is retrieved
+     * using the <code>getInstance</code> method.
+     *
+     * @param hardwareMap hardware map for the robot.
+     * @param telemetry   telemetry class for displaying data.
+     * @param opModeType  the type of opmode the robot is being used for
+     * @return the robot instance
+     */
+    public static Robot init(@NonNull HardwareMap hardwareMap, @NonNull Telemetry telemetry, OpModeType opModeType, double armFeedForward) {
+        robot = new Robot(hardwareMap, telemetry, opModeType, armFeedForward);
         return robot;
     }
 

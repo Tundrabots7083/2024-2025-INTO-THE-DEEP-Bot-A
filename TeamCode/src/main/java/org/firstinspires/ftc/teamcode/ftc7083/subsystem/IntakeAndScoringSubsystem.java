@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.ftc7083.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ftc7083.Robot;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionEx;
+import org.firstinspires.ftc.teamcode.ftc7083.action.ActionExBase;
+import org.firstinspires.ftc.teamcode.ftc7083.action.SequentialAction;
 
 /**
  * This class uses the Arm, LinearSlide, Wrist, and Claw subsystems to pick up, control,
@@ -15,7 +21,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
 
     // Robot measurements
     // Length of the arm and the wrist with zero extension in inches.
-    public static double ARM_LENGTH = 21.5;
+    public static double ARM_LENGTH = 22.0;
     // Height from the field to the center of rotation of the arm in inches.
     public static double ARM_HEIGHT = 16.5;
     // Distance from the front of the robot to the back of the robot in inches.
@@ -34,12 +40,16 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     public static double INTAKE_SHORT_Y = 1.6;
     public static double INTAKE_LONG_X = 36.0;
     public static double INTAKE_LONG_Y = 1.6;
+    public static double DEPOSIT_SAMPLE_X = 27.0;
+    public static double DEPOSIT_SAMPLE_Y = 1.6;
 
     // Heights of scoring places for game are in inches
     public static double HIGH_CHAMBER_HEIGHT = 26.0;
     public static double LOW_CHAMBER_HEIGHT = 13.0;
     public static double HIGH_BASKET_HEIGHT = 48.6;
     public static double LOW_BASKET_HEIGHT = 25.75;
+    public static double LOW_ASCENT_BAR_HEIGHT = 20.0;
+    public static double HIGH_ASCENT_BAR_HEIGHT = 36.0;
 
     // Maximum horizontal length of robot when extended
     public static double MAX_EXTENDED_ROBOT_LENGTH = 40.0;
@@ -49,16 +59,21 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     // different places.
     public static double HIGH_CHAMBER_SCORING_X = ARM_LENGTH;
     public static double HIGH_CHAMBER_SCORING_Y = HIGH_CHAMBER_HEIGHT + 2.5;
+    public static double HIGH_CHAMBER_SCORING_RELEASE_Y = HIGH_CHAMBER_SCORING_Y - 10;
     public static double LOW_CHAMBER_SCORING_X = ARM_LENGTH;
     public static double LOW_CHAMBER_SCORING_Y = LOW_CHAMBER_HEIGHT + 3.5;
     public static double HIGH_BASKET_SCORING_X = ARM_LENGTH;
     public static double HIGH_BASKET_SCORING_Y = HIGH_BASKET_HEIGHT + 5.5;
     public static double LOW_BASKET_SCORING_X = ARM_LENGTH;
     public static double LOW_BASKET_SCORING_Y = LOW_BASKET_HEIGHT + 5.5;
+    public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_X = ARM_LENGTH + 6.0;
+    public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y = 4.5;
+    public static double OBSERVATION_ZONE_INTAKE_SPECIMEN_ACQUIRE_Y = OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y + 5;
+    public static double LOW_ASCENT_BAR_X = ARM_LENGTH;
+    public static double LOW_ASCENT_BAR_Y = LOW_ASCENT_BAR_HEIGHT;
 
     // Other scoring constants
     public static double MOVE_ARM_AMOUNT = 3.0;
-    public static double Ka = 0.02;
 
     private final Telemetry telemetry;
     private final Robot robot;
@@ -93,10 +108,18 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * position.
      *
      * @return <code>true</code> if the intake and scoring subsystem is at the target position;
-     * <code>false</code> otherwise
+     *         <code>false</code> otherwise
      */
     public boolean isAtTarget() {
         return robot.arm.isAtTarget() && robot.linearSlide.isAtTarget();
+    }
+
+    /**
+     * Moves the subsystem to the starting position, with the claw closed.
+     */
+    public void moveToStartPosition() {
+        moveToPosition(START_X, START_Y);
+        telemetry.addData("[IAS] position", "start");
     }
 
     /**
@@ -151,14 +174,6 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
     }
 
     /**
-     * Moves the subsystem to the starting position, with the claw closed.
-     */
-    public void moveToStartPosition() {
-        moveToPosition(START_X, START_Y);
-        telemetry.addData("[IAS] position", "start");
-    }
-
-    /**
      * Fully retract the linear slide while not changing the arm angle.
      */
     public void retractLinearSlide() {
@@ -172,10 +187,10 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         // subtracted from the Y value by the moveToPosition() method.
         double hypotenuse = ARM_LENGTH;
         double x = getX(angle, hypotenuse);
-        double y = getY(angle,hypotenuse) + ARM_HEIGHT;
+        double y = getY(angle, hypotenuse) + ARM_HEIGHT;
 
         moveToPosition(x, y);
-        telemetry.addData("[IAS] position","retract slide");
+        telemetry.addData("[IAS] position", "retract slide");
     }
 
     /**
@@ -257,7 +272,7 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
      * to intake a sample.
      */
     public void moveToSampleIntakePosition() {
-        double xDistance = (double)robot.limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE);
+        double xDistance = (double) robot.limelight.getDistance(Limelight.TargetPosition.SUBMERSIBLE);
         double sampleHeight = 1.1;
         moveToPosition(xDistance,sampleHeight);
     }
@@ -324,21 +339,244 @@ public class IntakeAndScoringSubsystem extends SubsystemBase {
         telemetry.addData("[IAS] claw", "open");
     }
 
-    public double getFeedForward() {
-        double slideLength = robot.linearSlide.getCurrentLength();
-        return slideLength * Ka;
+    /**
+     * Gets an action to score a specimen on the high chamber. The robot must be in the correct
+     * scoring position prior to calling this method.
+     *
+     * @return an action to score a specimen on the high chamber
+     */
+    public ActionEx actionScoreSpecimenHighChamber() {
+        return new SequentialAction(
+                new MoveTo(this, HIGH_CHAMBER_SCORING_X, HIGH_CHAMBER_SCORING_Y),
+                new MoveTo(this, HIGH_BASKET_SCORING_X, HIGH_CHAMBER_SCORING_RELEASE_Y),
+                actionOpenClawWithWait(),
+                actionRetractLinearSlide()
+        );
     }
 
-    private double getArmFeedForward() {
-        double currentSlideLength = robot.linearSlide.getCurrentLength();
-        return Ka * currentSlideLength;
+    /**
+     * Gets an action to score a specimen on the high chamber. The robot must be in the correct
+     * scoring position prior to calling this method.
+     *
+     * @return an action to score a specimen on the high chamber
+     */
+    public ActionEx actionScoreSpecimenHighBasket() {
+        return new SequentialAction(
+                new MoveTo(this, HIGH_BASKET_SCORING_X, HIGH_BASKET_SCORING_Y),
+                actionOpenClawWithWait(),
+                actionRetractLinearSlide()
+        );
     }
 
-   /* public void scoreHighBasket() {
-        openClaw();
-        robot.claw.execute();
-        wait(1);
-        retractLinearSlide();
-        robot.arm.execute();
-    }*/
+    /**
+     * Gets an action to intake a specimen from the ground. The robot must be in the
+     * correct position prior to calling this method.
+     *
+     * @return an action to intake a specimen from the observation zone wall
+     */
+    public ActionEx actionIntakeSample() {
+        return new SequentialAction(
+                // TODO: this is not correct - it will need to use the LimeLight camera to orient the wrist and
+                //       adjust the length of the linear slide
+                new MoveTo(this, INTAKE_SHORT_X, INTAKE_SHORT_Y),
+                actionCloseClawWithWait(),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
+     * Gets an action to intake a specimen from the ground. The robot must be in the
+     * correct position prior to calling this method.
+     *
+     * @return an action to intake a specimen from the observation zone wall
+     */
+    public ActionEx actionDepositSample() {
+        return new SequentialAction(
+                new MoveTo(this, DEPOSIT_SAMPLE_X, DEPOSIT_SAMPLE_Y),
+                actionOpenClawWithWait(),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
+     * Gets an action to intake a specimen from the observation zone wall. The robot must be in the
+     * correct position prior to calling this method.
+     *
+     * @return an action to intake a specimen from the observation zone wall
+     */
+    public ActionEx actionIntakeSpecimen() {
+        return new SequentialAction(
+                // TODO: this is not correct - it will need to use the LimeLight camera to orient the wrist and
+                //       adjust the length of the linear slide
+                new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_GRAB_Y),
+                actionCloseClawWithWait(),
+                new MoveTo(this, OBSERVATION_ZONE_INTAKE_SPECIMEN_X, OBSERVATION_ZONE_INTAKE_SPECIMEN_ACQUIRE_Y),
+                actionRetractLinearSlide()
+        );
+    }
+
+    /**
+     * Gets an action to touch the low ascent bar. The robot must be in the correct position prior
+     * to calling this method.
+     *
+     * @return an action to touch the low ascent bar
+     */
+    public ActionEx actionTouchAscentBarLow() {
+        return new MoveTo(this, LOW_ASCENT_BAR_X, LOW_ASCENT_BAR_Y);
+    }
+
+    /**
+     * Gets an action to move the scoring subsystem to the start position.
+     *
+     * @return an action to move the scoring subsystem to the start position.
+     */
+    public ActionEx actionMoveToStartPosition() {
+        return new MoveTo(this, START_X, START_Y);
+    }
+
+    /**
+     * Gets an action to open the claw. This action waits for the claw to be successfully opened.
+     *
+     * @return an action to open the claw
+     */
+    public ActionEx actionOpenClaw() {
+        return robot.claw.actionOpenClaw();
+    }
+
+    /**
+     * Gets an action to open the claw. This action waits for the claw to be successfully opened.
+     *
+     * @return an action to open the claw
+     */
+    public ActionEx actionOpenClawWithWait() {
+        return robot.claw.actionOpenClawWithWait();
+    }
+
+    /**
+     * Gets an action to close the claw. This action does not wait for the claw to be successfully
+     * closed.
+     *
+     * @return an action to close the claw
+     */
+    public ActionEx actionCloseClaw() {
+        return robot.claw.actionCloseClaw();
+    }
+
+    /**
+     * Gets an action to close the claw. This action waits for the claw to be successfully closed.
+     *
+     * @return an action to close the claw
+     */
+    public ActionEx actionCloseClawWithWait() {
+        return robot.claw.actionCloseClawWithWait();
+    }
+
+    /**
+     * Gets an action to move the arm and linear slide so the intake and scoring subsystem are at
+     * the desired position.
+     *
+     * @param x the distance the arm needs to reach along the <code>X</code> axis
+     * @param y the height the arm needs to reach along the <code>Y</code> axis
+     * @return an action to move the arm and linear slide to the desired position
+     */
+    public ActionEx actionMoveTo(double x, double y) {
+        return new MoveTo(this, x, y);
+    }
+
+    /**
+     * Gets an action that retracts the linear slide while maintaining the current angle of the arm.
+     * @return an action that retracts the linear slide while maintaining the current angle of the arm
+     */
+    public ActionEx actionRetractLinearSlide() {
+        return new RetractLinearSlide(this);
+    }
+
+    /**
+     * An action to move the intake and scoring subsystem's arm and linear slide to the desired
+     * position.
+     */
+    public static class MoveTo extends ActionExBase {
+        private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+        private final double x;
+        private final double y;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an action to move the intake and scoring subsystem to the desired position.
+         *
+         * @param intakeAndScoringSubsystem the intake and scoring subsystem
+         * @param x                         the distance the arm needs to reach along the <code>X</code> axis
+         * @param y                         the height the arm needs to reach along the <code>Y</code> axis
+         */
+        public MoveTo(IntakeAndScoringSubsystem intakeAndScoringSubsystem, double x, double y) {
+            this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
+            this.x = x;
+            this.y = y;
+        }
+
+        /**
+         * Moves the intake and scoring subsystem to the desired position.
+         *
+         * @param telemetryPacket the telemetry used to output data to the user.
+         * @return <code>true</code> if the intake and scoring subsystem are still moving to the
+         *         target position; <code>false</code> if it is at the target position.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            intakeAndScoringSubsystem.execute();
+            return !intakeAndScoringSubsystem.isAtTarget();
+        }
+
+        /**
+         * Sets the position to which to move the intake and scoring subsystem.
+         */
+        private void initialize() {
+            intakeAndScoringSubsystem.moveToPosition(x, y);
+            initialized = true;
+        }
+    }
+
+    /**
+     * An action that retracts the linear slide while maintaining the current angle of the arm.
+     */
+    public static class RetractLinearSlide extends ActionExBase {
+        private final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
+        private boolean initialized = false;
+
+        /**
+         * Instantiates an action that retracts the linear slide while maintaining the current angle of the arm.
+         *
+         * @param intakeAndScoringSubsystem the intake and scoring subsystem
+         */
+        public RetractLinearSlide(IntakeAndScoringSubsystem intakeAndScoringSubsystem) {
+            this.intakeAndScoringSubsystem = intakeAndScoringSubsystem;
+        }
+
+        /**
+         * Retracts the linear slide while maintaining the current angle of the arm.
+         *
+         * @param telemetryPacket the telemetry used to output data to the user.
+         * @return <code>true</code> if the intake and scoring subsystem are still moving to the
+         *         target position; <code>false</code> if it is at the target position.
+         */
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialize();
+            }
+            intakeAndScoringSubsystem.execute();
+            return !intakeAndScoringSubsystem.isAtTarget();
+        }
+
+        /**
+         * Sets the position to which to move the intake and scoring subsystem.
+         */
+        private void initialize() {
+            intakeAndScoringSubsystem.retractLinearSlide();
+            initialized = true;
+        }
+    }
 }
