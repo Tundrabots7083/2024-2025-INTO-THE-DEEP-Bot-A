@@ -38,7 +38,6 @@ public class PrimaryTeleOp extends OpMode {
         MecanumDriveController mecanumDriveController = new MecanumDriveController(robot.mecanumDrive, telemetry);
         IntakeAndScoringSubsystemController intakeAndScoringSubsystemController = new IntakeAndScoringSubsystemController(robot.intakeAndScoringSubsystem, telemetry);
         controllers = Arrays.asList(mecanumDriveController, intakeAndScoringSubsystemController);
-
         telemetry.addLine("Initialization Complete");
         telemetry.update();
     }
