@@ -41,9 +41,9 @@ public class Robot {
     // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
 
     // RR localizer note: These units are inches and radians.
-    public static double SPARKFUN_OTOS_OFFSET_X = 0.0;
-    public static double SPARKFUN_OTOS_OFFSET_Y = 0.0;
-    public static double SPARKFUN_OTOS_HEADING_IN_DEGREES = 0.0;
+   // public static double SPARKFUN_OTOS_OFFSET_X = 0.0;
+    //public static double SPARKFUN_OTOS_OFFSET_Y = 0.0;
+    //public static double SPARKFUN_OTOS_HEADING_IN_DEGREES = 0.0;
 
     // Here we can set the linear and angular scalars, which can compensate for
     // scaling issues with the sensor measurements. Note that as of firmware
@@ -71,19 +71,19 @@ public class Robot {
     // Subsystems
     public final MecanumDrive mecanumDrive;
     public final IntakeAndScoringSubsystem intakeAndScoringSubsystem;
-    public final Webcam leftWebcam;
-    public final Webcam rightWebcam;
+    //public final Webcam leftWebcam;
+    //public final Webcam rightWebcam;
     public final Arm arm;
     public final LinearSlide linearSlide;
     public final Wrist wrist;
     public final Claw claw;
-    public final Limelight limelight;
-    public final SparkFunOTOS otos;
+    //public final Limelight limelight;
+    //public final SparkFunOTOS otos;
 
-    public final List<Webcam> webcams;
+    //public final List<Webcam> webcams;
 
     // Road Runner localization
-    public final Localizer localizer;
+    //public final Localizer localizer;
 
     // All lynx module hubs
     public final List<LynxModule> allHubs;
@@ -117,13 +117,13 @@ public class Robot {
         wrist = new Wrist(hardwareMap, telemetry);
         claw = new Claw(hardwareMap, telemetry);
         intakeAndScoringSubsystem = new IntakeAndScoringSubsystem(hardwareMap, telemetry);
-        leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
-        rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
-        limelight = new Limelight(hardwareMap, telemetry);
-        otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        //leftWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.LEFT, viewIds[0]);
+        //rightWebcam = new Webcam(hardwareMap, telemetry, Webcam.Location.RIGHT, viewIds[1]);
+        //limelight = new Limelight(hardwareMap, telemetry);
+        //otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
-        webcams = Arrays.asList(leftWebcam, rightWebcam);
-        localizer = new AprilTagAndOTOSLocalizer(webcams, otos);
+        //webcams = Arrays.asList(leftWebcam, rightWebcam);
+        //localizer = new AprilTagAndOTOSLocalizer(webcams, otos);
 
         this.telemetry.addLine("[Robot] initialized");
         this.telemetry.update();
@@ -185,7 +185,6 @@ public class Robot {
     public String toString() {
         return "Robot{" +
                 "mecanumDrive=" + mecanumDrive +
-                ", webcam=" + leftWebcam +
                 '}';
     }
 
