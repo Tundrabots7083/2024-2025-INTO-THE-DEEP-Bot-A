@@ -87,7 +87,7 @@ public class AutoMecanumDrive {
 
     public final VoltageSensor voltageSensor;
 
-    public final Localizer localizer;
+    //public final Localizer localizer;
     protected final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
@@ -103,8 +103,8 @@ public class AutoMecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = Robot.getInstance().localizer;
-        localizer.setPose2d(pose);
+        //localizer = Robot.getInstance().localizer;
+        //localizer.setPose2d(pose);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
